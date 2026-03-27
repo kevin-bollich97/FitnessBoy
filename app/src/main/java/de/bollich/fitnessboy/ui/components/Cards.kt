@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bollich.fitnessboy.domain.formatTrend
+import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.format.formattedWeight
@@ -49,7 +50,8 @@ fun HeadlineSection(
     title: String,
     subtitle: String,
     latestEntry: WeightEntry?,
-    trend: Double?,
+    trend: WeightTrend?,
+    trendList: List<WeightTrend>,
     bmi: Double?,
 ) {
     ElevatedCard(
@@ -93,17 +95,24 @@ fun HeadlineSection(
                         value = latestEntry.formattedWeight(),
                     )
                 }
-                if (trend != null) {
-                    MetricPill(
-                        label = "Trend",
-                        value = formatTrend(trend),
-                    )
-                }
                 if (bmi != null) {
                     MetricPill(
                         label = "BMI",
                         value = formatNumber(bmi),
                     )
+                }
+            }
+            if (trendList.isNotEmpty()) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    trendList.forEach { item ->
+                        MetricPill(
+                            label = item.period.label,
+                            value = formatTrend(item.deltaInKg),
+                        )
+                    }
                 }
             }
         }

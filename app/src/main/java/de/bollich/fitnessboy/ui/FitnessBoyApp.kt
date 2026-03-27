@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
@@ -177,7 +178,8 @@ private fun WeightTab(
                 title = "Gewicht",
                 subtitle = "Trage neue Werte ein und beobachte deinen Verlauf.",
                 latestEntry = uiState.latestEntry,
-                trend = uiState.trend,
+                trend = uiState.primaryTrend,
+                trendList = uiState.trends,
                 bmi = uiState.bmi,
             )
         }
@@ -235,6 +237,7 @@ private fun WeightHistoryPage(
                 subtitle = "Hier findest du alle gespeicherten Wiegeeinträge und kannst sie bei Bedarf löschen.",
                 latestEntry = entries.firstOrNull(),
                 trend = null,
+                trendList = emptyList(),
                 bmi = null,
             )
         }
@@ -270,6 +273,7 @@ private fun BmiTab(uiState: FitnessBoyUiState) {
                 subtitle = "Hier siehst du deinen BMI und Richtwerte auf Basis deiner Größe.",
                 latestEntry = uiState.latestEntry,
                 trend = null,
+                trendList = emptyList(),
                 bmi = uiState.bmi,
             )
         }
@@ -319,6 +323,7 @@ private fun ProfileTab(
                 subtitle = "Passe hier deine Körperdaten und Zielwerte an.",
                 latestEntry = null,
                 trend = null,
+                trendList = emptyList(),
                 bmi = uiState.bmi,
             )
         }
@@ -352,7 +357,6 @@ private fun FitnessBoyAppPreview() {
                 ),
                 profile = UserProfile(heightInCm = 180.0, targetWeightInKg = 78.0),
                 latestEntry = WeightEntry(LocalDate.of(2026, 3, 9), 82.4),
-                trend = -0.5,
                 bmi = 25.4,
                 bmiCategory = "Übergewicht",
                 healthyWeightRangeText = "59.9 bis 80.7 kg",

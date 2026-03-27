@@ -161,7 +161,8 @@ class FitnessBoyViewModel(
 
         return state.copy(
             latestEntry = overview.latestEntry,
-            trend = overview.trend,
+            primaryTrend = overview.primaryTrend,
+            trends = overview.trends,
             bmi = overview.bmi,
             bmiCategory = overview.bmiCategory,
             healthyWeightRangeText = overview.healthyWeightRangeText,

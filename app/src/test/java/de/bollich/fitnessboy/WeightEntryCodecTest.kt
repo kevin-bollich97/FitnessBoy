@@ -4,12 +4,15 @@ import de.bollich.fitnessboy.data.WeightEntryCodec
 import de.bollich.fitnessboy.domain.calculateBmi
 import de.bollich.fitnessboy.domain.calculateHealthyWeightRange
 import de.bollich.fitnessboy.domain.calculateOptimalWeight
+import de.bollich.fitnessboy.domain.calculateWeightTrend
 import de.bollich.fitnessboy.domain.classifyBmi
 import de.bollich.fitnessboy.domain.parseHeight
 import de.bollich.fitnessboy.domain.parseOptionalWeight
 import de.bollich.fitnessboy.domain.parseWeight
+import de.bollich.fitnessboy.domain.WeightTrendPeriod
 import de.bollich.fitnessboy.model.WeightEntry
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 import java.time.LocalDate
@@ -81,5 +84,35 @@ class WeightEntryCodecTest {
         assertEquals("Untergewicht", classifyBmi(17.0))
         assertEquals("Normalgewicht", classifyBmi(22.0))
         assertEquals("Übergewicht", classifyBmi(27.0))
+    }
+
+    @Test
+    fun calculateWeightTrend_returnsSevenDayTrend() {
+        val entries = listOf(
+            WeightEntry(LocalDate.of(2026, 3, 15), 81.0),
+            WeightEntry(LocalDate.of(2026, 3, 12), 81.5),
+            WeightEntry(LocalDate.of(2026, 3, 8), 82.4),
+        )
+
+        val trend = calculateWeightTrend(entries, WeightTrendPeriod.SEVEN_DAYS)
+
+        assertNotNull(trend)
+        assertEquals(-1.4, trend?.deltaInKg ?: error("Trend should not be null"), 0.1)
+        assertEquals(LocalDate.of(2026, 3, 8), trend?.referenceDate)
+    }
+
+    @Test
+    fun calculateWeightTrend_returnsSinceStartTrend() {
+        val entries = listOf(
+            WeightEntry(LocalDate.of(2026, 3, 15), 81.0),
+            WeightEntry(LocalDate.of(2026, 3, 12), 81.5),
+            WeightEntry(LocalDate.of(2026, 2, 20), 84.0),
+        )
+
+        val trend = calculateWeightTrend(entries, WeightTrendPeriod.SINCE_START)
+
+        assertNotNull(trend)
+        assertEquals(-3.0, trend?.deltaInKg ?: error("Trend should not be null"), 0.1)
+        assertEquals(LocalDate.of(2026, 2, 20), trend?.referenceDate)
     }
 }
