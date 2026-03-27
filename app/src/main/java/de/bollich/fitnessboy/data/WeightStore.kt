@@ -1,15 +1,16 @@
 package de.bollich.fitnessboy.data
 
 import android.content.Context
+import de.bollich.fitnessboy.domain.repository.WeightRepository
 import de.bollich.fitnessboy.model.WeightEntry
 
-class WeightStore(private val context: Context) {
-    fun load(): List<WeightEntry> {
+class WeightStore(private val context: Context) : WeightRepository {
+    override fun load(): List<WeightEntry> {
         val raw = preferences.getString(entriesKey, "").orEmpty()
         return WeightEntryCodec.decode(raw)
     }
 
-    fun save(entries: List<WeightEntry>) {
+    override fun save(entries: List<WeightEntry>) {
         preferences
             .edit()
             .putString(entriesKey, WeightEntryCodec.encode(entries.sortedByDescending(WeightEntry::date)))

@@ -1,10 +1,11 @@
 package de.bollich.fitnessboy.data
 
 import android.content.Context
+import de.bollich.fitnessboy.domain.repository.ProfileRepository
 import de.bollich.fitnessboy.model.UserProfile
 
-class ProfileStore(private val context: Context) {
-    fun load(): UserProfile {
+class ProfileStore(private val context: Context) : ProfileRepository {
+    override fun load(): UserProfile {
         val preferences = preferences
         val heightInCm = preferences.getString(heightKey, null)?.toDoubleOrNull()
         val targetWeightInKg = preferences.getString(targetWeightKey, null)?.toDoubleOrNull()
@@ -14,7 +15,7 @@ class ProfileStore(private val context: Context) {
         )
     }
 
-    fun save(profile: UserProfile) {
+    override fun save(profile: UserProfile) {
         preferences
             .edit()
             .putString(heightKey, profile.heightInCm?.toString())

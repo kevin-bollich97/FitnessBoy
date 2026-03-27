@@ -7,15 +7,12 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import de.bollich.fitnessboy.data.ProfileStore
 import de.bollich.fitnessboy.data.WeightStore
-import de.bollich.fitnessboy.domain.calculateBmi
-import de.bollich.fitnessboy.domain.calculateHealthyWeightRange
-import de.bollich.fitnessboy.domain.calculateOptimalWeight
-import de.bollich.fitnessboy.domain.classifyBmi
-import de.bollich.fitnessboy.domain.parseHeight
-import de.bollich.fitnessboy.domain.parseOptionalWeight
-import de.bollich.fitnessboy.domain.parseWeight
+import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
+import de.bollich.fitnessboy.domain.usecase.DeleteWeightEntry
+import de.bollich.fitnessboy.domain.usecase.GetFitnessBoySnapshot
+import de.bollich.fitnessboy.domain.usecase.GetHealthOverview
+import de.bollich.fitnessboy.domain.usecase.SaveProfile
 import de.bollich.fitnessboy.format.formatNumber
-import de.bollich.fitnessboy.model.WeightEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,8 +20,11 @@ import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 
 class FitnessBoyViewModel(
-    private val weightStore: WeightStore,
-    private val profileStore: ProfileStore,
+    private val getFitnessBoySnapshot: GetFitnessBoySnapshot,
+    private val getHealthOverview: GetHealthOverview,
+    private val saveProfile: SaveProfile,
+    private val addWeightEntry: AddWeightEntry,
+    private val deleteWeightEntry: DeleteWeightEntry,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(loadInitialState())
     val uiState: StateFlow<FitnessBoyUiState> = _uiState.asStateFlow()
@@ -55,83 +55,69 @@ class FitnessBoyViewModel(
 
     fun onSaveProfileClick() {
         val currentState = _uiState.value
-        val parsedHeight = parseHeight(currentState.heightInput)
-        if (parsedHeight == null) {
-            updateState {
+        when (val result = saveProfile(
+            profile = currentState.profile,
+            heightInput = currentState.heightInput,
+            targetWeightInput = currentState.targetWeightInput,
+        )) {
+            is SaveProfile.Result.Success -> updateState {
                 copy(
-                    heightErrorText = "Bitte eine gültige Größe in cm eingeben.",
+                    profile = result.profile,
+                    heightInput = result.formattedHeight,
+                    heightErrorText = null,
+                    targetWeightInput = result.formattedTargetWeight,
                     targetWeightErrorText = null,
                 )
             }
-            return
-        }
 
-        val parsedTargetWeight = parseOptionalWeight(currentState.targetWeightInput)
-        if (currentState.targetWeightInput.isNotBlank() && parsedTargetWeight == null) {
-            updateState {
-                copy(targetWeightErrorText = "Bitte ein gültiges Zielgewicht eingeben.")
+            is SaveProfile.Result.InvalidHeight -> updateState {
+                copy(
+                    heightErrorText = result.message,
+                    targetWeightErrorText = null,
+                )
             }
-            return
-        }
 
-        val updatedProfile = currentState.profile.copy(
-            heightInCm = parsedHeight,
-            targetWeightInKg = parsedTargetWeight,
-        )
-        profileStore.save(updatedProfile)
-
-        updateState {
-            copy(
-                profile = updatedProfile,
-                heightInput = formatNumber(parsedHeight),
-                heightErrorText = null,
-                targetWeightInput = parsedTargetWeight?.let(::formatNumber).orEmpty(),
-                targetWeightErrorText = null,
-            )
+            is SaveProfile.Result.InvalidTargetWeight -> updateState {
+                copy(targetWeightErrorText = result.message)
+            }
         }
     }
 
     fun onAddWeightClick() {
         val currentState = _uiState.value
-        val parsedWeight = parseWeight(currentState.weightInput)
-        if (parsedWeight == null) {
-            updateState { copy(weightErrorText = "Bitte ein gültiges Gewicht eingeben.") }
-            return
-        }
+        when (val result = addWeightEntry(
+            entries = currentState.entries,
+            weightInput = currentState.weightInput,
+            selectedDate = currentState.selectedWeightDate,
+        )) {
+            is AddWeightEntry.Result.Success -> updateState {
+                copy(
+                    entries = result.entries,
+                    weightInput = "",
+                    weightErrorText = null,
+                    selectedWeightDate = LocalDate.now(),
+                )
+            }
 
-        val updatedEntries = (
-            currentState.entries + WeightEntry(
-                date = currentState.selectedWeightDate,
-                weightInKg = parsedWeight,
-            )
-        ).sortedByDescending(WeightEntry::date)
-
-        weightStore.save(updatedEntries)
-
-        updateState {
-            copy(
-                entries = updatedEntries,
-                weightInput = "",
-                weightErrorText = null,
-                selectedWeightDate = LocalDate.now(),
-            )
+            is AddWeightEntry.Result.InvalidWeight -> updateState {
+                copy(weightErrorText = result.message)
+            }
         }
     }
 
-    fun onDeleteEntry(entry: WeightEntry) {
-        val updatedEntries = _uiState.value.entries - entry
-        weightStore.save(updatedEntries)
+    fun onDeleteEntry(entry: de.bollich.fitnessboy.model.WeightEntry) {
+        val updatedEntries = deleteWeightEntry(_uiState.value.entries, entry)
         updateState { copy(entries = updatedEntries) }
     }
 
     private fun loadInitialState(): FitnessBoyUiState {
-        val profile = profileStore.load()
+        val snapshot = getFitnessBoySnapshot()
         return deriveState(
             FitnessBoyUiState(
-                entries = weightStore.load(),
-                profile = profile,
-                heightInput = profile.heightInCm?.let(::formatNumber).orEmpty(),
-                targetWeightInput = profile.targetWeightInKg?.let(::formatNumber).orEmpty(),
+                entries = snapshot.entries,
+                profile = snapshot.profile,
+                heightInput = snapshot.profile.heightInCm?.let(::formatNumber).orEmpty(),
+                targetWeightInput = snapshot.profile.targetWeightInKg?.let(::formatNumber).orEmpty(),
             )
         )
     }
@@ -143,35 +129,37 @@ class FitnessBoyViewModel(
     }
 
     private fun deriveState(state: FitnessBoyUiState): FitnessBoyUiState {
-        val latestEntry = state.entries.firstOrNull()
-        val previousEntry = state.entries.getOrNull(1)
-        val trend = latestEntry?.let { latest ->
-            previousEntry?.let { previous -> latest.weightInKg - previous.weightInKg }
-        }
-        val bmi = calculateBmi(latestEntry?.weightInKg, state.profile.heightInCm)
-        val healthyWeightRange = calculateHealthyWeightRange(state.profile.heightInCm)
-        val optimalWeight = calculateOptimalWeight(state.profile.heightInCm)
+        val overview = getHealthOverview(
+            entries = state.entries,
+            profile = state.profile,
+        )
 
         return state.copy(
-            latestEntry = latestEntry,
-            trend = trend,
-            bmi = bmi,
-            bmiCategory = classifyBmi(bmi),
-            healthyWeightRangeText = healthyWeightRange?.let {
-                "${formatNumber(it.minimumInKg)} bis ${formatNumber(it.maximumInKg)} kg"
-            },
-            optimalWeightText = optimalWeight?.let { "${formatNumber(it)} kg" },
+            latestEntry = overview.latestEntry,
+            trend = overview.trend,
+            bmi = overview.bmi,
+            bmiCategory = overview.bmiCategory,
+            healthyWeightRangeText = overview.healthyWeightRangeText,
+            optimalWeightText = overview.optimalWeightText,
         )
     }
 
     companion object {
         fun factory(context: Context): ViewModelProvider.Factory {
             val appContext = context.applicationContext
+            val weightRepository = WeightStore(appContext)
+            val profileRepository = ProfileStore(appContext)
             return viewModelFactory {
                 initializer {
                     FitnessBoyViewModel(
-                        weightStore = WeightStore(appContext),
-                        profileStore = ProfileStore(appContext),
+                        getFitnessBoySnapshot = GetFitnessBoySnapshot(
+                            weightRepository = weightRepository,
+                            profileRepository = profileRepository,
+                        ),
+                        getHealthOverview = GetHealthOverview(),
+                        saveProfile = SaveProfile(profileRepository),
+                        addWeightEntry = AddWeightEntry(weightRepository),
+                        deleteWeightEntry = DeleteWeightEntry(weightRepository),
                     )
                 }
             }
