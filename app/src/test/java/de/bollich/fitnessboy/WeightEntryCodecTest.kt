@@ -9,6 +9,7 @@ import de.bollich.fitnessboy.domain.calculateWeightTrend
 import de.bollich.fitnessboy.domain.classifyBmi
 import de.bollich.fitnessboy.domain.GoalDirection
 import de.bollich.fitnessboy.domain.GoalStatus
+import de.bollich.fitnessboy.domain.parseBodyMeasurement
 import de.bollich.fitnessboy.domain.parseHeight
 import de.bollich.fitnessboy.domain.parseOptionalWeight
 import de.bollich.fitnessboy.domain.parseWeight
@@ -62,6 +63,19 @@ class WeightEntryCodecTest {
         assertNull(parseHeight("abc"))
         assertNull(parseHeight("79"))
         assertNull(parseHeight("300"))
+    }
+
+    @Test
+    fun parseBodyMeasurement_acceptsValidInput() {
+        assertEquals(88.0, parseBodyMeasurement("88"))
+        assertEquals(47.5, parseBodyMeasurement("47,5"))
+    }
+
+    @Test
+    fun parseBodyMeasurement_rejectsInvalidInput() {
+        assertNull(parseBodyMeasurement("abc"))
+        assertNull(parseBodyMeasurement("19"))
+        assertNull(parseBodyMeasurement("260"))
     }
 
     @Test

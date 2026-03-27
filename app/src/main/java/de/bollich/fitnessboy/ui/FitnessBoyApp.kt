@@ -33,13 +33,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.format.formatNumber
+import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.AddWeightCard
+import de.bollich.fitnessboy.ui.components.AddBodyMeasurementsDialog
+import de.bollich.fitnessboy.ui.components.BodyMeasurementsOverviewCard
 import de.bollich.fitnessboy.ui.components.BmiInsightsCard
 import de.bollich.fitnessboy.ui.components.EmptyStateCard
-import de.bollich.fitnessboy.ui.components.GoalProgressCard
 import de.bollich.fitnessboy.ui.components.HeadlineSection
+import de.bollich.fitnessboy.ui.components.GoalProgressCard
 import de.bollich.fitnessboy.ui.components.MetricInfoCard
 import de.bollich.fitnessboy.ui.components.ProfileCard
 import de.bollich.fitnessboy.ui.components.WeightChartCard
@@ -61,9 +64,15 @@ fun FitnessBoyApp(
         onWeightPageChange = viewModel::onWeightPageChange,
         onWeightValueChange = viewModel::onWeightValueChange,
         onSelectedWeightDateChange = viewModel::onSelectedWeightDateChange,
+        onBodyMeasurementsDialogChange = viewModel::onBodyMeasurementsDialogChange,
+        onBodyMeasurementsDateChange = viewModel::onBodyMeasurementsDateChange,
+        onWaistValueChange = viewModel::onWaistValueChange,
+        onHipsValueChange = viewModel::onHipsValueChange,
+        onShouldersValueChange = viewModel::onShouldersValueChange,
         onHeightValueChange = viewModel::onHeightValueChange,
         onTargetWeightValueChange = viewModel::onTargetWeightValueChange,
         onSaveProfileClick = viewModel::onSaveProfileClick,
+        onAddBodyMeasurementsClick = viewModel::onAddBodyMeasurementsClick,
         onAddWeightClick = viewModel::onAddWeightClick,
         onDeleteEntry = viewModel::onDeleteEntry,
     )
@@ -76,9 +85,15 @@ private fun FitnessBoyScreen(
     onWeightPageChange: (WeightPage) -> Unit,
     onWeightValueChange: (String) -> Unit,
     onSelectedWeightDateChange: (LocalDate) -> Unit,
+    onBodyMeasurementsDialogChange: (Boolean) -> Unit,
+    onBodyMeasurementsDateChange: (LocalDate) -> Unit,
+    onWaistValueChange: (String) -> Unit,
+    onHipsValueChange: (String) -> Unit,
+    onShouldersValueChange: (String) -> Unit,
     onHeightValueChange: (String) -> Unit,
     onTargetWeightValueChange: (String) -> Unit,
     onSaveProfileClick: () -> Unit,
+    onAddBodyMeasurementsClick: () -> Unit,
     onAddWeightClick: () -> Unit,
     onDeleteEntry: (WeightEntry) -> Unit,
 ) {
@@ -139,7 +154,18 @@ private fun FitnessBoyScreen(
                     onDeleteEntry = onDeleteEntry,
                 )
 
-                AppTab.BMI -> BmiTab(uiState = uiState)
+                AppTab.BMI -> BmiTab(
+                    uiState = uiState,
+                )
+                AppTab.MEASUREMENTS -> MeasurementsTab(
+                    uiState = uiState,
+                    onBodyMeasurementsDialogChange = onBodyMeasurementsDialogChange,
+                    onBodyMeasurementsDateChange = onBodyMeasurementsDateChange,
+                    onWaistValueChange = onWaistValueChange,
+                    onHipsValueChange = onHipsValueChange,
+                    onShouldersValueChange = onShouldersValueChange,
+                    onAddBodyMeasurementsClick = onAddBodyMeasurementsClick,
+                )
                 AppTab.PROFILE -> ProfileTab(
                     uiState = uiState,
                     onHeightValueChange = onHeightValueChange,
@@ -194,12 +220,6 @@ private fun WeightTab(
                 onDateChange = onSelectedWeightDateChange,
                 onAddClick = onAddWeightClick,
             )
-        }
-
-        uiState.goalProgress?.let { goalProgress ->
-            item {
-                GoalProgressCard(goalProgress = goalProgress)
-            }
         }
 
         item {
@@ -268,7 +288,9 @@ private fun WeightHistoryPage(
 }
 
 @Composable
-private fun BmiTab(uiState: FitnessBoyUiState) {
+private fun BmiTab(
+    uiState: FitnessBoyUiState,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
@@ -277,10 +299,10 @@ private fun BmiTab(uiState: FitnessBoyUiState) {
         item {
             HeadlineSection(
                 title = "BMI und Ziele",
-                subtitle = "Hier siehst du deinen BMI und Richtwerte auf Basis deiner Größe.",
+                subtitle = "Hier siehst du deinen BMI, Trends und Richtwerte auf Basis deiner Größe.",
                 latestEntry = uiState.latestEntry,
-                trend = null,
-                trendList = emptyList(),
+                trend = uiState.primaryTrend,
+                trendList = uiState.trends,
                 bmi = uiState.bmi,
             )
         }
@@ -315,6 +337,68 @@ private fun BmiTab(uiState: FitnessBoyUiState) {
                 description = "Abgeleitet aus BMI 18.5 bis 24.9 für deine Größe.",
             )
         }
+    }
+}
+
+@Composable
+private fun MeasurementsTab(
+    uiState: FitnessBoyUiState,
+    onBodyMeasurementsDialogChange: (Boolean) -> Unit,
+    onBodyMeasurementsDateChange: (LocalDate) -> Unit,
+    onWaistValueChange: (String) -> Unit,
+    onHipsValueChange: (String) -> Unit,
+    onShouldersValueChange: (String) -> Unit,
+    onAddBodyMeasurementsClick: () -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        item {
+            HeadlineSection(
+                title = "Körpermaße",
+                subtitle = "Erfasse Bauch, Hüfte und Schultern und nutze die Werte später für Verlauf und Vergleiche.",
+                latestEntry = uiState.latestEntry,
+                trend = null,
+                trendList = emptyList(),
+                bmi = null,
+            )
+        }
+
+        item {
+            OutlinedButton(
+                onClick = { onBodyMeasurementsDialogChange(true) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+            ) {
+                Text("Körpermaße erfassen")
+            }
+        }
+
+        item {
+            BodyMeasurementsOverviewCard(
+                latestEntry = uiState.latestBodyMeasurementsEntry,
+            )
+        }
+    }
+
+    if (uiState.isBodyMeasurementsDialogVisible) {
+        AddBodyMeasurementsDialog(
+            selectedDate = uiState.selectedBodyMeasurementsDate,
+            waistInput = uiState.waistInput,
+            waistErrorText = uiState.waistErrorText,
+            hipsInput = uiState.hipsInput,
+            hipsErrorText = uiState.hipsErrorText,
+            shouldersInput = uiState.shouldersInput,
+            shouldersErrorText = uiState.shouldersErrorText,
+            onDateChange = onBodyMeasurementsDateChange,
+            onWaistChange = onWaistValueChange,
+            onHipsChange = onHipsValueChange,
+            onShouldersChange = onShouldersValueChange,
+            onDismiss = { onBodyMeasurementsDialogChange(false) },
+            onSave = onAddBodyMeasurementsClick,
+        )
     }
 }
 
@@ -368,8 +452,22 @@ private fun FitnessBoyAppPreview() {
                     WeightEntry(LocalDate.of(2026, 3, 8), 82.9),
                     WeightEntry(LocalDate.of(2026, 3, 9), 82.4),
                 ),
+                bodyMeasurementsEntries = listOf(
+                    BodyMeasurementsEntry(
+                        date = LocalDate.of(2026, 3, 9),
+                        waistInCm = 88.0,
+                        hipsInCm = 95.0,
+                        shouldersInCm = 48.0,
+                    )
+                ),
                 profile = UserProfile(heightInCm = 180.0, targetWeightInKg = 78.0),
                 latestEntry = WeightEntry(LocalDate.of(2026, 3, 9), 82.4),
+                latestBodyMeasurementsEntry = BodyMeasurementsEntry(
+                    date = LocalDate.of(2026, 3, 9),
+                    waistInCm = 88.0,
+                    hipsInCm = 95.0,
+                    shouldersInCm = 48.0,
+                ),
                 bmi = 25.4,
                 bmiCategory = "Übergewicht",
                 healthyWeightRangeText = "59.9 bis 80.7 kg",
@@ -382,9 +480,15 @@ private fun FitnessBoyAppPreview() {
             onWeightPageChange = {},
             onWeightValueChange = {},
             onSelectedWeightDateChange = {},
+            onBodyMeasurementsDialogChange = {},
+            onBodyMeasurementsDateChange = {},
+            onWaistValueChange = {},
+            onHipsValueChange = {},
+            onShouldersValueChange = {},
             onHeightValueChange = {},
             onTargetWeightValueChange = {},
             onSaveProfileClick = {},
+            onAddBodyMeasurementsClick = {},
             onAddWeightClick = {},
             onDeleteEntry = {},
         )
