@@ -2,10 +2,13 @@ package de.bollich.fitnessboy
 
 import de.bollich.fitnessboy.data.WeightEntryCodec
 import de.bollich.fitnessboy.domain.calculateBmi
+import de.bollich.fitnessboy.domain.calculateGoalProgress
 import de.bollich.fitnessboy.domain.calculateHealthyWeightRange
 import de.bollich.fitnessboy.domain.calculateOptimalWeight
 import de.bollich.fitnessboy.domain.calculateWeightTrend
 import de.bollich.fitnessboy.domain.classifyBmi
+import de.bollich.fitnessboy.domain.GoalDirection
+import de.bollich.fitnessboy.domain.GoalStatus
 import de.bollich.fitnessboy.domain.parseHeight
 import de.bollich.fitnessboy.domain.parseOptionalWeight
 import de.bollich.fitnessboy.domain.parseWeight
@@ -114,5 +117,35 @@ class WeightEntryCodecTest {
         assertNotNull(trend)
         assertEquals(-3.0, trend?.deltaInKg ?: error("Trend should not be null"), 0.1)
         assertEquals(LocalDate.of(2026, 2, 20), trend?.referenceDate)
+    }
+
+    @Test
+    fun calculateGoalProgress_returnsProgressTowardsWeightLossGoal() {
+        val entries = listOf(
+            WeightEntry(LocalDate.of(2026, 3, 15), 81.0),
+            WeightEntry(LocalDate.of(2026, 3, 12), 81.5),
+            WeightEntry(LocalDate.of(2026, 2, 20), 84.0),
+        )
+
+        val progress = calculateGoalProgress(entries, targetWeightInKg = 78.0)
+
+        assertNotNull(progress)
+        assertEquals(GoalDirection.LOSE, progress?.direction)
+        assertEquals(50, progress?.progressPercent)
+        assertEquals(GoalStatus.IN_PROGRESS, progress?.status)
+    }
+
+    @Test
+    fun calculateGoalProgress_marksReachedGoal() {
+        val entries = listOf(
+            WeightEntry(LocalDate.of(2026, 3, 15), 77.5),
+            WeightEntry(LocalDate.of(2026, 3, 12), 78.4),
+            WeightEntry(LocalDate.of(2026, 2, 20), 84.0),
+        )
+
+        val progress = calculateGoalProgress(entries, targetWeightInKg = 78.0)
+
+        assertNotNull(progress)
+        assertEquals(GoalStatus.REACHED, progress?.status)
     }
 }

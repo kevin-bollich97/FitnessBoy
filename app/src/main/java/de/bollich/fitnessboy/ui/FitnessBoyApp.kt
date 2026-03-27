@@ -38,6 +38,7 @@ import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.AddWeightCard
 import de.bollich.fitnessboy.ui.components.BmiInsightsCard
 import de.bollich.fitnessboy.ui.components.EmptyStateCard
+import de.bollich.fitnessboy.ui.components.GoalProgressCard
 import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.components.MetricInfoCard
 import de.bollich.fitnessboy.ui.components.ProfileCard
@@ -195,6 +196,12 @@ private fun WeightTab(
             )
         }
 
+        uiState.goalProgress?.let { goalProgress ->
+            item {
+                GoalProgressCard(goalProgress = goalProgress)
+            }
+        }
+
         item {
             if (uiState.entries.isEmpty()) {
                 EmptyStateCard()
@@ -285,6 +292,12 @@ private fun BmiTab(uiState: FitnessBoyUiState) {
                 heightText = uiState.profile.heightInCm?.let { "${formatNumber(it)} cm" },
                 currentWeightText = uiState.latestEntry?.let { "${formatNumber(it.weightInKg)} kg" },
             )
+        }
+
+        uiState.goalProgress?.let { goalProgress ->
+            item {
+                GoalProgressCard(goalProgress = goalProgress)
+            }
         }
 
         item {

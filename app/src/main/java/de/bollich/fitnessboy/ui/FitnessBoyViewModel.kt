@@ -163,6 +163,7 @@ class FitnessBoyViewModel(
             latestEntry = overview.latestEntry,
             primaryTrend = overview.primaryTrend,
             trends = overview.trends,
+            goalProgress = overview.goalProgress,
             bmi = overview.bmi,
             bmiCategory = overview.bmiCategory,
             healthyWeightRangeText = overview.healthyWeightRangeText,

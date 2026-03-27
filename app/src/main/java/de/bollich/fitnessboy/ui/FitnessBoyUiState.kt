@@ -1,6 +1,7 @@
 package de.bollich.fitnessboy.ui
 
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.domain.GoalProgress
 import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
@@ -28,6 +29,7 @@ data class FitnessBoyUiState(
     val latestEntry: WeightEntry? = null,
     val primaryTrend: WeightTrend? = null,
     val trends: List<WeightTrend> = emptyList(),
+    val goalProgress: GoalProgress? = null,
     val bmi: Double? = null,
     val bmiCategory: String? = null,
     val healthyWeightRangeText: String? = null,
