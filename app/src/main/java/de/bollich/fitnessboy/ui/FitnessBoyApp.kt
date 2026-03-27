@@ -40,6 +40,7 @@ import de.bollich.fitnessboy.ui.components.AddWeightCard
 import de.bollich.fitnessboy.ui.components.AddBodyMeasurementsDialog
 import de.bollich.fitnessboy.ui.components.BodyMeasurementsOverviewCard
 import de.bollich.fitnessboy.ui.components.BmiInsightsCard
+import de.bollich.fitnessboy.ui.components.BodyMeasurementsHistoryRow
 import de.bollich.fitnessboy.ui.components.EmptyStateCard
 import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.components.GoalProgressCard
@@ -69,12 +70,14 @@ fun FitnessBoyApp(
         onWaistValueChange = viewModel::onWaistValueChange,
         onHipsValueChange = viewModel::onHipsValueChange,
         onShouldersValueChange = viewModel::onShouldersValueChange,
+        onProfilePageChange = viewModel::onProfilePageChange,
         onHeightValueChange = viewModel::onHeightValueChange,
         onTargetWeightValueChange = viewModel::onTargetWeightValueChange,
         onSaveProfileClick = viewModel::onSaveProfileClick,
         onAddBodyMeasurementsClick = viewModel::onAddBodyMeasurementsClick,
         onAddWeightClick = viewModel::onAddWeightClick,
         onDeleteEntry = viewModel::onDeleteEntry,
+        onDeleteBodyMeasurementsEntry = viewModel::onDeleteBodyMeasurementsEntry,
     )
 }
 
@@ -90,12 +93,14 @@ private fun FitnessBoyScreen(
     onWaistValueChange: (String) -> Unit,
     onHipsValueChange: (String) -> Unit,
     onShouldersValueChange: (String) -> Unit,
+    onProfilePageChange: (ProfilePage) -> Unit,
     onHeightValueChange: (String) -> Unit,
     onTargetWeightValueChange: (String) -> Unit,
     onSaveProfileClick: () -> Unit,
     onAddBodyMeasurementsClick: () -> Unit,
     onAddWeightClick: () -> Unit,
     onDeleteEntry: (WeightEntry) -> Unit,
+    onDeleteBodyMeasurementsEntry: (BodyMeasurementsEntry) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -168,9 +173,13 @@ private fun FitnessBoyScreen(
                 )
                 AppTab.PROFILE -> ProfileTab(
                     uiState = uiState,
+                    onProfilePageChange = onProfilePageChange,
+                    onBodyMeasurementsDialogChange = onBodyMeasurementsDialogChange,
                     onHeightValueChange = onHeightValueChange,
                     onTargetWeightValueChange = onTargetWeightValueChange,
                     onSaveProfileClick = onSaveProfileClick,
+                    onDeleteEntry = onDeleteEntry,
+                    onDeleteBodyMeasurementsEntry = onDeleteBodyMeasurementsEntry,
                 )
             }
         }
@@ -230,18 +239,6 @@ private fun WeightTab(
                     entries = uiState.entries,
                     targetWeightInKg = uiState.profile.targetWeightInKg,
                 )
-            }
-        }
-
-        if (uiState.entries.isNotEmpty()) {
-            item {
-                OutlinedButton(
-                    onClick = { onWeightPageChange(WeightPage.HISTORY) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                ) {
-                    Text("Verlauf öffnen")
-                }
             }
         }
     }
@@ -367,6 +364,12 @@ private fun MeasurementsTab(
         }
 
         item {
+            BodyMeasurementsOverviewCard(
+                latestEntry = uiState.latestBodyMeasurementsEntry,
+            )
+        }
+
+        item {
             OutlinedButton(
                 onClick = { onBodyMeasurementsDialogChange(true) },
                 modifier = Modifier.fillMaxWidth(),
@@ -374,12 +377,6 @@ private fun MeasurementsTab(
             ) {
                 Text("Körpermaße erfassen")
             }
-        }
-
-        item {
-            BodyMeasurementsOverviewCard(
-                latestEntry = uiState.latestBodyMeasurementsEntry,
-            )
         }
     }
 
@@ -405,10 +402,36 @@ private fun MeasurementsTab(
 @Composable
 private fun ProfileTab(
     uiState: FitnessBoyUiState,
+    onProfilePageChange: (ProfilePage) -> Unit,
+    onBodyMeasurementsDialogChange: (Boolean) -> Unit,
     onHeightValueChange: (String) -> Unit,
     onTargetWeightValueChange: (String) -> Unit,
     onSaveProfileClick: () -> Unit,
+    onDeleteEntry: (WeightEntry) -> Unit,
+    onDeleteBodyMeasurementsEntry: (BodyMeasurementsEntry) -> Unit,
 ) {
+    when (uiState.selectedProfilePage) {
+        ProfilePage.WEIGHT_HISTORY -> {
+            WeightHistoryPage(
+                entries = uiState.entries,
+                onBackClick = { onProfilePageChange(ProfilePage.OVERVIEW) },
+                onDeleteEntry = onDeleteEntry,
+            )
+            return
+        }
+
+        ProfilePage.MEASUREMENTS_HISTORY -> {
+            MeasurementsHistoryPage(
+                entries = uiState.bodyMeasurementsEntries,
+                onBackClick = { onProfilePageChange(ProfilePage.OVERVIEW) },
+                onDeleteEntry = onDeleteBodyMeasurementsEntry,
+            )
+            return
+        }
+
+        ProfilePage.OVERVIEW -> Unit
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
@@ -437,6 +460,66 @@ private fun ProfileTab(
                 onHeightValueChange = onHeightValueChange,
                 onTargetWeightValueChange = onTargetWeightValueChange,
                 onSaveClick = onSaveProfileClick,
+            )
+        }
+
+        item {
+            OutlinedButton(
+                onClick = { onProfilePageChange(ProfilePage.WEIGHT_HISTORY) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+            ) {
+                Text("Gewichtsverlauf verwalten")
+            }
+        }
+
+        item {
+            OutlinedButton(
+                onClick = { onProfilePageChange(ProfilePage.MEASUREMENTS_HISTORY) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+            ) {
+                Text("Maßverlauf verwalten")
+            }
+        }
+    }
+}
+
+@Composable
+private fun MeasurementsHistoryPage(
+    entries: List<BodyMeasurementsEntry>,
+    onBackClick: () -> Unit,
+    onDeleteEntry: (BodyMeasurementsEntry) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        item {
+            HeadlineSection(
+                title = "Maßverlauf",
+                subtitle = "Hier findest du alle gespeicherten Körpermaße und kannst sie bei Bedarf löschen.",
+                latestEntry = null,
+                trend = null,
+                trendList = emptyList(),
+                bmi = null,
+            )
+        }
+
+        item {
+            OutlinedButton(
+                onClick = onBackClick,
+                shape = RoundedCornerShape(20.dp),
+            ) {
+                Text("Zurück zum Profil")
+            }
+        }
+
+        items(entries, key = { it.id }) { entry ->
+            BodyMeasurementsHistoryRow(
+                entry = entry,
+                onDelete = { onDeleteEntry(entry) },
             )
         }
     }
@@ -485,12 +568,14 @@ private fun FitnessBoyAppPreview() {
             onWaistValueChange = {},
             onHipsValueChange = {},
             onShouldersValueChange = {},
+            onProfilePageChange = {},
             onHeightValueChange = {},
             onTargetWeightValueChange = {},
             onSaveProfileClick = {},
             onAddBodyMeasurementsClick = {},
             onAddWeightClick = {},
             onDeleteEntry = {},
+            onDeleteBodyMeasurementsEntry = {},
         )
     }
 }

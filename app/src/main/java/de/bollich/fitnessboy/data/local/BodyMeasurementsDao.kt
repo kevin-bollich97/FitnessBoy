@@ -1,6 +1,7 @@
 package de.bollich.fitnessboy.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -12,4 +13,7 @@ interface BodyMeasurementsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entry: BodyMeasurementsEntity)
+
+    @Delete
+    fun delete(entry: BodyMeasurementsEntity)
 }

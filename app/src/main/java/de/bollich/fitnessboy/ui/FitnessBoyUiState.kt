@@ -23,9 +23,16 @@ enum class WeightPage {
     HISTORY,
 }
 
+enum class ProfilePage {
+    OVERVIEW,
+    WEIGHT_HISTORY,
+    MEASUREMENTS_HISTORY,
+}
+
 data class FitnessBoyUiState(
     val selectedTab: AppTab = AppTab.WEIGHT,
     val selectedWeightPage: WeightPage = WeightPage.DASHBOARD,
+    val selectedProfilePage: ProfilePage = ProfilePage.OVERVIEW,
     val entries: List<WeightEntry> = emptyList(),
     val bodyMeasurementsEntries: List<BodyMeasurementsEntry> = emptyList(),
     val profile: UserProfile = UserProfile(),

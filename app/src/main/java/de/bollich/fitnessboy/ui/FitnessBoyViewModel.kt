@@ -14,6 +14,7 @@ import de.bollich.fitnessboy.data.local.FitnessBoyDatabase
 import de.bollich.fitnessboy.domain.usecase.AddBodyMeasurementsEntry
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
 import de.bollich.fitnessboy.domain.usecase.DeleteWeightEntry
+import de.bollich.fitnessboy.domain.usecase.DeleteBodyMeasurementsEntry
 import de.bollich.fitnessboy.domain.usecase.GetAppSettings
 import de.bollich.fitnessboy.domain.usecase.GetFitnessBoySnapshot
 import de.bollich.fitnessboy.domain.usecase.GetHealthOverview
@@ -34,6 +35,7 @@ class FitnessBoyViewModel(
     private val saveProfile: SaveProfile,
     private val saveAppSettings: SaveAppSettings,
     private val addBodyMeasurementsEntry: AddBodyMeasurementsEntry,
+    private val deleteBodyMeasurementsEntry: DeleteBodyMeasurementsEntry,
     private val addWeightEntry: AddWeightEntry,
     private val deleteWeightEntry: DeleteWeightEntry,
 ) : ViewModel() {
@@ -50,6 +52,10 @@ class FitnessBoyViewModel(
         updateState {
             copy(selectedWeightPage = page).persistSettings()
         }
+    }
+
+    fun onProfilePageChange(page: ProfilePage) {
+        updateState { copy(selectedProfilePage = page) }
     }
 
     fun onWeightValueChange(value: String) {
@@ -189,6 +195,11 @@ class FitnessBoyViewModel(
         updateState { copy(entries = updatedEntries) }
     }
 
+    fun onDeleteBodyMeasurementsEntry(entry: de.bollich.fitnessboy.model.BodyMeasurementsEntry) {
+        val updatedEntries = deleteBodyMeasurementsEntry(entry)
+        updateState { copy(bodyMeasurementsEntries = updatedEntries) }
+    }
+
     private fun loadInitialState(): FitnessBoyUiState {
         val snapshot = getFitnessBoySnapshot()
         val settings = getAppSettings()
@@ -266,6 +277,7 @@ class FitnessBoyViewModel(
                         saveProfile = SaveProfile(profileRepository),
                         saveAppSettings = SaveAppSettings(settingsRepository),
                         addBodyMeasurementsEntry = AddBodyMeasurementsEntry(bodyMeasurementsRepository),
+                        deleteBodyMeasurementsEntry = DeleteBodyMeasurementsEntry(bodyMeasurementsRepository),
                         addWeightEntry = AddWeightEntry(weightRepository),
                         deleteWeightEntry = DeleteWeightEntry(weightRepository),
                     )

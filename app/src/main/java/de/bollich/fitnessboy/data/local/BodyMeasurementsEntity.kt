@@ -22,6 +22,7 @@ data class BodyMeasurementsEntity(
 
 fun BodyMeasurementsEntity.toModel(): BodyMeasurementsEntry =
     BodyMeasurementsEntry(
+        id = id,
         date = LocalDate.ofEpochDay(dateEpochDay),
         waistInCm = waistInCm,
         hipsInCm = hipsInCm,
@@ -30,6 +31,7 @@ fun BodyMeasurementsEntity.toModel(): BodyMeasurementsEntry =
 
 fun BodyMeasurementsEntry.toEntity(): BodyMeasurementsEntity =
     BodyMeasurementsEntity(
+        id = id,
         dateEpochDay = date.toEpochDay(),
         waistInCm = waistInCm,
         hipsInCm = hipsInCm,

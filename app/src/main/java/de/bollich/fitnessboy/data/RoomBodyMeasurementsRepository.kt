@@ -16,4 +16,9 @@ class RoomBodyMeasurementsRepository(
         bodyMeasurementsDao.insert(entry.toEntity())
         return load()
     }
+
+    override fun delete(entry: BodyMeasurementsEntry): List<BodyMeasurementsEntry> {
+        bodyMeasurementsDao.delete(entry.toEntity())
+        return load()
+    }
 }

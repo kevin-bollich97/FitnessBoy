@@ -17,6 +17,8 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -32,9 +34,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.formatTrend
 import de.bollich.fitnessboy.domain.GoalDirection
 import de.bollich.fitnessboy.domain.GoalProgress
@@ -43,6 +47,7 @@ import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.format.formattedWeight
+import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.model.WeightEntry
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -578,8 +583,53 @@ fun WeightHistoryRow(
                     )
                 }
             }
-            TextButton(onClick = onDelete) {
-                Text("Löschen")
+            IconButton(onClick = onDelete) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_delete),
+                    contentDescription = "Eintrag löschen",
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BodyMeasurementsHistoryRow(
+    entry: BodyMeasurementsEntry,
+    onDelete: () -> Unit,
+) {
+    ElevatedCard(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = entry.date.formattedDate(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "Bauch ${formatNumber(entry.waistInCm)} cm, Hüfte ${formatNumber(entry.hipsInCm)} cm, Schultern ${formatNumber(entry.shouldersInCm)} cm",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            IconButton(onClick = onDelete) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_delete),
+                    contentDescription = "Eintrag löschen",
+                    tint = MaterialTheme.colorScheme.error,
+                )
             }
         }
     }

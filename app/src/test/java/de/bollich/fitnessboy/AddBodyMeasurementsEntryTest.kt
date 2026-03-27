@@ -52,4 +52,9 @@ private class FakeBodyMeasurementsRepository : BodyMeasurementsRepository {
         entries.add(entry)
         return load()
     }
+
+    override fun delete(entry: BodyMeasurementsEntry): List<BodyMeasurementsEntry> {
+        entries.remove(entry)
+        return load()
+    }
 }
