@@ -4,14 +4,22 @@ build/
 */build/
 .kotlin/
 local.properties
+*.apk
+*.ap_
+*.aab
 
 # IDE
+.idea/
 .idea/caches/
 .idea/libraries/
 .idea/modules.xml
 .idea/workspace.xml
 .idea/navEditor.xml
 .idea/assetWizardSettings.xml
+.idea/deploymentTargetSelector.xml
+.idea/gradle.xml
+.idea/kotlinc.xml
+.idea/runConfigurations/
 *.iml
 
 # Native build outputs
@@ -25,7 +33,9 @@ Thumbs.db
 # Signing files
 *.jks
 *.keystore
+keystore.properties
 
 # Logs / reports
 captures/
 *.log
+reports/
