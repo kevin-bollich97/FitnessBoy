@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import de.bollich.fitnessboy.data.RoomWeightRepository
 import de.bollich.fitnessboy.data.ProfileStore
 import de.bollich.fitnessboy.data.WeightStore
+import de.bollich.fitnessboy.data.local.FitnessBoyDatabase
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
 import de.bollich.fitnessboy.domain.usecase.DeleteWeightEntry
 import de.bollich.fitnessboy.domain.usecase.GetFitnessBoySnapshot
@@ -147,7 +149,11 @@ class FitnessBoyViewModel(
     companion object {
         fun factory(context: Context): ViewModelProvider.Factory {
             val appContext = context.applicationContext
-            val weightRepository = WeightStore(appContext)
+            val database = FitnessBoyDatabase.getInstance(appContext)
+            val weightRepository = RoomWeightRepository(
+                weightEntryDao = database.weightEntryDao(),
+                legacyWeightStore = WeightStore(appContext),
+            )
             val profileRepository = ProfileStore(appContext)
             return viewModelFactory {
                 initializer {
