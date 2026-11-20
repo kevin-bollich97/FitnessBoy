@@ -24,8 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.ui.components.localDateFromUtcMillis
 import de.bollich.fitnessboy.ui.components.toUtcStartOfDayMillis
@@ -56,7 +58,7 @@ fun AddWeightCard(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "Neuen Eintrag erfassen",
+                text = stringResource(R.string.weight_add_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
@@ -73,7 +75,7 @@ fun AddWeightCard(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = "Ausgewähltes Datum",
+                            text = stringResource(R.string.weight_selected_date),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -84,7 +86,7 @@ fun AddWeightCard(
                         )
                     }
                     TextButton(onClick = { showDatePicker = true }) {
-                        Text("Wählen")
+                        Text(stringResource(R.string.action_choose))
                     }
                 }
             }
@@ -93,8 +95,8 @@ fun AddWeightCard(
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text("Gewicht in kg") },
-                placeholder = { Text("z.B. 82.4") },
+                label = { Text(stringResource(R.string.weight_input_label)) },
+                placeholder = { Text(stringResource(R.string.weight_input_placeholder)) },
                 supportingText = {
                     if (errorText != null) {
                         Text(errorText)
@@ -107,7 +109,7 @@ fun AddWeightCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Eintrag speichern")
+                Text(stringResource(R.string.weight_add_action))
             }
         }
     }
@@ -130,12 +132,12 @@ fun AddWeightCard(
                         showDatePicker = false
                     }
                 ) {
-                    Text("Übernehmen")
+                    Text(stringResource(R.string.action_apply))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Abbrechen")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {

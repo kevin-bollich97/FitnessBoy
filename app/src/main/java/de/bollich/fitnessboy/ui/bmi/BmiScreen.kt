@@ -7,9 +7,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.domain.WeightRange
 import de.bollich.fitnessboy.format.formatNumber
@@ -17,6 +19,8 @@ import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.components.MetricInfoCard
+import de.bollich.fitnessboy.ui.components.formatCm
+import de.bollich.fitnessboy.ui.components.formatKg
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import de.bollich.fitnessboy.ui.weight.WeightUiState
 import de.bollich.fitnessboy.ui.weight.WeightViewModel
@@ -43,8 +47,8 @@ private fun BmiScreen(
     ) {
         item {
             HeadlineSection(
-                title = "BMI und Ziele",
-                subtitle = "Hier siehst du deinen BMI, Trends und Richtwerte auf Basis deiner Größe.",
+                title = stringResource(R.string.bmi_title),
+                subtitle = stringResource(R.string.bmi_subtitle),
                 metrics = uiState.headlineMetrics(),
                 secondaryMetrics = uiState.trendMetrics(),
             )
@@ -54,8 +58,8 @@ private fun BmiScreen(
             BmiInsightsCard(
                 bmi = uiState.bmi?.let(::formatNumber),
                 bmiCategory = uiState.bmiCategory,
-                heightText = uiState.profile.heightInCm?.let { "${formatNumber(it)} cm" },
-                currentWeightText = uiState.latestEntry?.let { "${formatNumber(it.weightInKg)} kg" },
+                heightText = uiState.profile.heightInCm?.let { formatCm(it) },
+                currentWeightText = uiState.latestEntry?.let { formatKg(it.weightInKg) },
             )
         }
 
@@ -67,19 +71,23 @@ private fun BmiScreen(
 
         item {
             MetricInfoCard(
-                title = "Optimalgewicht",
-                value = uiState.optimalWeightInKg?.let { "${formatNumber(it)} kg" } ?: "Bitte Profil ausfüllen",
-                description = "Grobe Orientierung mit BMI 22 als Zielwert.",
+                title = stringResource(R.string.bmi_optimal_weight_title),
+                value = uiState.optimalWeightInKg?.let { formatKg(it) } ?: stringResource(R.string.hint_complete_profile),
+                description = stringResource(R.string.bmi_optimal_weight_description, formatNumber(22.0)),
             )
         }
 
         item {
             MetricInfoCard(
-                title = "Gesunder Bereich",
+                title = stringResource(R.string.bmi_healthy_range_title),
                 value = uiState.healthyWeightRange?.let {
-                    "${formatNumber(it.minimumInKg)} bis ${formatNumber(it.maximumInKg)} kg"
-                } ?: "Bitte Profil ausfüllen",
-                description = "Abgeleitet aus BMI 18.5 bis 24.9 für deine Größe.",
+                    stringResource(
+                        R.string.bmi_healthy_range_value,
+                        formatNumber(it.minimumInKg),
+                        formatNumber(it.maximumInKg),
+                    )
+                } ?: stringResource(R.string.hint_complete_profile),
+                description = stringResource(R.string.bmi_healthy_range_description, formatNumber(18.5), formatNumber(24.9)),
             )
         }
     }

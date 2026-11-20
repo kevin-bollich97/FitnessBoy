@@ -48,6 +48,7 @@ Use Cases nur, wo sie Logik enthalten (Validierung, Berechnung, z. B. `AddWeight
 
 ### UI
 - Keine hartcodierten UI-Texte in Kotlin – alles in `res/values/strings.xml`.
+- Domain liefert keine Texte, sondern Werte/Enums/typisierte Fehler; die UI übersetzt (`@StringRes` in Form-States, `labelRes`-Mappings). Zahlen mit `formatNumber` (Geräte-Locale), Einheiten über `formatKg`/`formatCm`.
 - Ein ViewModel pro Bereich. UI-State wird reaktiv gebaut: `combine(Repository-Flows, Formular-State).stateIn(viewModelScope, WhileSubscribed(5_000), …)`. Kein manuelles Nachrechnen abgeleiteter Werte.
 - Formular-Eingaben (`…FormState`) sind getrennt vom gespeicherten Zustand und werden nie von Repository-Updates überschrieben.
 - Route/Screen-Muster: `XRoute(viewModel)` sammelt den State, `XScreen(uiState, callbacks)` ist stateless und hat eine Preview.

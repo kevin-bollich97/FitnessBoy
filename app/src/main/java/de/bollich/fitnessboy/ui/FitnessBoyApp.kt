@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -115,10 +116,10 @@ private fun FitnessBoyScaffold(
                         icon = {
                             Icon(
                                 painter = painterResource(tab.iconRes),
-                                contentDescription = tab.label,
+                                contentDescription = stringResource(tab.labelRes),
                             )
                         },
-                        label = { Text(tab.label) },
+                        label = { Text(stringResource(tab.labelRes)) },
                     )
                 }
             }

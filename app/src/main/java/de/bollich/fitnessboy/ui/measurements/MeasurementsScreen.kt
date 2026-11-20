@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.ui.components.HeadlineMetric
@@ -57,10 +58,10 @@ private fun MeasurementsScreen(
     ) {
         item {
             HeadlineSection(
-                title = "Körpermaße",
-                subtitle = "Erfasse Bauch, Hüfte und Schultern und nutze die Werte später für Verlauf und Vergleiche.",
+                title = stringResource(R.string.measurements_title),
+                subtitle = stringResource(R.string.measurements_subtitle),
                 metrics = listOfNotNull(
-                    uiState.latestEntry?.let { HeadlineMetric("Letzte Messung", it.date.formattedDate()) },
+                    uiState.latestEntry?.let { HeadlineMetric(stringResource(R.string.metric_latest_measurement), it.date.formattedDate()) },
                 ),
             )
         }
@@ -77,7 +78,7 @@ private fun MeasurementsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Körpermaße erfassen")
+                Text(stringResource(R.string.measurements_add_action))
             }
         }
     }

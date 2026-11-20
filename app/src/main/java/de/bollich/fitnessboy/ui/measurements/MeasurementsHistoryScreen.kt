@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,8 +62,8 @@ private fun MeasurementsHistoryScreen(
     ) {
         item {
             HeadlineSection(
-                title = "Maßverlauf",
-                subtitle = "Hier findest du alle gespeicherten Körpermaße und kannst sie bei Bedarf löschen.",
+                title = stringResource(R.string.measurements_history_title),
+                subtitle = stringResource(R.string.measurements_history_subtitle),
             )
         }
 
@@ -71,7 +72,7 @@ private fun MeasurementsHistoryScreen(
                 onClick = onBackClick,
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Zurück zum Profil")
+                Text(stringResource(R.string.action_back_to_profile))
             }
         }
 
@@ -109,7 +110,12 @@ fun BodyMeasurementsHistoryRow(
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "Bauch ${formatNumber(entry.waistInCm)} cm, Hüfte ${formatNumber(entry.hipsInCm)} cm, Schultern ${formatNumber(entry.shouldersInCm)} cm",
+                    text = stringResource(
+                        R.string.measurements_history_summary,
+                        formatNumber(entry.waistInCm),
+                        formatNumber(entry.hipsInCm),
+                        formatNumber(entry.shouldersInCm),
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -117,7 +123,7 @@ fun BodyMeasurementsHistoryRow(
             IconButton(onClick = onDelete) {
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
-                    contentDescription = "Eintrag löschen",
+                    contentDescription = stringResource(R.string.action_delete_entry),
                     tint = MaterialTheme.colorScheme.error,
                 )
             }

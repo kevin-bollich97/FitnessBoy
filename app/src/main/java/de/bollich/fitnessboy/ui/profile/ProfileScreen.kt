@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.ui.components.HeadlineMetric
@@ -56,10 +57,10 @@ private fun ProfileScreen(
     ) {
         item {
             HeadlineSection(
-                title = "Profil",
-                subtitle = "Passe hier deine Körperdaten und Zielwerte an.",
+                title = stringResource(R.string.profile_title),
+                subtitle = stringResource(R.string.profile_subtitle),
                 metrics = listOfNotNull(
-                    uiState.bmi?.let { HeadlineMetric("BMI", formatNumber(it)) },
+                    uiState.bmi?.let { HeadlineMetric(stringResource(R.string.metric_bmi), formatNumber(it)) },
                 ),
             )
         }
@@ -85,7 +86,7 @@ private fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Gewichtsverlauf verwalten")
+                Text(stringResource(R.string.profile_manage_weight_history))
             }
         }
 
@@ -95,7 +96,7 @@ private fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Maßverlauf verwalten")
+                Text(stringResource(R.string.profile_manage_measurements_history))
             }
         }
     }

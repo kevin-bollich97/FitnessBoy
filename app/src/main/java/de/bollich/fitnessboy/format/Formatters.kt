@@ -1,8 +1,11 @@
 package de.bollich.fitnessboy.format
 
 import de.bollich.fitnessboy.model.WeightEntry
+import java.math.RoundingMode
+import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 private val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -12,18 +15,23 @@ fun WeightEntry.formattedDate(): String = date.format(dateFormatter)
 
 fun WeightEntry.formattedShortDate(): String = date.format(shortDateFormatter)
 
-fun WeightEntry.formattedWeight(): String = "${formatNumber(weightInKg)} kg"
-
-fun formatNumber(value: Double): String =
-    if (value % 1.0 == 0.0) value.toInt().toString() else "%.1f".format(value)
-
 fun LocalDate.formattedDate(): String = format(dateFormatter)
 
-fun formatTrend(deltaInKg: Double): String {
+/** Formats with at most one decimal in the user's locale, e.g. "80,5" (de) or "80.5" (en). */
+fun formatNumber(value: Double, locale: Locale = Locale.getDefault()): String =
+    NumberFormat.getNumberInstance(locale).apply {
+        maximumFractionDigits = 1
+        roundingMode = RoundingMode.HALF_UP
+        isGroupingUsed = false
+    }.format(value)
+
+/** Like [formatNumber] but with an explicit "+" or "-"; values that round to zero get no sign. */
+fun formatSignedNumber(value: Double, locale: Locale = Locale.getDefault()): String {
+    val magnitude = formatNumber(value.absoluteValue, locale)
     val sign = when {
-        deltaInKg > 0 -> "+"
-        deltaInKg < 0 -> "-"
-        else -> ""
+        magnitude == formatNumber(0.0, locale) -> ""
+        value > 0 -> "+"
+        else -> "-"
     }
-    return "$sign${formatNumber(deltaInKg.absoluteValue)} kg"
+    return sign + magnitude
 }

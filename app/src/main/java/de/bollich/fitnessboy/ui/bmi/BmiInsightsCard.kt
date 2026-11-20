@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.ui.components.MetricPill
 
@@ -41,7 +42,7 @@ fun BmiInsightsCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Deine Kennzahlen",
+                text = stringResource(R.string.bmi_insights_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
@@ -50,16 +51,16 @@ fun BmiInsightsCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 MetricPill(
-                    label = "BMI",
-                    value = bmi ?: "Offen",
+                    label = stringResource(R.string.metric_bmi),
+                    value = bmi ?: stringResource(R.string.value_missing),
                 )
                 MetricPill(
-                    label = "Größe",
-                    value = heightText ?: "Offen",
+                    label = stringResource(R.string.bmi_insights_height),
+                    value = heightText ?: stringResource(R.string.value_missing),
                 )
                 MetricPill(
-                    label = "Gewicht",
-                    value = currentWeightText ?: "Offen",
+                    label = stringResource(R.string.bmi_insights_weight),
+                    value = currentWeightText ?: stringResource(R.string.value_missing),
                 )
             }
             if (bmiCategory != null) {
@@ -69,7 +70,7 @@ fun BmiInsightsCard(
                     color = containerColor,
                 ) {
                     Text(
-                        text = "Einordnung: ${stringResource(bmiCategory.labelRes)}",
+                        text = stringResource(R.string.bmi_category_label, stringResource(bmiCategory.labelRes)),
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,

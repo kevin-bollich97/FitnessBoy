@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.HeadlineSection
@@ -44,8 +45,8 @@ private fun WeightScreen(
     ) {
         item {
             HeadlineSection(
-                title = "Gewicht",
-                subtitle = "Trage neue Werte ein und beobachte deinen Verlauf.",
+                title = stringResource(R.string.weight_title),
+                subtitle = stringResource(R.string.weight_subtitle),
                 metrics = uiState.headlineMetrics(),
                 secondaryMetrics = uiState.trendMetrics(),
             )

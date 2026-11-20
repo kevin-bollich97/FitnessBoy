@@ -25,11 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.bollich.fitnessboy.format.formatNumber
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
+import de.bollich.fitnessboy.ui.components.formatCm
 
 @Composable
 fun BodyMeasurementsOverviewCard(
@@ -54,13 +56,13 @@ fun BodyMeasurementsOverviewCard(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Körpermaße",
+                        text = stringResource(R.string.measurements_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = latestEntry?.let { "Zuletzt aktualisiert am ${it.date.formattedDate()}" }
-                            ?: "Erfasse Bauch, Hüfte und Schultern für spätere Trends.",
+                        text = latestEntry?.let { stringResource(R.string.measurements_last_updated, it.date.formattedDate()) }
+                            ?: stringResource(R.string.measurements_overview_empty_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -85,18 +87,18 @@ fun BodyMeasurementsOverviewCard(
 
                 if (latestEntry != null) {
                     MeasurementBadge(
-                        label = "Schultern",
-                        value = "${formatNumber(latestEntry.shouldersInCm)} cm",
+                        label = stringResource(R.string.measurements_shoulders),
+                        value = formatCm(latestEntry.shouldersInCm),
                         modifier = Modifier.align(Alignment.TopCenter),
                     )
                     MeasurementBadge(
-                        label = "Bauch",
-                        value = "${formatNumber(latestEntry.waistInCm)} cm",
+                        label = stringResource(R.string.measurements_waist),
+                        value = formatCm(latestEntry.waistInCm),
                         modifier = Modifier.align(Alignment.CenterStart),
                     )
                     MeasurementBadge(
-                        label = "Hüfte",
-                        value = "${formatNumber(latestEntry.hipsInCm)} cm",
+                        label = stringResource(R.string.measurements_hips),
+                        value = formatCm(latestEntry.hipsInCm),
                         modifier = Modifier.align(Alignment.CenterEnd),
                     )
                 } else {
@@ -106,7 +108,7 @@ fun BodyMeasurementsOverviewCard(
                         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
                     ) {
                         Text(
-                            text = "Noch keine Körpermaße gespeichert",
+                            text = stringResource(R.string.measurements_overview_empty),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,

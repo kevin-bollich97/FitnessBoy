@@ -1,15 +1,17 @@
 package de.bollich.fitnessboy.ui.navigation
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import de.bollich.fitnessboy.R
 
 enum class AppTab(
-    val label: String,
-    val iconRes: Int,
+    @StringRes val labelRes: Int,
+    @DrawableRes val iconRes: Int,
 ) {
-    WEIGHT("Gewicht", R.drawable.ic_home),
-    BMI("BMI", R.drawable.ic_favorite),
-    MEASUREMENTS("Maße", R.drawable.ic_straighten),
-    PROFILE("Profil", R.drawable.ic_account_box),
+    WEIGHT(R.string.tab_weight, R.drawable.ic_home),
+    BMI(R.string.tab_bmi, R.drawable.ic_favorite),
+    MEASUREMENTS(R.string.tab_measurements, R.drawable.ic_straighten),
+    PROFILE(R.string.tab_profile, R.drawable.ic_account_box),
 }
 
 /** Keys of the Navigation 3 back stack. */

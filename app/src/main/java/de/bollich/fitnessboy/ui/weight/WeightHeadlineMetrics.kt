@@ -6,22 +6,29 @@ import androidx.compose.ui.res.stringResource
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.WeightTrendPeriod
 import de.bollich.fitnessboy.format.formatNumber
-import de.bollich.fitnessboy.format.formatTrend
-import de.bollich.fitnessboy.format.formattedWeight
+import de.bollich.fitnessboy.format.formatSignedNumber
 import de.bollich.fitnessboy.ui.components.HeadlineMetric
+import de.bollich.fitnessboy.ui.components.formatKg
 
 /** Latest weight and BMI. */
 @Composable
 fun WeightUiState.headlineMetrics(): List<HeadlineMetric> =
     listOfNotNull(
-        latestEntry?.let { HeadlineMetric("Letzter Wert", it.formattedWeight()) },
-        bmi?.let { HeadlineMetric("BMI", formatNumber(it)) },
+        latestEntry?.let {
+            HeadlineMetric(stringResource(R.string.metric_latest_weight), formatKg(it.weightInKg))
+        },
+        bmi?.let { HeadlineMetric(stringResource(R.string.metric_bmi), formatNumber(it)) },
     )
 
 /** One pill per available trend period. */
 @Composable
 fun WeightUiState.trendMetrics(): List<HeadlineMetric> =
-    trends.map { HeadlineMetric(stringResource(it.period.labelRes), formatTrend(it.deltaInKg)) }
+    trends.map {
+        HeadlineMetric(
+            label = stringResource(it.period.labelRes),
+            value = stringResource(R.string.value_kg, formatSignedNumber(it.deltaInKg)),
+        )
+    }
 
 @get:StringRes
 private val WeightTrendPeriod.labelRes: Int

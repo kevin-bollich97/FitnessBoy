@@ -22,8 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.ui.components.localDateFromUtcMillis
 import de.bollich.fitnessboy.ui.components.toUtcStartOfDayMillis
@@ -52,17 +54,17 @@ fun AddBodyMeasurementsDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onSave) {
-                Text("Speichern")
+                Text(stringResource(R.string.action_save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Abbrechen")
+                Text(stringResource(R.string.action_cancel))
             }
         },
         title = {
             Text(
-                text = "Körpermaße erfassen",
+                text = stringResource(R.string.measurements_add_action),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
@@ -82,7 +84,7 @@ fun AddBodyMeasurementsDialog(
                     ) {
                         Column {
                             Text(
-                                text = "Datum",
+                                text = stringResource(R.string.measurements_date),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -93,7 +95,7 @@ fun AddBodyMeasurementsDialog(
                             )
                         }
                         TextButton(onClick = { showDatePicker = true }) {
-                            Text("Wählen")
+                            Text(stringResource(R.string.action_choose))
                         }
                     }
                 }
@@ -102,8 +104,8 @@ fun AddBodyMeasurementsDialog(
                     onValueChange = onWaistChange,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    label = { Text("Bauchumfang in cm") },
-                    placeholder = { Text("z.B. 88") },
+                    label = { Text(stringResource(R.string.measurements_waist_label)) },
+                    placeholder = { Text(stringResource(R.string.measurements_waist_placeholder)) },
                     supportingText = { waistErrorText?.let { Text(it) } },
                     isError = waistErrorText != null,
                 )
@@ -112,8 +114,8 @@ fun AddBodyMeasurementsDialog(
                     onValueChange = onHipsChange,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    label = { Text("Hüftumfang in cm") },
-                    placeholder = { Text("z.B. 96") },
+                    label = { Text(stringResource(R.string.measurements_hips_label)) },
+                    placeholder = { Text(stringResource(R.string.measurements_hips_placeholder)) },
                     supportingText = { hipsErrorText?.let { Text(it) } },
                     isError = hipsErrorText != null,
                 )
@@ -122,8 +124,8 @@ fun AddBodyMeasurementsDialog(
                     onValueChange = onShouldersChange,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    label = { Text("Schulterbreite in cm") },
-                    placeholder = { Text("z.B. 48") },
+                    label = { Text(stringResource(R.string.measurements_shoulders_label)) },
+                    placeholder = { Text(stringResource(R.string.measurements_shoulders_placeholder)) },
                     supportingText = { shouldersErrorText?.let { Text(it) } },
                     isError = shouldersErrorText != null,
                 )
@@ -149,12 +151,12 @@ fun AddBodyMeasurementsDialog(
                         showDatePicker = false
                     }
                 ) {
-                    Text("Übernehmen")
+                    Text(stringResource(R.string.action_apply))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Abbrechen")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {

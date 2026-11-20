@@ -27,16 +27,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.format.formattedDate
-import de.bollich.fitnessboy.format.formattedWeight
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.HeadlineMetric
 import de.bollich.fitnessboy.ui.components.HeadlineSection
+import de.bollich.fitnessboy.ui.components.formatKg
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import java.time.LocalDate
 
@@ -68,10 +70,10 @@ private fun WeightHistoryScreen(
     ) {
         item {
             HeadlineSection(
-                title = "Verlauf",
-                subtitle = "Hier findest du alle gespeicherten Wiegeeinträge und kannst sie bei Bedarf löschen.",
+                title = stringResource(R.string.weight_history_title),
+                subtitle = stringResource(R.string.weight_history_subtitle),
                 metrics = listOfNotNull(
-                    entries.firstOrNull()?.let { HeadlineMetric("Letzter Wert", it.formattedWeight()) },
+                    entries.firstOrNull()?.let { HeadlineMetric(stringResource(R.string.metric_latest_weight), formatKg(it.weightInKg)) },
                 ),
             )
         }
@@ -81,7 +83,7 @@ private fun WeightHistoryScreen(
                 onClick = onBackClick,
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Zurück zum Profil")
+                Text(stringResource(R.string.action_back_to_profile))
             }
         }
 
@@ -124,7 +126,7 @@ fun WeightHistoryRow(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = entry.formattedWeight().substringBefore(" "),
+                        text = formatNumber(entry.weightInKg),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -132,7 +134,7 @@ fun WeightHistoryRow(
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = entry.formattedWeight(),
+                        text = formatKg(entry.weightInKg),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
@@ -146,7 +148,7 @@ fun WeightHistoryRow(
             IconButton(onClick = onDelete) {
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
-                    contentDescription = "Eintrag löschen",
+                    contentDescription = stringResource(R.string.action_delete_entry),
                     tint = MaterialTheme.colorScheme.error,
                 )
             }

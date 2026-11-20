@@ -13,13 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.GoalDirection
 import de.bollich.fitnessboy.domain.GoalProgress
 import de.bollich.fitnessboy.domain.GoalStatus
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.ui.components.MetricPill
+import de.bollich.fitnessboy.ui.components.formatKg
 import kotlin.math.absoluteValue
 
 @Composable
@@ -37,7 +40,7 @@ fun GoalProgressCard(goalProgress: GoalProgress) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Zielverfolgung",
+                text = stringResource(R.string.goal_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
@@ -51,20 +54,25 @@ fun GoalProgressCard(goalProgress: GoalProgress) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 MetricPill(
-                    label = "Ziel",
-                    value = "${formatNumber(goalProgress.targetWeightInKg)} kg",
+                    label = stringResource(R.string.goal_target),
+                    value = formatKg(goalProgress.targetWeightInKg),
                 )
                 MetricPill(
-                    label = "Fortschritt",
-                    value = "${goalProgress.progressPercent} %",
+                    label = stringResource(R.string.goal_progress),
+                    value = stringResource(R.string.value_percent, goalProgress.progressPercent),
                 )
                 MetricPill(
-                    label = "Verbleibend",
-                    value = "${formatNumber(goalProgress.remainingInKg.absoluteValue)} kg",
+                    label = stringResource(R.string.goal_remaining),
+                    value = formatKg(goalProgress.remainingInKg.absoluteValue),
                 )
             }
             Text(
-                text = "Start: ${formatNumber(goalProgress.startWeightInKg)} kg, aktuell: ${formatNumber(goalProgress.currentWeightInKg)} kg, geschafft: ${formatNumber(goalProgress.achievedInKg.absoluteValue)} kg.",
+                text = stringResource(
+                    R.string.goal_progress_summary,
+                    formatNumber(goalProgress.startWeightInKg),
+                    formatNumber(goalProgress.currentWeightInKg),
+                    formatNumber(goalProgress.achievedInKg.absoluteValue),
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -72,13 +80,17 @@ fun GoalProgressCard(goalProgress: GoalProgress) {
     }
 }
 
+@Composable
 private fun goalStatusText(goalProgress: GoalProgress): String =
     when (goalProgress.status) {
-        GoalStatus.REACHED -> "Ziel erreicht. Du bist bei ${formatNumber(goalProgress.currentWeightInKg)} kg angekommen."
-        GoalStatus.NOT_STARTED -> "Noch keine Zielverfolgung aktiv."
+        GoalStatus.REACHED -> stringResource(
+            R.string.goal_status_reached,
+            formatNumber(goalProgress.currentWeightInKg),
+        )
+        GoalStatus.NOT_STARTED -> stringResource(R.string.goal_status_not_started)
         GoalStatus.IN_PROGRESS -> when (goalProgress.direction) {
-            GoalDirection.LOSE -> "Du arbeitest auf eine Gewichtsabnahme hin."
-            GoalDirection.GAIN -> "Du arbeitest auf eine Gewichtszunahme hin."
-            GoalDirection.MAINTAIN -> "Du hältst dein aktuelles Gewicht als Ziel."
+            GoalDirection.LOSE -> stringResource(R.string.goal_status_losing)
+            GoalDirection.GAIN -> stringResource(R.string.goal_status_gaining)
+            GoalDirection.MAINTAIN -> stringResource(R.string.goal_status_maintaining)
         }
     }

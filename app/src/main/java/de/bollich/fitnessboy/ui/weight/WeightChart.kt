@@ -23,15 +23,17 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import de.bollich.fitnessboy.format.formatNumber
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.format.formattedShortDate
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.MetricPill
+import de.bollich.fitnessboy.ui.components.formatKg
 import kotlin.math.max
 import kotlin.math.min
 
@@ -72,23 +74,27 @@ fun WeightChartCard(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Gewichts-Chart",
+                        text = stringResource(R.string.chart_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = if (chartEntries.size > 1) {
-                            "${chartEntries.first().formattedDate()} bis ${chartEntries.last().formattedDate()}"
+                            stringResource(
+                                R.string.date_range,
+                                chartEntries.first().formattedDate(),
+                                chartEntries.last().formattedDate(),
+                            )
                         } else {
-                            "Bisher nur ein Eintrag vorhanden"
+                            stringResource(R.string.chart_single_entry)
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 MetricPill(
-                    label = "Spanne",
-                    value = "${formatNumber(weightRange)} kg",
+                    label = stringResource(R.string.chart_range),
+                    value = formatKg(weightRange),
                 )
             }
 
@@ -134,12 +140,12 @@ private fun WeightChart(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = "${formatNumber(maxWeight)} kg",
+                text = formatKg(maxWeight),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "${formatNumber(minWeight)} kg",
+                text = formatKg(minWeight),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -147,7 +153,7 @@ private fun WeightChart(
 
         if (targetWeightInKg != null) {
             Text(
-                text = "Zielgewicht: ${formatNumber(targetWeightInKg)} kg",
+                text = stringResource(R.string.chart_target_weight, formatKg(targetWeightInKg)),
                 style = MaterialTheme.typography.labelMedium,
                 color = targetColor,
             )
@@ -270,7 +276,7 @@ private fun ChartAxisLabel(
 fun EmptyStateCard() {
     ElevatedCard(shape = RoundedCornerShape(24.dp)) {
         Text(
-            text = "Noch keine Gewichtsverläufe vorhanden. Lege oben deinen ersten Wert an.",
+            text = stringResource(R.string.chart_empty),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp),

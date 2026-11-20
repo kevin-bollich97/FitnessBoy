@@ -13,9 +13,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formatNumber
+import de.bollich.fitnessboy.ui.components.formatCm
+import de.bollich.fitnessboy.ui.components.formatKg
 
 @Composable
 fun ProfileCard(
@@ -43,7 +47,7 @@ fun ProfileCard(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "Profil",
+                text = stringResource(R.string.profile_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
@@ -57,12 +61,12 @@ fun ProfileCard(
                 onValueChange = onHeightValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text("Größe in cm") },
-                placeholder = { Text("z.B. 180") },
+                label = { Text(stringResource(R.string.profile_height_label)) },
+                placeholder = { Text(stringResource(R.string.profile_height_placeholder)) },
                 supportingText = {
                     when {
                         heightErrorText != null -> Text(heightErrorText)
-                        bmi != null -> Text("Aktueller BMI: ${formatNumber(bmi)}")
+                        bmi != null -> Text(stringResource(R.string.profile_current_bmi, formatNumber(bmi)))
                     }
                 },
                 isError = heightErrorText != null,
@@ -72,8 +76,8 @@ fun ProfileCard(
                 onValueChange = onTargetWeightValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text("Zielgewicht in kg") },
-                placeholder = { Text("z.B. 75") },
+                label = { Text(stringResource(R.string.profile_target_weight_label)) },
+                placeholder = { Text(stringResource(R.string.profile_target_weight_placeholder)) },
                 supportingText = {
                     if (targetWeightErrorText != null) {
                         Text(targetWeightErrorText)
@@ -86,29 +90,21 @@ fun ProfileCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Profil speichern")
+                Text(stringResource(R.string.profile_save_action))
             }
         }
     }
 }
 
+@Composable
 private fun buildProfileSummary(
     savedHeightInCm: Double?,
     savedTargetWeightInKg: Double?,
 ): String {
-    if (savedHeightInCm == null && savedTargetWeightInKg == null) {
-        return "Lege deine Größe fest, damit später BMI und Ziele berechnet werden können."
-    }
-
-    return buildString {
-        if (savedHeightInCm != null) {
-            append("Größe: ${formatNumber(savedHeightInCm)} cm")
-        }
-        if (savedTargetWeightInKg != null) {
-            if (isNotEmpty()) {
-                append("  |  ")
-            }
-            append("Ziel: ${formatNumber(savedTargetWeightInKg)} kg")
-        }
-    }
+    val parts = listOfNotNull(
+        savedHeightInCm?.let { stringResource(R.string.profile_summary_height, formatCm(it)) },
+        savedTargetWeightInKg?.let { stringResource(R.string.profile_summary_target, formatKg(it)) },
+    )
+    return parts.joinToString(separator = "  |  ")
+        .ifEmpty { stringResource(R.string.profile_summary_empty) }
 }
