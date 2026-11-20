@@ -29,7 +29,7 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
 - [x] ViewModel-Tests mit `MainDispatcherRule` (`83e8b14`)
 - [x] Auf Emulator geprüft: Tab-Wiederherstellung, Validierung, Profil → BMI reaktiv, Maße-Dialog
 
-## Phase 3 – Navigation & UI
+## Phase 3 – Navigation & UI ✅
 
 - [x] Navigation 3 statt `WeightPage`/`ProfilePage`-Enums; Back-Stack im `MainViewModel` (`4b1489a`)
   - [x] Compose-BOM auf 2026.06.01 (Navigation 3 braucht Compose UI 1.11) (`8eedef7`)
@@ -37,18 +37,20 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
   - [x] Zurück-Taste des Systems funktioniert auf Unterseiten und Tabs (`4b1489a`)
 - [x] `FitnessBoyApp.kt` (~590 Zeilen) aufteilen: ein Screen pro Datei im jeweiligen Feature-Paket, jeder Screen mit Preview (`4a1c3aa`)
 - [x] `ui/components/Cards.kt` (~700 Zeilen) aufteilen; ungenutzte `SummaryCard` entfernt (`4a1c3aa`)
-- [ ] Alle UI-Texte nach `res/values/strings.xml` (auch Fehlermeldungen aus Use Cases und BMI-Kategorien)
-- [ ] `formatNumber` vereinheitlichen (aktuell Geräte-Locale-abhängig: „80,5“ vs. „80.5“)
+- [x] Domain liefert typisierte Werte statt deutscher Texte (BMI-Kategorie, Fehler, Trendperioden) (`74990f5`)
+- [x] Alle UI-Texte nach `res/values/strings.xml` (`d03a1f2`)
+- [x] `formatNumber` über `NumberFormat` mit Geräte-Locale, max. 1 Nachkommastelle; Einheiten aus Ressourcen (`d03a1f2`)
 - [x] Bug: Maße-Tab zeigt als „Letzter Wert“ das Gewicht statt der Körpermaße; `HeadlineSection` generisch gemacht (`5830ce5`)
 - [x] Bug: Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil (`4b1489a`)
-- [ ] Auf Emulator prüfen
+- [x] Auf Emulator geprüft: Navigation inkl. System-Zurück, alle Screens, deutsche Zahlenformatierung
 
 ## Phase 4 – Aufräumen
 
 - [ ] Legacy `WeightStore`/`WeightEntryCodec` entfernen (wenn keine Altdaten mehr zu erwarten sind)
 - [ ] README aktualisieren (Maße, Architektur, Tests)
 - [ ] CI-Workflow für Tests und Lint bei Push/PR
-- [ ] Lint-Warnungen abarbeiten (Library-Updates, ungenutzte Ressourcen)
+- [ ] Lint-Warnungen abarbeiten (Library-Updates, ungenutzte Template-Farben in `colors.xml`)
+- [ ] Template-Test `ExampleInstrumentedTest` entfernen oder durch echten Room-/Migrationstest ersetzen
 
 ## Unterwegs gefundene Bugs
 
