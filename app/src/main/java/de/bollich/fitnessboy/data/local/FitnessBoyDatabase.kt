@@ -44,7 +44,6 @@ abstract class FitnessBoyDatabase : RoomDatabase() {
                     "fitnessboy.db",
                 )
                     .addMigrations(migration1To2)
-                    .fallbackToDestructiveMigration(false)
                     .allowMainThreadQueries()
                     .build()
                     .also { instance = it }
