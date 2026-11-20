@@ -31,15 +31,16 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
 
 ## Phase 3 – Navigation & UI
 
-- [ ] Navigation Compose statt `WeightPage`/`ProfilePage`-Enums
-  - [ ] Totes `WeightPage.HISTORY` entfernen (inkl. gespeicherter Einstellung)
-  - [ ] Zurück-Taste des Systems funktioniert auf Unterseiten
-- [ ] `FitnessBoyApp.kt` (~590 Zeilen) aufteilen: ein Screen pro Datei im jeweiligen Feature-Paket
-- [ ] `ui/components/Cards.kt` (~700 Zeilen) aufteilen
+- [x] Navigation 3 statt `WeightPage`/`ProfilePage`-Enums; Back-Stack im `MainViewModel` (`4b1489a`)
+  - [x] Compose-BOM auf 2026.06.01 (Navigation 3 braucht Compose UI 1.11) (`8eedef7`)
+  - [x] Totes `WeightPage.HISTORY` entfernt (inkl. gespeicherter Einstellung) (`4b1489a`)
+  - [x] Zurück-Taste des Systems funktioniert auf Unterseiten und Tabs (`4b1489a`)
+- [x] `FitnessBoyApp.kt` (~590 Zeilen) aufteilen: ein Screen pro Datei im jeweiligen Feature-Paket, jeder Screen mit Preview (`4a1c3aa`)
+- [x] `ui/components/Cards.kt` (~700 Zeilen) aufteilen; ungenutzte `SummaryCard` entfernt (`4a1c3aa`)
 - [ ] Alle UI-Texte nach `res/values/strings.xml` (auch Fehlermeldungen aus Use Cases und BMI-Kategorien)
 - [ ] `formatNumber` vereinheitlichen (aktuell Geräte-Locale-abhängig: „80,5“ vs. „80.5“)
 - [ ] Bug: Maße-Tab zeigt als „Letzter Wert“ das Gewicht statt der Körpermaße
-- [ ] Bug: Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil
+- [x] Bug: Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil (`4b1489a`)
 - [ ] Auf Emulator prüfen
 
 ## Phase 4 – Aufräumen
@@ -55,7 +56,7 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
 - [x] `fallbackToDestructiveMigration` hätte bei fehlender Migration alle Daten gelöscht (`2a1c846`)
 - [x] Absturz bei zwei Gewichtseinträgen mit gleichem Datum und Gewicht (doppelter Listen-Key) (`1770c63`)
 - [ ] Maße-Tab „Letzter Wert“ zeigt Gewicht (→ Phase 3)
-- [ ] Falsche Beschriftung des Zurück-Buttons im Gewichtsverlauf (→ Phase 3)
+- [x] Falsche Beschriftung des Zurück-Buttons im Gewichtsverlauf (`4b1489a`)
 
 ## Offene Punkte / Notizen
 
