@@ -1,4 +1,4 @@
-package de.bollich.fitnessboy.ui.components
+package de.bollich.fitnessboy.ui.weight
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -29,6 +31,7 @@ import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.format.formattedShortDate
 import de.bollich.fitnessboy.model.WeightEntry
+import de.bollich.fitnessboy.ui.components.MetricPill
 import kotlin.math.max
 import kotlin.math.min
 
@@ -261,4 +264,18 @@ private fun ChartAxisLabel(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = if (alignEnd) TextAlign.End else TextAlign.Start,
     )
+}
+
+@Composable
+fun EmptyStateCard() {
+    ElevatedCard(shape = RoundedCornerShape(24.dp)) {
+        Text(
+            text = "Noch keine Gewichtsverläufe vorhanden. Lege oben deinen ersten Wert an.",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
 }
