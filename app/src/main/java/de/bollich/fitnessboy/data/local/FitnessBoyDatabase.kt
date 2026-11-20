@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 @Database(
     entities = [WeightEntryEntity::class, BodyMeasurementsEntity::class],
     version = 2,
-    exportSchema = false,
+    exportSchema = true,
 )
 abstract class FitnessBoyDatabase : RoomDatabase() {
     abstract fun weightEntryDao(): WeightEntryDao
