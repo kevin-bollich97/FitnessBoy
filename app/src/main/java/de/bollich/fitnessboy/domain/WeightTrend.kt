@@ -42,7 +42,6 @@ fun calculateWeightTrend(
         WeightTrendPeriod.THIRTY_DAYS -> {
             val cutoffDate = latestEntry.date.minusDays(period.days ?: return null)
             entries
-                .asReversed()
                 .firstOrNull { it.date <= cutoffDate }
                 ?: entries.lastOrNull()
         }
