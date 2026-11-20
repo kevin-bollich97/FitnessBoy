@@ -2,6 +2,23 @@
 
 Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne dass die App zwischendurch kaputt ist. Jede Phase endet lauffähig, getestet (`./gradlew test`) und auf dem Emulator geprüft. Regeln dazu stehen in [`CLAUDE.md`](CLAUDE.md).
 
+## ▶ Nächste Schritte (Stand 20.11.2026)
+
+Phasen 0–3 sind erledigt. Weiter geht es mit **Phase 4 – Aufräumen**, in dieser Reihenfolge:
+
+1. **Entscheidung klären:** Ist die App irgendwo installiert, wo noch Gewichtsdaten aus der Zeit vor Room (SharedPreferences `weight_tracker`) liegen könnten?
+   - Ja / unklar → Legacy-Migration (`WeightStore`, `WeightEntryCodec`) vorerst behalten.
+   - Nein → beide Klassen samt Migration in `RoomWeightRepository` und Codec-Test entfernen.
+2. Template-Reste entfernen: ungenutzte Farben in `res/values/colors.xml`, `ExampleInstrumentedTest` (oder durch echten Room-/Migrationstest ersetzen).
+3. README aktualisieren: Funktionen (inkl. Körpermaße), Architektur (Feature-Pakete, ViewModels, Navigation 3), Tests, Verweis auf `CLAUDE.md`/`PLAN.md`.
+4. CI-Workflow (GitHub Actions) für `./gradlew testDebugUnitTest lintDebug` bei Push/PR.
+5. Bibliotheken aktualisieren (Lint: `GradleDependency`, `NewerVersionAvailable`, `AndroidGradlePluginVersion`), jeweils einzeln committen und auf dem Emulator prüfen.
+6. Restliche Lint-Warnungen (`UseKtx`, `RedundantLabel`) abarbeiten.
+
+Hinweise für den Start:
+- Emulator `Medium_Phone_API_36.1` enthält Testdaten aus den Prüfläufen (Größe 175 statt 180 cm, Gewichtseintrag 125 kg und Maße-Eintrag vom 20.11.2026). Die Sicherung des Stands davor lag nur im temporären Session-Verzeichnis und ist evtl. nicht mehr vorhanden – Testdaten ggf. in der App löschen bzw. Größe zurücksetzen.
+- Nichts ist gepusht; alle Commits liegen lokal auf `main`.
+
 ## Phase 0 – Grundlagen ✅
 
 - [x] `CLAUDE.md` mit Architektur und gemeinsamen Regeln (`8fd9f3e`)
