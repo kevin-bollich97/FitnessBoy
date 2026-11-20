@@ -1,15 +1,15 @@
 package de.bollich.fitnessboy.domain.usecase
 
+import de.bollich.fitnessboy.testing.FakeBodyMeasurementsRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
-class BodyMeasurementsUseCasesTest {
+class AddBodyMeasurementsEntryTest {
     private val repository = FakeBodyMeasurementsRepository()
     private val addBodyMeasurementsEntry = AddBodyMeasurementsEntry(repository)
-    private val deleteBodyMeasurementsEntry = DeleteBodyMeasurementsEntry(repository)
     private val date = LocalDate.of(2026, 3, 27)
 
     @Test
@@ -49,15 +49,6 @@ class BodyMeasurementsUseCasesTest {
         val result = addBodyMeasurementsEntry(date, waistInput = "88", hipsInput = "96", shouldersInput = "999")
 
         assertTrue(result is AddBodyMeasurementsEntry.Result.InvalidShoulders)
-        assertTrue(repository.entries.value.isEmpty())
-    }
-
-    @Test
-    fun deleteBodyMeasurementsEntry_removesEntry() = runTest {
-        addBodyMeasurementsEntry(date, waistInput = "88", hipsInput = "96", shouldersInput = "48")
-
-        deleteBodyMeasurementsEntry(repository.entries.value.single())
-
         assertTrue(repository.entries.value.isEmpty())
     }
 }

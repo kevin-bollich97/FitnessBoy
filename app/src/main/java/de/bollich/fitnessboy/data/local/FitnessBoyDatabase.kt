@@ -33,19 +33,13 @@ abstract class FitnessBoyDatabase : RoomDatabase() {
             }
         }
 
-        @Volatile
-        private var instance: FitnessBoyDatabase? = null
-
-        fun getInstance(context: Context): FitnessBoyDatabase =
-            instance ?: synchronized(this) {
-                instance ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    FitnessBoyDatabase::class.java,
-                    "fitnessboy.db",
-                )
-                    .addMigrations(migration1To2)
-                    .build()
-                    .also { instance = it }
-            }
+        fun create(context: Context): FitnessBoyDatabase =
+            Room.databaseBuilder(
+                context.applicationContext,
+                FitnessBoyDatabase::class.java,
+                "fitnessboy.db",
+            )
+                .addMigrations(migration1To2)
+                .build()
     }
 }

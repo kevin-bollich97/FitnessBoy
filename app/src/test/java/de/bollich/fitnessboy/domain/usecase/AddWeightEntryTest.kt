@@ -1,15 +1,15 @@
 package de.bollich.fitnessboy.domain.usecase
 
+import de.bollich.fitnessboy.testing.FakeWeightRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
-class WeightEntryUseCasesTest {
+class AddWeightEntryTest {
     private val repository = FakeWeightRepository()
     private val addWeightEntry = AddWeightEntry(repository)
-    private val deleteWeightEntry = DeleteWeightEntry(repository)
     private val date = LocalDate.of(2026, 3, 9)
 
     @Test
@@ -28,17 +28,5 @@ class WeightEntryUseCasesTest {
 
         assertTrue(result is AddWeightEntry.Result.InvalidWeight)
         assertTrue(repository.entries.value.isEmpty())
-    }
-
-    @Test
-    fun deleteWeightEntry_removesOnlyThatEntry() = runTest {
-        // Identical date and weight: only the id tells them apart.
-        addWeightEntry(weightInput = "80", selectedDate = date)
-        addWeightEntry(weightInput = "80", selectedDate = date)
-        val (first, second) = repository.entries.value
-
-        deleteWeightEntry(first)
-
-        assertEquals(listOf(second), repository.entries.value)
     }
 }

@@ -1,8 +1,10 @@
-package de.bollich.fitnessboy.domain.usecase
+package de.bollich.fitnessboy.testing
 
 import de.bollich.fitnessboy.domain.repository.BodyMeasurementsRepository
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
+import de.bollich.fitnessboy.domain.repository.SettingsRepository
 import de.bollich.fitnessboy.domain.repository.WeightRepository
+import de.bollich.fitnessboy.model.AppSettings
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
@@ -52,5 +54,15 @@ class FakeProfileRepository : ProfileRepository {
 
     override suspend fun save(profile: UserProfile) {
         this.profile.value = profile
+    }
+}
+
+class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRepository {
+    val settings = MutableStateFlow(initial)
+
+    override fun observeSettings(): Flow<AppSettings> = settings
+
+    override suspend fun save(settings: AppSettings) {
+        this.settings.value = settings
     }
 }

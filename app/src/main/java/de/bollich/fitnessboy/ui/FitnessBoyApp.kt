@@ -3,6 +3,7 @@ package de.bollich.fitnessboy.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,59 +46,75 @@ import de.bollich.fitnessboy.ui.components.MetricInfoCard
 import de.bollich.fitnessboy.ui.components.ProfileCard
 import de.bollich.fitnessboy.ui.components.WeightChartCard
 import de.bollich.fitnessboy.ui.components.WeightHistoryRow
+import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsUiState
+import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsViewModel
+import de.bollich.fitnessboy.ui.profile.ProfileUiState
+import de.bollich.fitnessboy.ui.profile.ProfileViewModel
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
+import de.bollich.fitnessboy.ui.weight.WeightFormState
+import de.bollich.fitnessboy.ui.weight.WeightUiState
+import de.bollich.fitnessboy.ui.weight.WeightViewModel
 import java.time.LocalDate
 
 @Composable
 fun FitnessBoyApp(
-    viewModel: FitnessBoyViewModel = viewModel(
-        factory = FitnessBoyViewModel.factory(LocalContext.current)
-    ),
+    mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory),
+    weightViewModel: WeightViewModel = viewModel(factory = WeightViewModel.Factory),
+    bodyMeasurementsViewModel: BodyMeasurementsViewModel = viewModel(factory = BodyMeasurementsViewModel.Factory),
+    profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModel.Factory),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val mainState by mainViewModel.uiState.collectAsStateWithLifecycle()
 
-    FitnessBoyScreen(
-        uiState = uiState,
-        onTabSelected = viewModel::onTabSelected,
-        onWeightPageChange = viewModel::onWeightPageChange,
-        onWeightValueChange = viewModel::onWeightValueChange,
-        onSelectedWeightDateChange = viewModel::onSelectedWeightDateChange,
-        onBodyMeasurementsDialogChange = viewModel::onBodyMeasurementsDialogChange,
-        onBodyMeasurementsDateChange = viewModel::onBodyMeasurementsDateChange,
-        onWaistValueChange = viewModel::onWaistValueChange,
-        onHipsValueChange = viewModel::onHipsValueChange,
-        onShouldersValueChange = viewModel::onShouldersValueChange,
-        onProfilePageChange = viewModel::onProfilePageChange,
-        onHeightValueChange = viewModel::onHeightValueChange,
-        onTargetWeightValueChange = viewModel::onTargetWeightValueChange,
-        onSaveProfileClick = viewModel::onSaveProfileClick,
-        onAddBodyMeasurementsClick = viewModel::onAddBodyMeasurementsClick,
-        onAddWeightClick = viewModel::onAddWeightClick,
-        onDeleteEntry = viewModel::onDeleteEntry,
-        onDeleteBodyMeasurementsEntry = viewModel::onDeleteBodyMeasurementsEntry,
-    )
+    FitnessBoyScaffold(
+        selectedTab = mainState.selectedTab,
+        onTabSelected = mainViewModel::onTabSelected,
+    ) {
+        if (mainState.isLoading) return@FitnessBoyScaffold
+
+        when (mainState.selectedTab) {
+            AppTab.WEIGHT -> when (mainState.selectedWeightPage) {
+                WeightPage.DASHBOARD -> WeightRoute(weightViewModel)
+                WeightPage.HISTORY -> WeightHistoryRoute(
+                    viewModel = weightViewModel,
+                    onBackClick = { mainViewModel.onWeightPageChange(WeightPage.DASHBOARD) },
+                )
+            }
+
+            AppTab.BMI -> BmiRoute(weightViewModel)
+
+            AppTab.MEASUREMENTS -> MeasurementsRoute(
+                viewModel = bodyMeasurementsViewModel,
+                weightViewModel = weightViewModel,
+            )
+
+            AppTab.PROFILE -> when (mainState.selectedProfilePage) {
+                ProfilePage.OVERVIEW -> ProfileRoute(
+                    viewModel = profileViewModel,
+                    onOpenWeightHistory = { mainViewModel.onProfilePageChange(ProfilePage.WEIGHT_HISTORY) },
+                    onOpenMeasurementsHistory = {
+                        mainViewModel.onProfilePageChange(ProfilePage.MEASUREMENTS_HISTORY)
+                    },
+                )
+
+                ProfilePage.WEIGHT_HISTORY -> WeightHistoryRoute(
+                    viewModel = weightViewModel,
+                    onBackClick = { mainViewModel.onProfilePageChange(ProfilePage.OVERVIEW) },
+                )
+
+                ProfilePage.MEASUREMENTS_HISTORY -> MeasurementsHistoryRoute(
+                    viewModel = bodyMeasurementsViewModel,
+                    onBackClick = { mainViewModel.onProfilePageChange(ProfilePage.OVERVIEW) },
+                )
+            }
+        }
+    }
 }
 
 @Composable
-private fun FitnessBoyScreen(
-    uiState: FitnessBoyUiState,
+private fun FitnessBoyScaffold(
+    selectedTab: AppTab,
     onTabSelected: (AppTab) -> Unit,
-    onWeightPageChange: (WeightPage) -> Unit,
-    onWeightValueChange: (String) -> Unit,
-    onSelectedWeightDateChange: (LocalDate) -> Unit,
-    onBodyMeasurementsDialogChange: (Boolean) -> Unit,
-    onBodyMeasurementsDateChange: (LocalDate) -> Unit,
-    onWaistValueChange: (String) -> Unit,
-    onHipsValueChange: (String) -> Unit,
-    onShouldersValueChange: (String) -> Unit,
-    onProfilePageChange: (ProfilePage) -> Unit,
-    onHeightValueChange: (String) -> Unit,
-    onTargetWeightValueChange: (String) -> Unit,
-    onSaveProfileClick: () -> Unit,
-    onAddBodyMeasurementsClick: () -> Unit,
-    onAddWeightClick: () -> Unit,
-    onDeleteEntry: (WeightEntry) -> Unit,
-    onDeleteBodyMeasurementsEntry: (BodyMeasurementsEntry) -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -111,7 +127,7 @@ private fun FitnessBoyScreen(
             ) {
                 AppTab.entries.forEach { tab ->
                     NavigationBarItem(
-                        selected = tab == uiState.selectedTab,
+                        selected = tab == selectedTab,
                         onClick = { onTabSelected(tab) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = MaterialTheme.colorScheme.onPrimary,
@@ -147,63 +163,109 @@ private fun FitnessBoyScreen(
                 )
                 .padding(innerPadding)
         ) {
-            if (uiState.isLoading) return@Box
-
-            when (uiState.selectedTab) {
-                AppTab.WEIGHT -> WeightTab(
-                    uiState = uiState,
-                    onWeightPageChange = onWeightPageChange,
-                    onWeightValueChange = onWeightValueChange,
-                    onSelectedWeightDateChange = onSelectedWeightDateChange,
-                    onAddWeightClick = onAddWeightClick,
-                    onDeleteEntry = onDeleteEntry,
-                )
-
-                AppTab.BMI -> BmiTab(
-                    uiState = uiState,
-                )
-                AppTab.MEASUREMENTS -> MeasurementsTab(
-                    uiState = uiState,
-                    onBodyMeasurementsDialogChange = onBodyMeasurementsDialogChange,
-                    onBodyMeasurementsDateChange = onBodyMeasurementsDateChange,
-                    onWaistValueChange = onWaistValueChange,
-                    onHipsValueChange = onHipsValueChange,
-                    onShouldersValueChange = onShouldersValueChange,
-                    onAddBodyMeasurementsClick = onAddBodyMeasurementsClick,
-                )
-                AppTab.PROFILE -> ProfileTab(
-                    uiState = uiState,
-                    onProfilePageChange = onProfilePageChange,
-                    onBodyMeasurementsDialogChange = onBodyMeasurementsDialogChange,
-                    onHeightValueChange = onHeightValueChange,
-                    onTargetWeightValueChange = onTargetWeightValueChange,
-                    onSaveProfileClick = onSaveProfileClick,
-                    onDeleteEntry = onDeleteEntry,
-                    onDeleteBodyMeasurementsEntry = onDeleteBodyMeasurementsEntry,
-                )
-            }
+            content()
         }
     }
 }
 
 @Composable
-private fun WeightTab(
-    uiState: FitnessBoyUiState,
-    onWeightPageChange: (WeightPage) -> Unit,
+private fun WeightRoute(viewModel: WeightViewModel) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    if (uiState.isLoading) return
+
+    WeightScreen(
+        uiState = uiState,
+        onWeightValueChange = viewModel::onWeightValueChange,
+        onSelectedWeightDateChange = viewModel::onSelectedDateChange,
+        onAddWeightClick = viewModel::onAddWeightClick,
+    )
+}
+
+@Composable
+private fun WeightHistoryRoute(
+    viewModel: WeightViewModel,
+    onBackClick: () -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    if (uiState.isLoading) return
+
+    WeightHistoryPage(
+        entries = uiState.entries,
+        onBackClick = onBackClick,
+        onDeleteEntry = viewModel::onDeleteEntry,
+    )
+}
+
+@Composable
+private fun BmiRoute(viewModel: WeightViewModel) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    if (uiState.isLoading) return
+
+    BmiScreen(uiState = uiState)
+}
+
+@Composable
+private fun MeasurementsRoute(
+    viewModel: BodyMeasurementsViewModel,
+    weightViewModel: WeightViewModel,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val weightUiState by weightViewModel.uiState.collectAsStateWithLifecycle()
+    if (uiState.isLoading || weightUiState.isLoading) return
+
+    MeasurementsScreen(
+        uiState = uiState,
+        latestWeightEntry = weightUiState.latestEntry,
+        onBodyMeasurementsDialogChange = viewModel::onDialogVisibilityChange,
+        onBodyMeasurementsDateChange = viewModel::onDateChange,
+        onWaistValueChange = viewModel::onWaistValueChange,
+        onHipsValueChange = viewModel::onHipsValueChange,
+        onShouldersValueChange = viewModel::onShouldersValueChange,
+        onAddBodyMeasurementsClick = viewModel::onSaveClick,
+    )
+}
+
+@Composable
+private fun MeasurementsHistoryRoute(
+    viewModel: BodyMeasurementsViewModel,
+    onBackClick: () -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    if (uiState.isLoading) return
+
+    MeasurementsHistoryPage(
+        entries = uiState.entries,
+        onBackClick = onBackClick,
+        onDeleteEntry = viewModel::onDeleteEntry,
+    )
+}
+
+@Composable
+private fun ProfileRoute(
+    viewModel: ProfileViewModel,
+    onOpenWeightHistory: () -> Unit,
+    onOpenMeasurementsHistory: () -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    if (uiState.isLoading) return
+
+    ProfileScreen(
+        uiState = uiState,
+        onOpenWeightHistory = onOpenWeightHistory,
+        onOpenMeasurementsHistory = onOpenMeasurementsHistory,
+        onHeightValueChange = viewModel::onHeightValueChange,
+        onTargetWeightValueChange = viewModel::onTargetWeightValueChange,
+        onSaveProfileClick = viewModel::onSaveClick,
+    )
+}
+
+@Composable
+private fun WeightScreen(
+    uiState: WeightUiState,
     onWeightValueChange: (String) -> Unit,
     onSelectedWeightDateChange: (LocalDate) -> Unit,
     onAddWeightClick: () -> Unit,
-    onDeleteEntry: (WeightEntry) -> Unit,
 ) {
-    if (uiState.selectedWeightPage == WeightPage.HISTORY) {
-        WeightHistoryPage(
-            entries = uiState.entries,
-            onBackClick = { onWeightPageChange(WeightPage.DASHBOARD) },
-            onDeleteEntry = onDeleteEntry,
-        )
-        return
-    }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
@@ -222,9 +284,9 @@ private fun WeightTab(
 
         item {
             AddWeightCard(
-                value = uiState.weightInput,
-                selectedDate = uiState.selectedWeightDate,
-                errorText = uiState.weightErrorText,
+                value = uiState.form.weightInput,
+                selectedDate = uiState.form.selectedDate,
+                errorText = uiState.form.errorText,
                 onValueChange = onWeightValueChange,
                 onDateChange = onSelectedWeightDateChange,
                 onAddClick = onAddWeightClick,
@@ -285,8 +347,8 @@ private fun WeightHistoryPage(
 }
 
 @Composable
-private fun BmiTab(
-    uiState: FitnessBoyUiState,
+private fun BmiScreen(
+    uiState: WeightUiState,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -338,8 +400,9 @@ private fun BmiTab(
 }
 
 @Composable
-private fun MeasurementsTab(
-    uiState: FitnessBoyUiState,
+private fun MeasurementsScreen(
+    uiState: BodyMeasurementsUiState,
+    latestWeightEntry: WeightEntry?,
     onBodyMeasurementsDialogChange: (Boolean) -> Unit,
     onBodyMeasurementsDateChange: (LocalDate) -> Unit,
     onWaistValueChange: (String) -> Unit,
@@ -356,7 +419,7 @@ private fun MeasurementsTab(
             HeadlineSection(
                 title = "Körpermaße",
                 subtitle = "Erfasse Bauch, Hüfte und Schultern und nutze die Werte später für Verlauf und Vergleiche.",
-                latestEntry = uiState.latestEntry,
+                latestEntry = latestWeightEntry,
                 trend = null,
                 trendList = emptyList(),
                 bmi = null,
@@ -365,7 +428,7 @@ private fun MeasurementsTab(
 
         item {
             BodyMeasurementsOverviewCard(
-                latestEntry = uiState.latestBodyMeasurementsEntry,
+                latestEntry = uiState.latestEntry,
             )
         }
 
@@ -380,15 +443,15 @@ private fun MeasurementsTab(
         }
     }
 
-    if (uiState.isBodyMeasurementsDialogVisible) {
+    if (uiState.form.isDialogVisible) {
         AddBodyMeasurementsDialog(
-            selectedDate = uiState.selectedBodyMeasurementsDate,
-            waistInput = uiState.waistInput,
-            waistErrorText = uiState.waistErrorText,
-            hipsInput = uiState.hipsInput,
-            hipsErrorText = uiState.hipsErrorText,
-            shouldersInput = uiState.shouldersInput,
-            shouldersErrorText = uiState.shouldersErrorText,
+            selectedDate = uiState.form.selectedDate,
+            waistInput = uiState.form.waistInput,
+            waistErrorText = uiState.form.waistErrorText,
+            hipsInput = uiState.form.hipsInput,
+            hipsErrorText = uiState.form.hipsErrorText,
+            shouldersInput = uiState.form.shouldersInput,
+            shouldersErrorText = uiState.form.shouldersErrorText,
             onDateChange = onBodyMeasurementsDateChange,
             onWaistChange = onWaistValueChange,
             onHipsChange = onHipsValueChange,
@@ -400,38 +463,14 @@ private fun MeasurementsTab(
 }
 
 @Composable
-private fun ProfileTab(
-    uiState: FitnessBoyUiState,
-    onProfilePageChange: (ProfilePage) -> Unit,
-    onBodyMeasurementsDialogChange: (Boolean) -> Unit,
+private fun ProfileScreen(
+    uiState: ProfileUiState,
+    onOpenWeightHistory: () -> Unit,
+    onOpenMeasurementsHistory: () -> Unit,
     onHeightValueChange: (String) -> Unit,
     onTargetWeightValueChange: (String) -> Unit,
     onSaveProfileClick: () -> Unit,
-    onDeleteEntry: (WeightEntry) -> Unit,
-    onDeleteBodyMeasurementsEntry: (BodyMeasurementsEntry) -> Unit,
 ) {
-    when (uiState.selectedProfilePage) {
-        ProfilePage.WEIGHT_HISTORY -> {
-            WeightHistoryPage(
-                entries = uiState.entries,
-                onBackClick = { onProfilePageChange(ProfilePage.OVERVIEW) },
-                onDeleteEntry = onDeleteEntry,
-            )
-            return
-        }
-
-        ProfilePage.MEASUREMENTS_HISTORY -> {
-            MeasurementsHistoryPage(
-                entries = uiState.bodyMeasurementsEntries,
-                onBackClick = { onProfilePageChange(ProfilePage.OVERVIEW) },
-                onDeleteEntry = onDeleteBodyMeasurementsEntry,
-            )
-            return
-        }
-
-        ProfilePage.OVERVIEW -> Unit
-    }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
@@ -450,12 +489,12 @@ private fun ProfileTab(
 
         item {
             ProfileCard(
-                heightValue = uiState.heightInput,
-                targetWeightValue = uiState.targetWeightInput,
+                heightValue = uiState.form.heightInput,
+                targetWeightValue = uiState.form.targetWeightInput,
                 savedHeightInCm = uiState.profile.heightInCm,
                 savedTargetWeightInKg = uiState.profile.targetWeightInKg,
-                heightErrorText = uiState.heightErrorText,
-                targetWeightErrorText = uiState.targetWeightErrorText,
+                heightErrorText = uiState.form.heightErrorText,
+                targetWeightErrorText = uiState.form.targetWeightErrorText,
                 bmi = uiState.bmi,
                 onHeightValueChange = onHeightValueChange,
                 onTargetWeightValueChange = onTargetWeightValueChange,
@@ -465,7 +504,7 @@ private fun ProfileTab(
 
         item {
             OutlinedButton(
-                onClick = { onProfilePageChange(ProfilePage.WEIGHT_HISTORY) },
+                onClick = onOpenWeightHistory,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
             ) {
@@ -475,7 +514,7 @@ private fun ProfileTab(
 
         item {
             OutlinedButton(
-                onClick = { onProfilePageChange(ProfilePage.MEASUREMENTS_HISTORY) },
+                onClick = onOpenMeasurementsHistory,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
             ) {
@@ -527,56 +566,24 @@ private fun MeasurementsHistoryPage(
 
 @Preview(showBackground = true)
 @Composable
-private fun FitnessBoyAppPreview() {
+private fun WeightScreenPreview() {
+    val entries = listOf(
+        WeightEntry(id = 2, date = LocalDate.of(2026, 3, 9), weightInKg = 82.4),
+        WeightEntry(id = 1, date = LocalDate.of(2026, 3, 8), weightInKg = 82.9),
+    )
     FitnessBoyTheme {
-        FitnessBoyScreen(
-            uiState = FitnessBoyUiState(
+        WeightScreen(
+            uiState = WeightUiState(
                 isLoading = false,
-                entries = listOf(
-                    WeightEntry(id = 1, date = LocalDate.of(2026, 3, 8), weightInKg = 82.9),
-                    WeightEntry(id = 2, date = LocalDate.of(2026, 3, 9), weightInKg = 82.4),
-                ),
-                bodyMeasurementsEntries = listOf(
-                    BodyMeasurementsEntry(
-                        date = LocalDate.of(2026, 3, 9),
-                        waistInCm = 88.0,
-                        hipsInCm = 95.0,
-                        shouldersInCm = 48.0,
-                    )
-                ),
+                entries = entries,
                 profile = UserProfile(heightInCm = 180.0, targetWeightInKg = 78.0),
-                latestEntry = WeightEntry(id = 2, date = LocalDate.of(2026, 3, 9), weightInKg = 82.4),
-                latestBodyMeasurementsEntry = BodyMeasurementsEntry(
-                    date = LocalDate.of(2026, 3, 9),
-                    waistInCm = 88.0,
-                    hipsInCm = 95.0,
-                    shouldersInCm = 48.0,
-                ),
+                latestEntry = entries.first(),
                 bmi = 25.4,
-                bmiCategory = "Übergewicht",
-                healthyWeightRangeText = "59.9 bis 80.7 kg",
-                optimalWeightText = "71.3 kg",
-                selectedWeightDate = LocalDate.of(2026, 3, 9),
-                heightInput = "180",
-                targetWeightInput = "78",
+                form = WeightFormState(selectedDate = LocalDate.of(2026, 3, 9)),
             ),
-            onTabSelected = {},
-            onWeightPageChange = {},
             onWeightValueChange = {},
             onSelectedWeightDateChange = {},
-            onBodyMeasurementsDialogChange = {},
-            onBodyMeasurementsDateChange = {},
-            onWaistValueChange = {},
-            onHipsValueChange = {},
-            onShouldersValueChange = {},
-            onProfilePageChange = {},
-            onHeightValueChange = {},
-            onTargetWeightValueChange = {},
-            onSaveProfileClick = {},
-            onAddBodyMeasurementsClick = {},
             onAddWeightClick = {},
-            onDeleteEntry = {},
-            onDeleteBodyMeasurementsEntry = {},
         )
     }
 }

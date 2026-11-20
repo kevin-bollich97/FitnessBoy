@@ -19,11 +19,14 @@ Package `de.bollich.fitnessboy`:
 - `model/` – reine Datenklassen, keine Android-Abhängigkeiten
 - `domain/` – Berechnungen, Use Cases, Repository-Interfaces. Reines Kotlin, keine Android-Imports.
 - `data/` – Repository-Implementierungen (Room für Einträge, DataStore für Profil/Einstellungen)
-- `ui/` – Compose-Screens, ViewModels, UI-State; `ui/components/` wiederverwendbare Komponenten
+- `ui/` – Compose-Screens, ViewModels, UI-State; ein Unterpaket pro Bereich (`weight/`, `measurements/`, `profile/`); `ui/components/` wiederverwendbare Komponenten
+- `AppContainer` / `FitnessBoyApplication` – erzeugen Datenbank, DataStores und Repositories genau einmal
 
 Abhängigkeitsrichtung: `ui → domain ← data`. `domain` kennt weder `ui` noch `data`.
 
-Dependency Injection: manuell über einen `AppContainer` in der `Application`-Klasse. Keine DI-Library (kein Hilt/Koin).
+Dependency Injection: manuell über einen `AppContainer` in der `Application`-Klasse. Keine DI-Library (kein Hilt/Koin). ViewModels bekommen ihre Abhängigkeiten über eine `Factory` im `companion object` (`appContainer()` aus `CreationExtras`).
+
+Use Cases nur, wo sie Logik enthalten (Validierung, Berechnung, z. B. `AddWeightEntry`, `SaveProfile`, `GetHealthOverview`). Reine Durchreicher zum Repository gibt es nicht – ViewModels lesen und löschen dann direkt über das Repository.
 
 `minSdk = 36` ist bewusst so gewählt – nicht senken.
 
@@ -45,7 +48,10 @@ Dependency Injection: manuell über einen `AppContainer` in der `Application`-Kl
 
 ### UI
 - Keine hartcodierten UI-Texte in Kotlin – alles in `res/values/strings.xml`.
-- ViewModels halten State als `StateFlow`; Composables sind möglichst stateless (State rein, Events raus).
+- Ein ViewModel pro Bereich. UI-State wird reaktiv gebaut: `combine(Repository-Flows, Formular-State).stateIn(viewModelScope, WhileSubscribed(5_000), …)`. Kein manuelles Nachrechnen abgeleiteter Werte.
+- Formular-Eingaben (`…FormState`) sind getrennt vom gespeicherten Zustand und werden nie von Repository-Updates überschrieben.
+- Route/Screen-Muster: `XRoute(viewModel)` sammelt den State, `XScreen(uiState, callbacks)` ist stateless und hat eine Preview.
+- ViewModel-Tests nutzen `MainDispatcherRule` und Fakes aus `src/test/.../testing/`; ViewModels in Tests `by lazy` erzeugen (erst nach dem Setzen des Main-Dispatchers).
 
 ### Sicherheit
 - Keine Secrets, Keystores oder Passwörter im Repo; Signing nur über Umgebungsvariablen/GitHub Secrets.
@@ -61,8 +67,8 @@ Dependency Injection: manuell über einen `AppContainer` in der `Application`-Kl
 
 Laufende Verbesserung in Phasen (jeweils lauffähig abschließen):
 
-0. Grundlagen: Tests für `GoalProgress`, `WeightTrend`, BMI, `InputParser`; Room-Schema-Export
-1. Datenschicht: `WeightEntry` mit `id`, einzelne insert/delete statt Tabelle neu schreiben; DAOs/Repositories auf `suspend`/`Flow`
-2. State: reaktiver UI-State via `combine`, ViewModel pro Bereich, Formular-State getrennt vom persistierten State, `AppContainer`
-3. Navigation & UI: Navigation Compose statt `WeightPage`/`ProfilePage`-Enums; große Dateien aufteilen; Strings in Ressourcen
+0. ✅ Grundlagen: Tests für `GoalProgress`, `WeightTrend`, BMI, `InputParser`; Room-Schema-Export
+1. ✅ Datenschicht: `WeightEntry` mit `id`, einzelne insert/delete statt Tabelle neu schreiben; DAOs/Repositories auf `suspend`/`Flow`
+2. ✅ State: reaktiver UI-State via `combine`, ViewModel pro Bereich, Formular-State getrennt vom persistierten State, `AppContainer`
+3. Navigation & UI: Navigation Compose statt `WeightPage`/`ProfilePage`-Enums (`WeightPage.HISTORY` ist toter Code); große Dateien aufteilen; Strings in Ressourcen; `formatNumber` locale-unabhängig/konsistent machen; Maße-Tab zeigt als „Letzter Wert“ das Gewicht; Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil
 4. Aufräumen: Legacy `WeightStore`/`WeightEntryCodec` entfernen, README aktualisieren, CI für Tests/Lint

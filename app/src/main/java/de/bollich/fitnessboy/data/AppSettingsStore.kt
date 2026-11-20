@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-class AppSettingsStore private constructor(
+class AppSettingsStore(
     private val dataStore: DataStore<Preferences>,
 ) : SettingsRepository {
     override fun observeSettings(): Flow<AppSettings> =
@@ -46,24 +46,20 @@ class AppSettingsStore private constructor(
         private val selectedTabKey = stringPreferencesKey("selected_tab")
         private val selectedWeightPageKey = stringPreferencesKey("selected_weight_page")
 
-        @Volatile
-        private var instance: AppSettingsStore? = null
-
-        fun getInstance(context: Context): AppSettingsStore =
-            instance ?: synchronized(this) {
-                instance ?: AppSettingsStore(
-                    dataStore = PreferenceDataStoreFactory.create(
-                        migrations = listOf(
-                            SharedPreferencesMigration(
-                                context = context.applicationContext,
-                                sharedPreferencesName = "app_settings",
-                            )
-                        ),
-                        produceFile = {
-                            context.applicationContext.preferencesDataStoreFile("app_settings")
-                        },
-                    )
-                ).also { instance = it }
-            }
+        /** Must be called only once per process; DataStore forbids multiple instances per file. */
+        fun create(context: Context): AppSettingsStore =
+            AppSettingsStore(
+                dataStore = PreferenceDataStoreFactory.create(
+                    migrations = listOf(
+                        SharedPreferencesMigration(
+                            context = context.applicationContext,
+                            sharedPreferencesName = "app_settings",
+                        )
+                    ),
+                    produceFile = {
+                        context.applicationContext.preferencesDataStoreFile("app_settings")
+                    },
+                ),
+            )
     }
 }

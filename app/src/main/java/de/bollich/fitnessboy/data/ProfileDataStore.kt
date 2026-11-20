@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-class ProfileDataStore private constructor(
+class ProfileDataStore(
     private val dataStore: DataStore<Preferences>,
 ) : ProfileRepository {
     override fun observeProfile(): Flow<UserProfile> =
@@ -58,24 +58,20 @@ class ProfileDataStore private constructor(
         private val heightKey = stringPreferencesKey("height_in_cm")
         private val targetWeightKey = stringPreferencesKey("target_weight_in_kg")
 
-        @Volatile
-        private var instance: ProfileDataStore? = null
-
-        fun getInstance(context: Context): ProfileDataStore =
-            instance ?: synchronized(this) {
-                instance ?: ProfileDataStore(
-                    dataStore = PreferenceDataStoreFactory.create(
-                        migrations = listOf(
-                            SharedPreferencesMigration(
-                                context = context.applicationContext,
-                                sharedPreferencesName = "user_profile",
-                            )
-                        ),
-                        produceFile = {
-                            context.applicationContext.preferencesDataStoreFile("user_profile")
-                        },
-                    )
-                ).also { instance = it }
-            }
+        /** Must be called only once per process; DataStore forbids multiple instances per file. */
+        fun create(context: Context): ProfileDataStore =
+            ProfileDataStore(
+                dataStore = PreferenceDataStoreFactory.create(
+                    migrations = listOf(
+                        SharedPreferencesMigration(
+                            context = context.applicationContext,
+                            sharedPreferencesName = "user_profile",
+                        )
+                    ),
+                    produceFile = {
+                        context.applicationContext.preferencesDataStoreFile("user_profile")
+                    },
+                ),
+            )
     }
 }
