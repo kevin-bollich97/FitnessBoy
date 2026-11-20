@@ -17,6 +17,8 @@ import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.components.MetricInfoCard
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import de.bollich.fitnessboy.ui.weight.WeightUiState
+import de.bollich.fitnessboy.ui.weight.headlineMetrics
+import de.bollich.fitnessboy.ui.weight.trendMetrics
 import de.bollich.fitnessboy.ui.weight.WeightViewModel
 import java.time.LocalDate
 
@@ -41,10 +43,8 @@ private fun BmiScreen(
             HeadlineSection(
                 title = "BMI und Ziele",
                 subtitle = "Hier siehst du deinen BMI, Trends und Richtwerte auf Basis deiner Größe.",
-                latestEntry = uiState.latestEntry,
-                trend = uiState.primaryTrend,
-                trendList = uiState.trends,
-                bmi = uiState.bmi,
+                metrics = uiState.headlineMetrics(),
+                secondaryMetrics = uiState.trendMetrics(),
             )
         }
 

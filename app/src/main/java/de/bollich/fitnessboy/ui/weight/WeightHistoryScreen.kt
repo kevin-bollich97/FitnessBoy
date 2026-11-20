@@ -35,6 +35,7 @@ import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.format.formattedWeight
 import de.bollich.fitnessboy.model.WeightEntry
+import de.bollich.fitnessboy.ui.components.HeadlineMetric
 import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import java.time.LocalDate
@@ -69,10 +70,9 @@ private fun WeightHistoryScreen(
             HeadlineSection(
                 title = "Verlauf",
                 subtitle = "Hier findest du alle gespeicherten Wiegeeinträge und kannst sie bei Bedarf löschen.",
-                latestEntry = entries.firstOrNull(),
-                trend = null,
-                trendList = emptyList(),
-                bmi = null,
+                metrics = listOfNotNull(
+                    entries.firstOrNull()?.let { HeadlineMetric("Letzter Wert", it.formattedWeight()) },
+                ),
             )
         }
 

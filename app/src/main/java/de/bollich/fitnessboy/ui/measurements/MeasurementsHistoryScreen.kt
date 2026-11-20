@@ -63,10 +63,6 @@ private fun MeasurementsHistoryScreen(
             HeadlineSection(
                 title = "Maßverlauf",
                 subtitle = "Hier findest du alle gespeicherten Körpermaße und kannst sie bei Bedarf löschen.",
-                latestEntry = null,
-                trend = null,
-                trendList = emptyList(),
-                bmi = null,
             )
         }
 

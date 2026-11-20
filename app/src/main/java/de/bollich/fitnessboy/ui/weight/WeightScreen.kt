@@ -45,10 +45,8 @@ private fun WeightScreen(
             HeadlineSection(
                 title = "Gewicht",
                 subtitle = "Trage neue Werte ein und beobachte deinen Verlauf.",
-                latestEntry = uiState.latestEntry,
-                trend = uiState.primaryTrend,
-                trendList = uiState.trends,
-                bmi = uiState.bmi,
+                metrics = uiState.headlineMetrics(),
+                secondaryMetrics = uiState.trendMetrics(),
             )
         }
 

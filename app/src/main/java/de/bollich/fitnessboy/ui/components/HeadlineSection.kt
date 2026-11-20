@@ -17,20 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.bollich.fitnessboy.domain.WeightTrend
-import de.bollich.fitnessboy.domain.formatTrend
-import de.bollich.fitnessboy.format.formatNumber
-import de.bollich.fitnessboy.format.formattedWeight
-import de.bollich.fitnessboy.model.WeightEntry
 
 @Composable
 fun HeadlineSection(
     title: String,
     subtitle: String,
-    latestEntry: WeightEntry?,
-    trend: WeightTrend?,
-    trendList: List<WeightTrend>,
-    bmi: Double?,
+    metrics: List<HeadlineMetric> = emptyList(),
+    secondaryMetrics: List<HeadlineMetric> = emptyList(),
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(32.dp),
@@ -63,36 +56,28 @@ fun HeadlineSection(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (latestEntry != null) {
-                    MetricPill(
-                        label = "Letzter Wert",
-                        value = latestEntry.formattedWeight(),
-                    )
-                }
-                if (bmi != null) {
-                    MetricPill(
-                        label = "BMI",
-                        value = formatNumber(bmi),
-                    )
-                }
-            }
-            if (trendList.isNotEmpty()) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    trendList.forEach { item ->
-                        MetricPill(
-                            label = item.period.label,
-                            value = formatTrend(item.deltaInKg),
-                        )
-                    }
-                }
-            }
+            MetricRow(metrics)
+            MetricRow(secondaryMetrics)
+        }
+    }
+}
+
+/** A label/value pair shown as a pill in the [HeadlineSection]. */
+data class HeadlineMetric(
+    val label: String,
+    val value: String,
+)
+
+@Composable
+private fun MetricRow(metrics: List<HeadlineMetric>) {
+    if (metrics.isEmpty()) return
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        metrics.forEach { metric ->
+            MetricPill(label = metric.label, value = metric.value)
         }
     }
 }

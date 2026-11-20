@@ -17,7 +17,6 @@ data class WeightUiState(
     val entries: List<WeightEntry> = emptyList(),
     val profile: UserProfile = UserProfile(),
     val latestEntry: WeightEntry? = null,
-    val primaryTrend: WeightTrend? = null,
     val trends: List<WeightTrend> = emptyList(),
     val goalProgress: GoalProgress? = null,
     val bmi: Double? = null,

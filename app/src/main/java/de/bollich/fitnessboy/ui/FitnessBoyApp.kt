@@ -59,10 +59,7 @@ fun FitnessBoyApp(
                     when (destination.tab) {
                         AppTab.WEIGHT -> WeightRoute(weightViewModel)
                         AppTab.BMI -> BmiRoute(weightViewModel)
-                        AppTab.MEASUREMENTS -> MeasurementsRoute(
-                            viewModel = bodyMeasurementsViewModel,
-                            weightViewModel = weightViewModel,
-                        )
+                        AppTab.MEASUREMENTS -> MeasurementsRoute(bodyMeasurementsViewModel)
                         AppTab.PROFILE -> ProfileRoute(
                             viewModel = profileViewModel,
                             onOpenWeightHistory = { mainViewModel.navigateTo(Destination.WeightHistory) },

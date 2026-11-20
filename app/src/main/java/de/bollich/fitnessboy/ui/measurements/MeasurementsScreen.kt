@@ -14,25 +14,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
-import de.bollich.fitnessboy.model.WeightEntry
+import de.bollich.fitnessboy.ui.components.HeadlineMetric
 import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
-import de.bollich.fitnessboy.ui.weight.WeightViewModel
 import java.time.LocalDate
 
 @Composable
 fun MeasurementsRoute(
     viewModel: BodyMeasurementsViewModel,
-    weightViewModel: WeightViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val weightUiState by weightViewModel.uiState.collectAsStateWithLifecycle()
-    if (uiState.isLoading || weightUiState.isLoading) return
+    if (uiState.isLoading) return
 
     MeasurementsScreen(
         uiState = uiState,
-        latestWeightEntry = weightUiState.latestEntry,
         onBodyMeasurementsDialogChange = viewModel::onDialogVisibilityChange,
         onBodyMeasurementsDateChange = viewModel::onDateChange,
         onWaistValueChange = viewModel::onWaistValueChange,
@@ -45,7 +42,6 @@ fun MeasurementsRoute(
 @Composable
 private fun MeasurementsScreen(
     uiState: BodyMeasurementsUiState,
-    latestWeightEntry: WeightEntry?,
     onBodyMeasurementsDialogChange: (Boolean) -> Unit,
     onBodyMeasurementsDateChange: (LocalDate) -> Unit,
     onWaistValueChange: (String) -> Unit,
@@ -62,10 +58,9 @@ private fun MeasurementsScreen(
             HeadlineSection(
                 title = "Körpermaße",
                 subtitle = "Erfasse Bauch, Hüfte und Schultern und nutze die Werte später für Verlauf und Vergleiche.",
-                latestEntry = latestWeightEntry,
-                trend = null,
-                trendList = emptyList(),
-                bmi = null,
+                metrics = listOfNotNull(
+                    uiState.latestEntry?.let { HeadlineMetric("Letzte Messung", it.date.formattedDate()) },
+                ),
             )
         }
 
@@ -114,7 +109,6 @@ private fun MeasurementsScreenPreview() {
                 isLoading = false,
                 entries = listOf(previewBodyMeasurementsEntry),
             ),
-            latestWeightEntry = WeightEntry(id = 1, date = LocalDate.of(2026, 3, 9), weightInKg = 82.4),
             onBodyMeasurementsDialogChange = {},
             onBodyMeasurementsDateChange = {},
             onWaistValueChange = {},

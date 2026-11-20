@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.UserProfile
+import de.bollich.fitnessboy.ui.components.HeadlineMetric
 import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 
@@ -55,10 +57,9 @@ private fun ProfileScreen(
             HeadlineSection(
                 title = "Profil",
                 subtitle = "Passe hier deine Körperdaten und Zielwerte an.",
-                latestEntry = null,
-                trend = null,
-                trendList = emptyList(),
-                bmi = uiState.bmi,
+                metrics = listOfNotNull(
+                    uiState.bmi?.let { HeadlineMetric("BMI", formatNumber(it)) },
+                ),
             )
         }
 

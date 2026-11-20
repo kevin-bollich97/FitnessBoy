@@ -25,13 +25,9 @@ class GetHealthOverview {
         val goalProgress = calculateGoalProgress(entries, profile.targetWeightInKg)
         val trends = WeightTrendPeriod.entries
             .mapNotNull { period -> calculateWeightTrend(entries, period) }
-        val primaryTrend = trends.firstOrNull { it.period == WeightTrendPeriod.SEVEN_DAYS }
-            ?: trends.firstOrNull { it.period == WeightTrendPeriod.THIRTY_DAYS }
-            ?: trends.firstOrNull()
 
         return HealthOverview(
             latestEntry = latestEntry,
-            primaryTrend = primaryTrend,
             trends = trends,
             goalProgress = goalProgress,
             bmi = bmi,
@@ -45,7 +41,6 @@ class GetHealthOverview {
 
     data class HealthOverview(
         val latestEntry: WeightEntry?,
-        val primaryTrend: WeightTrend?,
         val trends: List<WeightTrend>,
         val goalProgress: GoalProgress?,
         val bmi: Double?,

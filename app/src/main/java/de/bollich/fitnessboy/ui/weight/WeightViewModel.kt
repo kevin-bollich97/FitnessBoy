@@ -40,7 +40,6 @@ class WeightViewModel(
                 entries = entries,
                 profile = profile,
                 latestEntry = overview.latestEntry,
-                primaryTrend = overview.primaryTrend,
                 trends = overview.trends,
                 goalProgress = overview.goalProgress,
                 bmi = overview.bmi,
