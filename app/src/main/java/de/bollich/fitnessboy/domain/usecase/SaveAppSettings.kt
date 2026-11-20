@@ -6,7 +6,7 @@ import de.bollich.fitnessboy.model.AppSettings
 class SaveAppSettings(
     private val settingsRepository: SettingsRepository,
 ) {
-    operator fun invoke(settings: AppSettings) {
+    suspend operator fun invoke(settings: AppSettings) {
         settingsRepository.save(settings)
     }
 }

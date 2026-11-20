@@ -6,6 +6,7 @@ import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 class DeleteBodyMeasurementsEntry(
     private val repository: BodyMeasurementsRepository,
 ) {
-    operator fun invoke(entry: BodyMeasurementsEntry): List<BodyMeasurementsEntry> =
+    suspend operator fun invoke(entry: BodyMeasurementsEntry) {
         repository.delete(entry)
+    }
 }

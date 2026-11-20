@@ -12,15 +12,15 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
 import de.bollich.fitnessboy.model.UserProfile
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 class ProfileDataStore private constructor(
     private val dataStore: DataStore<Preferences>,
 ) : ProfileRepository {
-    override fun load(): UserProfile = runBlocking {
-        val preferences = dataStore.data
+    override fun observeProfile(): Flow<UserProfile> =
+        dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
                     emit(emptyPreferences())
@@ -28,15 +28,14 @@ class ProfileDataStore private constructor(
                     throw exception
                 }
             }
-            .first()
+            .map { preferences ->
+                UserProfile(
+                    heightInCm = preferences[heightKey]?.toDoubleOrNull(),
+                    targetWeightInKg = preferences[targetWeightKey]?.toDoubleOrNull(),
+                )
+            }
 
-        UserProfile(
-            heightInCm = preferences[heightKey]?.toDoubleOrNull(),
-            targetWeightInKg = preferences[targetWeightKey]?.toDoubleOrNull(),
-        )
-    }
-
-    override fun save(profile: UserProfile): Unit = runBlocking {
+    override suspend fun save(profile: UserProfile) {
         dataStore.edit { preferences ->
             updateStringPreference(preferences, heightKey, profile.heightInCm?.toString())
             updateStringPreference(preferences, targetWeightKey, profile.targetWeightInKg?.toString())

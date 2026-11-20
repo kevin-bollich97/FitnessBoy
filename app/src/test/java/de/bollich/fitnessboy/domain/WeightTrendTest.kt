@@ -13,7 +13,7 @@ class WeightTrendTest {
     /** Builds entries newest first, as delivered by the repository. */
     private fun entries(vararg daysAgoToWeight: Pair<Long, Double>): List<WeightEntry> =
         daysAgoToWeight
-            .map { (daysAgo, weight) -> WeightEntry(today.minusDays(daysAgo), weight) }
+            .map { (daysAgo, weight) -> WeightEntry(date = today.minusDays(daysAgo), weightInKg = weight) }
             .sortedByDescending(WeightEntry::date)
 
     @Test

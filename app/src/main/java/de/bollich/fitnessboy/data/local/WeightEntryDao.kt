@@ -1,21 +1,34 @@
 package de.bollich.fitnessboy.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeightEntryDao {
     @Query("SELECT * FROM weight_entries ORDER BY date_epoch_day DESC, id DESC")
-    fun getAll(): List<WeightEntryEntity>
+    fun observeAll(): Flow<List<WeightEntryEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(entries: List<WeightEntryEntity>)
+    @Insert
+    suspend fun insert(entry: WeightEntryEntity)
 
-    @Query("DELETE FROM weight_entries")
-    fun deleteAll()
+    @Insert
+    suspend fun insertAll(entries: List<WeightEntryEntity>)
+
+    @Delete
+    suspend fun delete(entry: WeightEntryEntity)
 
     @Query("SELECT COUNT(*) FROM weight_entries")
-    fun count(): Int
+    suspend fun count(): Int
+
+    /** Inserts [entries] only if the table is empty. Returns whether anything was inserted. */
+    @Transaction
+    suspend fun insertAllIfEmpty(entries: List<WeightEntryEntity>): Boolean {
+        if (count() > 0) return false
+        insertAll(entries)
+        return true
+    }
 }

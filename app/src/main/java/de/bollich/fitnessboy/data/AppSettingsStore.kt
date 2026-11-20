@@ -12,15 +12,15 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import de.bollich.fitnessboy.domain.repository.SettingsRepository
 import de.bollich.fitnessboy.model.AppSettings
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 class AppSettingsStore private constructor(
     private val dataStore: DataStore<Preferences>,
 ) : SettingsRepository {
-    override fun load(): AppSettings = runBlocking {
-        val preferences = dataStore.data
+    override fun observeSettings(): Flow<AppSettings> =
+        dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
                     emit(emptyPreferences())
@@ -28,15 +28,14 @@ class AppSettingsStore private constructor(
                     throw exception
                 }
             }
-            .first()
+            .map { preferences ->
+                AppSettings(
+                    selectedTabName = preferences[selectedTabKey] ?: AppSettings().selectedTabName,
+                    selectedWeightPageName = preferences[selectedWeightPageKey] ?: AppSettings().selectedWeightPageName,
+                )
+            }
 
-        AppSettings(
-            selectedTabName = preferences[selectedTabKey] ?: AppSettings().selectedTabName,
-            selectedWeightPageName = preferences[selectedWeightPageKey] ?: AppSettings().selectedWeightPageName,
-        )
-    }
-
-    override fun save(settings: AppSettings): Unit = runBlocking {
+    override suspend fun save(settings: AppSettings) {
         dataStore.edit { preferences ->
             preferences[selectedTabKey] = settings.selectedTabName
             preferences[selectedWeightPageKey] = settings.selectedWeightPageName

@@ -8,27 +8,24 @@ import java.time.LocalDate
 class AddWeightEntry(
     private val weightRepository: WeightRepository,
 ) {
-    operator fun invoke(
-        entries: List<WeightEntry>,
+    suspend operator fun invoke(
         weightInput: String,
         selectedDate: LocalDate,
     ): Result {
         val parsedWeight = parseWeight(weightInput)
             ?: return Result.InvalidWeight("Bitte ein gültiges Gewicht eingeben.")
 
-        val updatedEntries = (
-            entries + WeightEntry(
+        weightRepository.add(
+            WeightEntry(
                 date = selectedDate,
                 weightInKg = parsedWeight,
             )
-        ).sortedByDescending(WeightEntry::date)
-
-        weightRepository.save(updatedEntries)
-        return Result.Success(updatedEntries)
+        )
+        return Result.Success
     }
 
     sealed interface Result {
-        data class Success(val entries: List<WeightEntry>) : Result
+        data object Success : Result
         data class InvalidWeight(val message: String) : Result
     }
 }

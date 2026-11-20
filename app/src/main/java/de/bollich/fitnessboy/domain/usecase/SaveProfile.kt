@@ -9,7 +9,7 @@ import de.bollich.fitnessboy.model.UserProfile
 class SaveProfile(
     private val profileRepository: ProfileRepository,
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         profile: UserProfile,
         heightInput: String,
         targetWeightInput: String,

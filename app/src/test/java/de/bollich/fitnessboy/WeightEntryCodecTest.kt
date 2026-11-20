@@ -25,8 +25,8 @@ class WeightEntryCodecTest {
     @Test
     fun encodeAndDecode_roundTripsEntries() {
         val entries = listOf(
-            WeightEntry(LocalDate.of(2026, 3, 9), 82.4),
-            WeightEntry(LocalDate.of(2026, 3, 8), 82.9),
+            WeightEntry(date = LocalDate.of(2026, 3, 9), weightInKg = 82.4),
+            WeightEntry(date = LocalDate.of(2026, 3, 8), weightInKg = 82.9),
         )
 
         val decoded = WeightEntryCodec.decode(WeightEntryCodec.encode(entries))
@@ -106,9 +106,9 @@ class WeightEntryCodecTest {
     @Test
     fun calculateWeightTrend_returnsSevenDayTrend() {
         val entries = listOf(
-            WeightEntry(LocalDate.of(2026, 3, 15), 81.0),
-            WeightEntry(LocalDate.of(2026, 3, 12), 81.5),
-            WeightEntry(LocalDate.of(2026, 3, 8), 82.4),
+            WeightEntry(date = LocalDate.of(2026, 3, 15), weightInKg = 81.0),
+            WeightEntry(date = LocalDate.of(2026, 3, 12), weightInKg = 81.5),
+            WeightEntry(date = LocalDate.of(2026, 3, 8), weightInKg = 82.4),
         )
 
         val trend = calculateWeightTrend(entries, WeightTrendPeriod.SEVEN_DAYS)
@@ -121,9 +121,9 @@ class WeightEntryCodecTest {
     @Test
     fun calculateWeightTrend_returnsSinceStartTrend() {
         val entries = listOf(
-            WeightEntry(LocalDate.of(2026, 3, 15), 81.0),
-            WeightEntry(LocalDate.of(2026, 3, 12), 81.5),
-            WeightEntry(LocalDate.of(2026, 2, 20), 84.0),
+            WeightEntry(date = LocalDate.of(2026, 3, 15), weightInKg = 81.0),
+            WeightEntry(date = LocalDate.of(2026, 3, 12), weightInKg = 81.5),
+            WeightEntry(date = LocalDate.of(2026, 2, 20), weightInKg = 84.0),
         )
 
         val trend = calculateWeightTrend(entries, WeightTrendPeriod.SINCE_START)
@@ -136,9 +136,9 @@ class WeightEntryCodecTest {
     @Test
     fun calculateGoalProgress_returnsProgressTowardsWeightLossGoal() {
         val entries = listOf(
-            WeightEntry(LocalDate.of(2026, 3, 15), 81.0),
-            WeightEntry(LocalDate.of(2026, 3, 12), 81.5),
-            WeightEntry(LocalDate.of(2026, 2, 20), 84.0),
+            WeightEntry(date = LocalDate.of(2026, 3, 15), weightInKg = 81.0),
+            WeightEntry(date = LocalDate.of(2026, 3, 12), weightInKg = 81.5),
+            WeightEntry(date = LocalDate.of(2026, 2, 20), weightInKg = 84.0),
         )
 
         val progress = calculateGoalProgress(entries, targetWeightInKg = 78.0)
@@ -152,9 +152,9 @@ class WeightEntryCodecTest {
     @Test
     fun calculateGoalProgress_marksReachedGoal() {
         val entries = listOf(
-            WeightEntry(LocalDate.of(2026, 3, 15), 77.5),
-            WeightEntry(LocalDate.of(2026, 3, 12), 78.4),
-            WeightEntry(LocalDate.of(2026, 2, 20), 84.0),
+            WeightEntry(date = LocalDate.of(2026, 3, 15), weightInKg = 77.5),
+            WeightEntry(date = LocalDate.of(2026, 3, 12), weightInKg = 78.4),
+            WeightEntry(date = LocalDate.of(2026, 2, 20), weightInKg = 84.0),
         )
 
         val progress = calculateGoalProgress(entries, targetWeightInKg = 78.0)

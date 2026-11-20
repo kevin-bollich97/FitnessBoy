@@ -147,6 +147,8 @@ private fun FitnessBoyScreen(
                 )
                 .padding(innerPadding)
         ) {
+            if (uiState.isLoading) return@Box
+
             when (uiState.selectedTab) {
                 AppTab.WEIGHT -> WeightTab(
                     uiState = uiState,
@@ -273,7 +275,7 @@ private fun WeightHistoryPage(
             }
         }
 
-        items(entries, key = { "${it.date}-${it.weightInKg}" }) { entry ->
+        items(entries, key = { it.id }) { entry ->
             WeightHistoryRow(
                 entry = entry,
                 onDelete = { onDeleteEntry(entry) },
@@ -529,9 +531,10 @@ private fun FitnessBoyAppPreview() {
     FitnessBoyTheme {
         FitnessBoyScreen(
             uiState = FitnessBoyUiState(
+                isLoading = false,
                 entries = listOf(
-                    WeightEntry(LocalDate.of(2026, 3, 8), 82.9),
-                    WeightEntry(LocalDate.of(2026, 3, 9), 82.4),
+                    WeightEntry(id = 1, date = LocalDate.of(2026, 3, 8), weightInKg = 82.9),
+                    WeightEntry(id = 2, date = LocalDate.of(2026, 3, 9), weightInKg = 82.4),
                 ),
                 bodyMeasurementsEntries = listOf(
                     BodyMeasurementsEntry(
@@ -542,7 +545,7 @@ private fun FitnessBoyAppPreview() {
                     )
                 ),
                 profile = UserProfile(heightInCm = 180.0, targetWeightInKg = 78.0),
-                latestEntry = WeightEntry(LocalDate.of(2026, 3, 9), 82.4),
+                latestEntry = WeightEntry(id = 2, date = LocalDate.of(2026, 3, 9), weightInKg = 82.4),
                 latestBodyMeasurementsEntry = BodyMeasurementsEntry(
                     date = LocalDate.of(2026, 3, 9),
                     waistInCm = 88.0,

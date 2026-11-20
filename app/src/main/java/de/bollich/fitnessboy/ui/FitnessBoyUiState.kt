@@ -30,6 +30,7 @@ enum class ProfilePage {
 }
 
 data class FitnessBoyUiState(
+    val isLoading: Boolean = true,
     val selectedTab: AppTab = AppTab.WEIGHT,
     val selectedWeightPage: WeightPage = WeightPage.DASHBOARD,
     val selectedProfilePage: ProfilePage = ProfilePage.OVERVIEW,

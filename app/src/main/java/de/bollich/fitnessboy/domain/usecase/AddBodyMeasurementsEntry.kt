@@ -8,7 +8,7 @@ import java.time.LocalDate
 class AddBodyMeasurementsEntry(
     private val repository: BodyMeasurementsRepository,
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         date: LocalDate,
         waistInput: String,
         hipsInput: String,
@@ -21,7 +21,7 @@ class AddBodyMeasurementsEntry(
         val shoulders = parseBodyMeasurement(shouldersInput)
             ?: return Result.InvalidShoulders("Bitte eine gültige Schulterbreite eingeben.")
 
-        val updatedEntries = repository.add(
+        repository.add(
             BodyMeasurementsEntry(
                 date = date,
                 waistInCm = waist,
@@ -30,11 +30,11 @@ class AddBodyMeasurementsEntry(
             )
         )
 
-        return Result.Success(updatedEntries)
+        return Result.Success
     }
 
     sealed interface Result {
-        data class Success(val entries: List<BodyMeasurementsEntry>) : Result
+        data object Success : Result
         data class InvalidWaist(val message: String) : Result
         data class InvalidHips(val message: String) : Result
         data class InvalidShoulders(val message: String) : Result

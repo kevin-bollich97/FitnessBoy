@@ -11,6 +11,7 @@ class WeightEntryEntityTest {
     @Test
     fun weightEntryEntity_roundTripsModel() {
         val entry = WeightEntry(
+            id = 7,
             date = LocalDate.of(2026, 3, 9),
             weightInKg = 82.4,
         )

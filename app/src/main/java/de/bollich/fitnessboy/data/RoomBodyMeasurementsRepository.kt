@@ -5,20 +5,21 @@ import de.bollich.fitnessboy.data.local.toEntity
 import de.bollich.fitnessboy.data.local.toModel
 import de.bollich.fitnessboy.domain.repository.BodyMeasurementsRepository
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RoomBodyMeasurementsRepository(
     private val bodyMeasurementsDao: BodyMeasurementsDao,
 ) : BodyMeasurementsRepository {
-    override fun load(): List<BodyMeasurementsEntry> =
-        bodyMeasurementsDao.getAll().map { it.toModel() }
+    override fun observeEntries(): Flow<List<BodyMeasurementsEntry>> =
+        bodyMeasurementsDao.observeAll()
+            .map { entities -> entities.map { it.toModel() } }
 
-    override fun add(entry: BodyMeasurementsEntry): List<BodyMeasurementsEntry> {
+    override suspend fun add(entry: BodyMeasurementsEntry) {
         bodyMeasurementsDao.insert(entry.toEntity())
-        return load()
     }
 
-    override fun delete(entry: BodyMeasurementsEntry): List<BodyMeasurementsEntry> {
+    override suspend fun delete(entry: BodyMeasurementsEntry) {
         bodyMeasurementsDao.delete(entry.toEntity())
-        return load()
     }
 }

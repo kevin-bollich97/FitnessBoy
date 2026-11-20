@@ -18,12 +18,14 @@ data class WeightEntryEntity(
 
 fun WeightEntryEntity.toModel(): WeightEntry =
     WeightEntry(
+        id = id,
         date = LocalDate.ofEpochDay(dateEpochDay),
         weightInKg = weightInKg,
     )
 
 fun WeightEntry.toEntity(): WeightEntryEntity =
     WeightEntryEntity(
+        id = id,
         dateEpochDay = date.toEpochDay(),
         weightInKg = weightInKg,
     )
