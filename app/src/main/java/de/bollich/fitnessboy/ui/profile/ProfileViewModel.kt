@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.calculateBmi
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
 import de.bollich.fitnessboy.domain.repository.WeightRepository
 import de.bollich.fitnessboy.domain.usecase.SaveProfile
 import de.bollich.fitnessboy.format.formatNumber
+import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.ui.appContainer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -49,19 +51,16 @@ class ProfileViewModel(
     init {
         viewModelScope.launch {
             val profile = profileRepository.observeProfile().first()
-            form.value = ProfileFormState(
-                heightInput = profile.heightInCm?.let(::formatNumber).orEmpty(),
-                targetWeightInput = profile.targetWeightInKg?.let(::formatNumber).orEmpty(),
-            )
+            form.value = profile.toFormState()
         }
     }
 
     fun onHeightValueChange(value: String) {
-        form.update { it?.copy(heightInput = value, heightErrorText = null) }
+        form.update { it?.copy(heightInput = value, heightErrorRes = null) }
     }
 
     fun onTargetWeightValueChange(value: String) {
-        form.update { it?.copy(targetWeightInput = value, targetWeightErrorText = null) }
+        form.update { it?.copy(targetWeightInput = value, targetWeightErrorRes = null) }
     }
 
     fun onSaveClick() {
@@ -73,15 +72,12 @@ class ProfileViewModel(
                 targetWeightInput = current.targetWeightInput,
             )
             when (result) {
-                is SaveProfile.Result.Success -> form.value = ProfileFormState(
-                    heightInput = result.formattedHeight,
-                    targetWeightInput = result.formattedTargetWeight,
-                )
-                is SaveProfile.Result.InvalidHeight -> form.update {
-                    it?.copy(heightErrorText = result.message, targetWeightErrorText = null)
+                is SaveProfile.Result.Success -> form.value = result.profile.toFormState()
+                SaveProfile.Result.InvalidHeight -> form.update {
+                    it?.copy(heightErrorRes = R.string.error_invalid_height, targetWeightErrorRes = null)
                 }
-                is SaveProfile.Result.InvalidTargetWeight -> form.update {
-                    it?.copy(targetWeightErrorText = result.message)
+                SaveProfile.Result.InvalidTargetWeight -> form.update {
+                    it?.copy(targetWeightErrorRes = R.string.error_invalid_target_weight)
                 }
             }
         }
@@ -100,3 +96,8 @@ class ProfileViewModel(
         }
     }
 }
+
+private fun UserProfile.toFormState() = ProfileFormState(
+    heightInput = heightInCm?.let(::formatNumber).orEmpty(),
+    targetWeightInput = targetWeightInKg?.let(::formatNumber).orEmpty(),
+)

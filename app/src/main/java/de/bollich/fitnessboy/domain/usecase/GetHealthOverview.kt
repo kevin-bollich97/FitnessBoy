@@ -1,5 +1,7 @@
 package de.bollich.fitnessboy.domain.usecase
 
+import de.bollich.fitnessboy.domain.BmiCategory
+import de.bollich.fitnessboy.domain.WeightRange
 import de.bollich.fitnessboy.domain.calculateBmi
 import de.bollich.fitnessboy.domain.calculateGoalProgress
 import de.bollich.fitnessboy.domain.calculateHealthyWeightRange
@@ -9,7 +11,6 @@ import de.bollich.fitnessboy.domain.classifyBmi
 import de.bollich.fitnessboy.domain.GoalProgress
 import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.domain.WeightTrendPeriod
-import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
 
@@ -20,8 +21,6 @@ class GetHealthOverview {
     ): HealthOverview {
         val latestEntry = entries.firstOrNull()
         val bmi = calculateBmi(latestEntry?.weightInKg, profile.heightInCm)
-        val healthyWeightRange = calculateHealthyWeightRange(profile.heightInCm)
-        val optimalWeight = calculateOptimalWeight(profile.heightInCm)
         val goalProgress = calculateGoalProgress(entries, profile.targetWeightInKg)
         val trends = WeightTrendPeriod.entries
             .mapNotNull { period -> calculateWeightTrend(entries, period) }
@@ -32,10 +31,8 @@ class GetHealthOverview {
             goalProgress = goalProgress,
             bmi = bmi,
             bmiCategory = classifyBmi(bmi),
-            healthyWeightRangeText = healthyWeightRange?.let {
-                "${formatNumber(it.minimumInKg)} bis ${formatNumber(it.maximumInKg)} kg"
-            },
-            optimalWeightText = optimalWeight?.let { "${formatNumber(it)} kg" },
+            healthyWeightRange = calculateHealthyWeightRange(profile.heightInCm),
+            optimalWeightInKg = calculateOptimalWeight(profile.heightInCm),
         )
     }
 
@@ -44,8 +41,8 @@ class GetHealthOverview {
         val trends: List<WeightTrend>,
         val goalProgress: GoalProgress?,
         val bmi: Double?,
-        val bmiCategory: String?,
-        val healthyWeightRangeText: String?,
-        val optimalWeightText: String?,
+        val bmiCategory: BmiCategory?,
+        val healthyWeightRange: WeightRange?,
+        val optimalWeightInKg: Double?,
     )
 }

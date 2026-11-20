@@ -1,4 +1,4 @@
-package de.bollich.fitnessboy
+package de.bollich.fitnessboy.data
 
 import de.bollich.fitnessboy.data.local.toEntity
 import de.bollich.fitnessboy.data.local.toModel

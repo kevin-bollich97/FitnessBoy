@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.bollich.fitnessboy.domain.BmiCategory
+import de.bollich.fitnessboy.domain.WeightRange
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
@@ -17,9 +19,9 @@ import de.bollich.fitnessboy.ui.components.HeadlineSection
 import de.bollich.fitnessboy.ui.components.MetricInfoCard
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import de.bollich.fitnessboy.ui.weight.WeightUiState
+import de.bollich.fitnessboy.ui.weight.WeightViewModel
 import de.bollich.fitnessboy.ui.weight.headlineMetrics
 import de.bollich.fitnessboy.ui.weight.trendMetrics
-import de.bollich.fitnessboy.ui.weight.WeightViewModel
 import java.time.LocalDate
 
 @Composable
@@ -66,7 +68,7 @@ private fun BmiScreen(
         item {
             MetricInfoCard(
                 title = "Optimalgewicht",
-                value = uiState.optimalWeightText ?: "Bitte Profil ausfüllen",
+                value = uiState.optimalWeightInKg?.let { "${formatNumber(it)} kg" } ?: "Bitte Profil ausfüllen",
                 description = "Grobe Orientierung mit BMI 22 als Zielwert.",
             )
         }
@@ -74,7 +76,9 @@ private fun BmiScreen(
         item {
             MetricInfoCard(
                 title = "Gesunder Bereich",
-                value = uiState.healthyWeightRangeText ?: "Bitte Profil ausfüllen",
+                value = uiState.healthyWeightRange?.let {
+                    "${formatNumber(it.minimumInKg)} bis ${formatNumber(it.maximumInKg)} kg"
+                } ?: "Bitte Profil ausfüllen",
                 description = "Abgeleitet aus BMI 18.5 bis 24.9 für deine Größe.",
             )
         }
@@ -93,9 +97,9 @@ private fun BmiScreenPreview() {
                 profile = UserProfile(heightInCm = 180.0, targetWeightInKg = 78.0),
                 latestEntry = latestEntry,
                 bmi = 25.4,
-                bmiCategory = "Übergewicht",
-                healthyWeightRangeText = "59,9 bis 80,7 kg",
-                optimalWeightText = "71,3 kg",
+                bmiCategory = BmiCategory.OVERWEIGHT,
+                healthyWeightRange = WeightRange(minimumInKg = 59.9, maximumInKg = 80.7),
+                optimalWeightInKg = 71.3,
             ),
         )
     }

@@ -63,7 +63,7 @@ class BodyMeasurementsViewModelTest {
 
         val state = viewModel.uiState.value
         assertTrue(state.form.isDialogVisible)
-        assertNotNull(state.form.hipsErrorText)
+        assertNotNull(state.form.hipsErrorRes)
         assertTrue(state.entries.isEmpty())
     }
 
@@ -78,7 +78,7 @@ class BodyMeasurementsViewModelTest {
 
         val form = viewModel.uiState.value.form
         assertFalse(form.isDialogVisible)
-        assertNull(form.waistErrorText)
+        assertNull(form.waistErrorRes)
         assertEquals("x", form.waistInput)
     }
 

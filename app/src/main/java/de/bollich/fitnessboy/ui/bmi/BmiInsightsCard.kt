@@ -15,14 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.ui.components.MetricPill
 
 @Composable
 fun BmiInsightsCard(
     bmi: String?,
-    bmiCategory: String?,
+    bmiCategory: BmiCategory?,
     heightText: String?,
     currentWeightText: String?,
 ) {
@@ -67,7 +69,7 @@ fun BmiInsightsCard(
                     color = containerColor,
                 ) {
                     Text(
-                        text = "Einordnung: $bmiCategory",
+                        text = "Einordnung: ${stringResource(bmiCategory.labelRes)}",
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
@@ -80,12 +82,14 @@ fun BmiInsightsCard(
 }
 
 @Composable
-private fun bmiCategoryColors(category: String): Pair<Color, Color> {
+private fun bmiCategoryColors(category: BmiCategory): Pair<Color, Color> {
     val colorScheme = MaterialTheme.colorScheme
     return when (category) {
-        "Normalgewicht" -> colorScheme.primary.copy(alpha = 0.16f) to colorScheme.primary
-        "Untergewicht" -> colorScheme.tertiary.copy(alpha = 0.18f) to colorScheme.tertiary
-        "Übergewicht" -> colorScheme.secondary.copy(alpha = 0.18f) to colorScheme.secondary
-        else -> colorScheme.error.copy(alpha = 0.16f) to colorScheme.error
+        BmiCategory.NORMAL_WEIGHT -> colorScheme.primary.copy(alpha = 0.16f) to colorScheme.primary
+        BmiCategory.UNDERWEIGHT -> colorScheme.tertiary.copy(alpha = 0.18f) to colorScheme.tertiary
+        BmiCategory.OVERWEIGHT -> colorScheme.secondary.copy(alpha = 0.18f) to colorScheme.secondary
+        BmiCategory.OBESITY_CLASS_I,
+        BmiCategory.OBESITY_CLASS_II,
+        BmiCategory.OBESITY_CLASS_III -> colorScheme.error.copy(alpha = 0.16f) to colorScheme.error
     }
 }

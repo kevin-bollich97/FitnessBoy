@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">FitnessBoy</string>
+
+    <!-- Validation -->
+    <string name="error_invalid_weight">Bitte ein gültiges Gewicht eingeben.</string>
+    <string name="error_invalid_waist">Bitte einen gültigen Bauchumfang eingeben.</string>
+    <string name="error_invalid_hips">Bitte einen gültigen Hüftumfang eingeben.</string>
+    <string name="error_invalid_shoulders">Bitte eine gültige Schulterbreite eingeben.</string>
+    <string name="error_invalid_height">Bitte eine gültige Größe in cm eingeben.</string>
+    <string name="error_invalid_target_weight">Bitte ein gültiges Zielgewicht eingeben.</string>
+
+    <!-- BMI categories (WHO) -->
+    <string name="bmi_category_underweight">Untergewicht</string>
+    <string name="bmi_category_normal_weight">Normalgewicht</string>
+    <string name="bmi_category_overweight">Übergewicht</string>
+    <string name="bmi_category_obesity_class_1">Adipositas Grad I</string>
+    <string name="bmi_category_obesity_class_2">Adipositas Grad II</string>
+    <string name="bmi_category_obesity_class_3">Adipositas Grad III</string>
+
+    <!-- Trend periods -->
+    <string name="trend_period_seven_days">7 Tage</string>
+    <string name="trend_period_thirty_days">30 Tage</string>
+    <string name="trend_period_since_start">Seit Start</string>
 </resources>

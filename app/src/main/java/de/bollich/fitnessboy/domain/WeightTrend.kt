@@ -1,17 +1,14 @@
 package de.bollich.fitnessboy.domain
 
-import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.WeightEntry
 import java.time.LocalDate
-import kotlin.math.absoluteValue
 
 enum class WeightTrendPeriod(
-    val label: String,
     val days: Long?,
 ) {
-    SEVEN_DAYS("7 Tage", 7),
-    THIRTY_DAYS("30 Tage", 30),
-    SINCE_START("Seit Start", null),
+    SEVEN_DAYS(7),
+    THIRTY_DAYS(30),
+    SINCE_START(null),
 }
 
 data class WeightTrend(
@@ -59,13 +56,4 @@ fun calculateWeightTrend(
         latestDate = latestEntry.date,
         latestWeightInKg = latestEntry.weightInKg,
     )
-}
-
-fun formatTrend(delta: Double): String {
-    val direction = when {
-        delta > 0 -> "+"
-        delta < 0 -> "-"
-        else -> ""
-    }
-    return "$direction${formatNumber(delta.absoluteValue)} kg"
 }

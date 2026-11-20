@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.repository.BodyMeasurementsRepository
 import de.bollich.fitnessboy.domain.usecase.AddBodyMeasurementsEntry
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.ui.appContainer
+import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class BodyMeasurementsViewModel(
     private val repository: BodyMeasurementsRepository,
@@ -41,9 +42,9 @@ class BodyMeasurementsViewModel(
                 it.copy(
                     isDialogVisible = false,
                     selectedDate = LocalDate.now(),
-                    waistErrorText = null,
-                    hipsErrorText = null,
-                    shouldersErrorText = null,
+                    waistErrorRes = null,
+                    hipsErrorRes = null,
+                    shouldersErrorRes = null,
                 )
             }
         }
@@ -54,15 +55,15 @@ class BodyMeasurementsViewModel(
     }
 
     fun onWaistValueChange(value: String) {
-        form.update { it.copy(waistInput = value, waistErrorText = null) }
+        form.update { it.copy(waistInput = value, waistErrorRes = null) }
     }
 
     fun onHipsValueChange(value: String) {
-        form.update { it.copy(hipsInput = value, hipsErrorText = null) }
+        form.update { it.copy(hipsInput = value, hipsErrorRes = null) }
     }
 
     fun onShouldersValueChange(value: String) {
-        form.update { it.copy(shouldersInput = value, shouldersErrorText = null) }
+        form.update { it.copy(shouldersInput = value, shouldersErrorRes = null) }
     }
 
     fun onSaveClick() {
@@ -76,12 +77,12 @@ class BodyMeasurementsViewModel(
             )
             when (result) {
                 AddBodyMeasurementsEntry.Result.Success -> form.value = BodyMeasurementsFormState()
-                is AddBodyMeasurementsEntry.Result.InvalidWaist ->
-                    form.update { it.copy(waistErrorText = result.message) }
-                is AddBodyMeasurementsEntry.Result.InvalidHips ->
-                    form.update { it.copy(hipsErrorText = result.message) }
-                is AddBodyMeasurementsEntry.Result.InvalidShoulders ->
-                    form.update { it.copy(shouldersErrorText = result.message) }
+                AddBodyMeasurementsEntry.Result.InvalidWaist ->
+                    form.update { it.copy(waistErrorRes = R.string.error_invalid_waist) }
+                AddBodyMeasurementsEntry.Result.InvalidHips ->
+                    form.update { it.copy(hipsErrorRes = R.string.error_invalid_hips) }
+                AddBodyMeasurementsEntry.Result.InvalidShoulders ->
+                    form.update { it.copy(shouldersErrorRes = R.string.error_invalid_shoulders) }
             }
         }
     }

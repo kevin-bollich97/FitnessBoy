@@ -1,5 +1,6 @@
 package de.bollich.fitnessboy.ui.measurements
 
+import androidx.annotation.StringRes
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import java.time.LocalDate
 
@@ -7,11 +8,11 @@ data class BodyMeasurementsFormState(
     val isDialogVisible: Boolean = false,
     val selectedDate: LocalDate = LocalDate.now(),
     val waistInput: String = "",
-    val waistErrorText: String? = null,
+    @StringRes val waistErrorRes: Int? = null,
     val hipsInput: String = "",
-    val hipsErrorText: String? = null,
+    @StringRes val hipsErrorRes: Int? = null,
     val shouldersInput: String = "",
-    val shouldersErrorText: String? = null,
+    @StringRes val shouldersErrorRes: Int? = null,
 )
 
 data class BodyMeasurementsUiState(

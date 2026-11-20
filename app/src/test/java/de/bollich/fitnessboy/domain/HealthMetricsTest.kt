@@ -21,13 +21,13 @@ class HealthMetricsTest {
     @Test
     fun classifyBmi_usesWhoCategories() {
         assertNull(classifyBmi(null))
-        assertEquals("Untergewicht", classifyBmi(18.4))
-        assertEquals("Normalgewicht", classifyBmi(18.5))
-        assertEquals("Normalgewicht", classifyBmi(24.9))
-        assertEquals("Übergewicht", classifyBmi(25.0))
-        assertEquals("Adipositas Grad I", classifyBmi(30.0))
-        assertEquals("Adipositas Grad II", classifyBmi(35.0))
-        assertEquals("Adipositas Grad III", classifyBmi(40.0))
+        assertEquals(BmiCategory.UNDERWEIGHT, classifyBmi(18.4))
+        assertEquals(BmiCategory.NORMAL_WEIGHT, classifyBmi(18.5))
+        assertEquals(BmiCategory.NORMAL_WEIGHT, classifyBmi(24.9))
+        assertEquals(BmiCategory.OVERWEIGHT, classifyBmi(25.0))
+        assertEquals(BmiCategory.OBESITY_CLASS_I, classifyBmi(30.0))
+        assertEquals(BmiCategory.OBESITY_CLASS_II, classifyBmi(35.0))
+        assertEquals(BmiCategory.OBESITY_CLASS_III, classifyBmi(40.0))
     }
 
     @Test

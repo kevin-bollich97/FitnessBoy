@@ -3,7 +3,6 @@ package de.bollich.fitnessboy.domain.usecase
 import de.bollich.fitnessboy.domain.parseHeight
 import de.bollich.fitnessboy.domain.parseOptionalWeight
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
-import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.UserProfile
 
 class SaveProfile(
@@ -15,11 +14,11 @@ class SaveProfile(
         targetWeightInput: String,
     ): Result {
         val parsedHeight = parseHeight(heightInput)
-            ?: return Result.InvalidHeight("Bitte eine gültige Größe in cm eingeben.")
+            ?: return Result.InvalidHeight
 
         val parsedTargetWeight = parseOptionalWeight(targetWeightInput)
         if (targetWeightInput.isNotBlank() && parsedTargetWeight == null) {
-            return Result.InvalidTargetWeight("Bitte ein gültiges Zielgewicht eingeben.")
+            return Result.InvalidTargetWeight
         }
 
         val updatedProfile = profile.copy(
@@ -28,21 +27,13 @@ class SaveProfile(
         )
         profileRepository.save(updatedProfile)
 
-        return Result.Success(
-            profile = updatedProfile,
-            formattedHeight = formatNumber(parsedHeight),
-            formattedTargetWeight = parsedTargetWeight?.let(::formatNumber).orEmpty(),
-        )
+        return Result.Success(updatedProfile)
     }
 
     sealed interface Result {
-        data class Success(
-            val profile: UserProfile,
-            val formattedHeight: String,
-            val formattedTargetWeight: String,
-        ) : Result
+        data class Success(val profile: UserProfile) : Result
 
-        data class InvalidHeight(val message: String) : Result
-        data class InvalidTargetWeight(val message: String) : Result
+        data object InvalidHeight : Result
+        data object InvalidTargetWeight : Result
     }
 }

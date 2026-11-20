@@ -1,15 +1,25 @@
 package de.bollich.fitnessboy.domain
 
-fun classifyBmi(bmi: Double?): String? {
+/** WHO BMI classification for adults. */
+enum class BmiCategory {
+    UNDERWEIGHT,
+    NORMAL_WEIGHT,
+    OVERWEIGHT,
+    OBESITY_CLASS_I,
+    OBESITY_CLASS_II,
+    OBESITY_CLASS_III,
+}
+
+fun classifyBmi(bmi: Double?): BmiCategory? {
     if (bmi == null) return null
 
     return when {
-        bmi < 18.5 -> "Untergewicht"
-        bmi < 25.0 -> "Normalgewicht"
-        bmi < 30.0 -> "Übergewicht"
-        bmi < 35.0 -> "Adipositas Grad I"
-        bmi < 40.0 -> "Adipositas Grad II"
-        else -> "Adipositas Grad III"
+        bmi < 18.5 -> BmiCategory.UNDERWEIGHT
+        bmi < 25.0 -> BmiCategory.NORMAL_WEIGHT
+        bmi < 30.0 -> BmiCategory.OVERWEIGHT
+        bmi < 35.0 -> BmiCategory.OBESITY_CLASS_I
+        bmi < 40.0 -> BmiCategory.OBESITY_CLASS_II
+        else -> BmiCategory.OBESITY_CLASS_III
     }
 }
 

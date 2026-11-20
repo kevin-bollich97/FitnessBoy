@@ -1,6 +1,9 @@
 package de.bollich.fitnessboy.ui.weight
 
+import androidx.annotation.StringRes
+import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.domain.GoalProgress
+import de.bollich.fitnessboy.domain.WeightRange
 import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
@@ -9,7 +12,7 @@ import java.time.LocalDate
 data class WeightFormState(
     val weightInput: String = "",
     val selectedDate: LocalDate = LocalDate.now(),
-    val errorText: String? = null,
+    @StringRes val errorRes: Int? = null,
 )
 
 data class WeightUiState(
@@ -20,8 +23,8 @@ data class WeightUiState(
     val trends: List<WeightTrend> = emptyList(),
     val goalProgress: GoalProgress? = null,
     val bmi: Double? = null,
-    val bmiCategory: String? = null,
-    val healthyWeightRangeText: String? = null,
-    val optimalWeightText: String? = null,
+    val bmiCategory: BmiCategory? = null,
+    val healthyWeightRange: WeightRange? = null,
+    val optimalWeightInKg: Double? = null,
     val form: WeightFormState = WeightFormState(),
 )

@@ -1,12 +1,13 @@
 package de.bollich.fitnessboy.ui.profile
 
+import androidx.annotation.StringRes
 import de.bollich.fitnessboy.model.UserProfile
 
 data class ProfileFormState(
     val heightInput: String = "",
-    val heightErrorText: String? = null,
+    @StringRes val heightErrorRes: Int? = null,
     val targetWeightInput: String = "",
-    val targetWeightErrorText: String? = null,
+    @StringRes val targetWeightErrorRes: Int? = null,
 )
 
 data class ProfileUiState(

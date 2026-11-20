@@ -15,11 +15,11 @@ class AddBodyMeasurementsEntry(
         shouldersInput: String,
     ): Result {
         val waist = parseBodyMeasurement(waistInput)
-            ?: return Result.InvalidWaist("Bitte einen gültigen Bauchumfang eingeben.")
+            ?: return Result.InvalidWaist
         val hips = parseBodyMeasurement(hipsInput)
-            ?: return Result.InvalidHips("Bitte einen gültigen Hüftumfang eingeben.")
+            ?: return Result.InvalidHips
         val shoulders = parseBodyMeasurement(shouldersInput)
-            ?: return Result.InvalidShoulders("Bitte eine gültige Schulterbreite eingeben.")
+            ?: return Result.InvalidShoulders
 
         repository.add(
             BodyMeasurementsEntry(
@@ -35,8 +35,8 @@ class AddBodyMeasurementsEntry(
 
     sealed interface Result {
         data object Success : Result
-        data class InvalidWaist(val message: String) : Result
-        data class InvalidHips(val message: String) : Result
-        data class InvalidShoulders(val message: String) : Result
+        data object InvalidWaist : Result
+        data object InvalidHips : Result
+        data object InvalidShoulders : Result
     }
 }

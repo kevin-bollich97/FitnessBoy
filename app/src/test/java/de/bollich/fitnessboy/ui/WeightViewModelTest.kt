@@ -1,5 +1,6 @@
 package de.bollich.fitnessboy.ui
 
+import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
 import de.bollich.fitnessboy.domain.usecase.GetHealthOverview
 import de.bollich.fitnessboy.model.UserProfile
@@ -49,7 +50,7 @@ class WeightViewModelTest {
         assertFalse(state.isLoading)
         assertEquals(81.0, state.latestEntry!!.weightInKg, 0.0)
         assertEquals(25.0, state.bmi!!, 0.01)
-        assertEquals("Übergewicht", state.bmiCategory)
+        assertEquals(BmiCategory.OVERWEIGHT, state.bmiCategory)
     }
 
     @Test
@@ -65,7 +66,7 @@ class WeightViewModelTest {
         assertEquals(80.5, state.entries.single().weightInKg, 0.0)
         assertEquals(date, state.entries.single().date)
         assertEquals("", state.form.weightInput)
-        assertNull(state.form.errorText)
+        assertNull(state.form.errorRes)
     }
 
     @Test
@@ -77,7 +78,7 @@ class WeightViewModelTest {
 
         val state = viewModel.uiState.value
         assertEquals("abc", state.form.weightInput)
-        assertNotNull(state.form.errorText)
+        assertNotNull(state.form.errorRes)
         assertEquals(emptyList<Any>(), state.entries)
     }
 
@@ -88,7 +89,7 @@ class WeightViewModelTest {
 
         viewModel.onWeightValueChange("8")
 
-        assertNull(viewModel.uiState.value.form.errorText)
+        assertNull(viewModel.uiState.value.form.errorRes)
     }
 
     @Test

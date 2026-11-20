@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -85,11 +86,11 @@ private fun MeasurementsScreen(
         AddBodyMeasurementsDialog(
             selectedDate = uiState.form.selectedDate,
             waistInput = uiState.form.waistInput,
-            waistErrorText = uiState.form.waistErrorText,
+            waistErrorText = uiState.form.waistErrorRes?.let { stringResource(it) },
             hipsInput = uiState.form.hipsInput,
-            hipsErrorText = uiState.form.hipsErrorText,
+            hipsErrorText = uiState.form.hipsErrorRes?.let { stringResource(it) },
             shouldersInput = uiState.form.shouldersInput,
-            shouldersErrorText = uiState.form.shouldersErrorText,
+            shouldersErrorText = uiState.form.shouldersErrorRes?.let { stringResource(it) },
             onDateChange = onBodyMeasurementsDateChange,
             onWaistChange = onWaistValueChange,
             onHipsChange = onHipsValueChange,

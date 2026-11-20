@@ -39,7 +39,7 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
 - [x] `ui/components/Cards.kt` (~700 Zeilen) aufteilen; ungenutzte `SummaryCard` entfernt (`4a1c3aa`)
 - [ ] Alle UI-Texte nach `res/values/strings.xml` (auch Fehlermeldungen aus Use Cases und BMI-Kategorien)
 - [ ] `formatNumber` vereinheitlichen (aktuell Geräte-Locale-abhängig: „80,5“ vs. „80.5“)
-- [ ] Bug: Maße-Tab zeigt als „Letzter Wert“ das Gewicht statt der Körpermaße
+- [x] Bug: Maße-Tab zeigt als „Letzter Wert“ das Gewicht statt der Körpermaße; `HeadlineSection` generisch gemacht (`5830ce5`)
 - [x] Bug: Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil (`4b1489a`)
 - [ ] Auf Emulator prüfen
 
@@ -55,7 +55,7 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
 - [x] 7-/30-Tage-Trend verglich mit dem ältesten statt dem jüngsten Eintrag vor dem Stichtag (`562aa4a`)
 - [x] `fallbackToDestructiveMigration` hätte bei fehlender Migration alle Daten gelöscht (`2a1c846`)
 - [x] Absturz bei zwei Gewichtseinträgen mit gleichem Datum und Gewicht (doppelter Listen-Key) (`1770c63`)
-- [ ] Maße-Tab „Letzter Wert“ zeigt Gewicht (→ Phase 3)
+- [x] Maße-Tab „Letzter Wert“ zeigt Gewicht (`5830ce5`)
 - [x] Falsche Beschriftung des Zurück-Buttons im Gewichtsverlauf (`4b1489a`)
 
 ## Offene Punkte / Notizen

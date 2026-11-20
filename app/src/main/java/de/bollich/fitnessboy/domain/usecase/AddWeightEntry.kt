@@ -13,7 +13,7 @@ class AddWeightEntry(
         selectedDate: LocalDate,
     ): Result {
         val parsedWeight = parseWeight(weightInput)
-            ?: return Result.InvalidWeight("Bitte ein gültiges Gewicht eingeben.")
+            ?: return Result.InvalidWeight
 
         weightRepository.add(
             WeightEntry(
@@ -26,6 +26,6 @@ class AddWeightEntry(
 
     sealed interface Result {
         data object Success : Result
-        data class InvalidWeight(val message: String) : Result
+        data object InvalidWeight : Result
     }
 }

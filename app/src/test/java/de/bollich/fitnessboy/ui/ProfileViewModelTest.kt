@@ -75,7 +75,7 @@ class ProfileViewModelTest {
 
         viewModel.onSaveClick()
 
-        assertNotNull(viewModel.uiState.value.form.heightErrorText)
+        assertNotNull(viewModel.uiState.value.form.heightErrorRes)
         assertEquals(180.0, profileRepository.profile.value.heightInCm!!, 0.0)
     }
 }
