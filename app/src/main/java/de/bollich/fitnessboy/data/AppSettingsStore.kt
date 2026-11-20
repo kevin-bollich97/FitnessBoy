@@ -31,20 +31,20 @@ class AppSettingsStore(
             .map { preferences ->
                 AppSettings(
                     selectedTabName = preferences[selectedTabKey] ?: AppSettings().selectedTabName,
-                    selectedWeightPageName = preferences[selectedWeightPageKey] ?: AppSettings().selectedWeightPageName,
                 )
             }
 
     override suspend fun save(settings: AppSettings) {
         dataStore.edit { preferences ->
             preferences[selectedTabKey] = settings.selectedTabName
-            preferences[selectedWeightPageKey] = settings.selectedWeightPageName
+            // Written by older versions that had a separate weight history page.
+            preferences.remove(legacySelectedWeightPageKey)
         }
     }
 
     companion object {
         private val selectedTabKey = stringPreferencesKey("selected_tab")
-        private val selectedWeightPageKey = stringPreferencesKey("selected_weight_page")
+        private val legacySelectedWeightPageKey = stringPreferencesKey("selected_weight_page")
 
         /** Must be called only once per process; DataStore forbids multiple instances per file. */
         fun create(context: Context): AppSettingsStore =

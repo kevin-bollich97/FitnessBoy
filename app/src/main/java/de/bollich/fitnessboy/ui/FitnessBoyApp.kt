@@ -30,6 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.model.UserProfile
@@ -48,6 +50,8 @@ import de.bollich.fitnessboy.ui.components.WeightChartCard
 import de.bollich.fitnessboy.ui.components.WeightHistoryRow
 import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsUiState
 import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsViewModel
+import de.bollich.fitnessboy.ui.navigation.AppTab
+import de.bollich.fitnessboy.ui.navigation.Destination
 import de.bollich.fitnessboy.ui.profile.ProfileUiState
 import de.bollich.fitnessboy.ui.profile.ProfileViewModel
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
@@ -71,42 +75,41 @@ fun FitnessBoyApp(
     ) {
         if (mainState.isLoading) return@FitnessBoyScaffold
 
-        when (mainState.selectedTab) {
-            AppTab.WEIGHT -> when (mainState.selectedWeightPage) {
-                WeightPage.DASHBOARD -> WeightRoute(weightViewModel)
-                WeightPage.HISTORY -> WeightHistoryRoute(
-                    viewModel = weightViewModel,
-                    onBackClick = { mainViewModel.onWeightPageChange(WeightPage.DASHBOARD) },
-                )
-            }
-
-            AppTab.BMI -> BmiRoute(weightViewModel)
-
-            AppTab.MEASUREMENTS -> MeasurementsRoute(
-                viewModel = bodyMeasurementsViewModel,
-                weightViewModel = weightViewModel,
-            )
-
-            AppTab.PROFILE -> when (mainState.selectedProfilePage) {
-                ProfilePage.OVERVIEW -> ProfileRoute(
-                    viewModel = profileViewModel,
-                    onOpenWeightHistory = { mainViewModel.onProfilePageChange(ProfilePage.WEIGHT_HISTORY) },
-                    onOpenMeasurementsHistory = {
-                        mainViewModel.onProfilePageChange(ProfilePage.MEASUREMENTS_HISTORY)
-                    },
-                )
-
-                ProfilePage.WEIGHT_HISTORY -> WeightHistoryRoute(
-                    viewModel = weightViewModel,
-                    onBackClick = { mainViewModel.onProfilePageChange(ProfilePage.OVERVIEW) },
-                )
-
-                ProfilePage.MEASUREMENTS_HISTORY -> MeasurementsHistoryRoute(
-                    viewModel = bodyMeasurementsViewModel,
-                    onBackClick = { mainViewModel.onProfilePageChange(ProfilePage.OVERVIEW) },
-                )
-            }
-        }
+        NavDisplay(
+            backStack = mainState.backStack,
+            onBack = mainViewModel::onBack,
+            entryProvider = entryProvider {
+                entry<Destination.Tab> { destination ->
+                    when (destination.tab) {
+                        AppTab.WEIGHT -> WeightRoute(weightViewModel)
+                        AppTab.BMI -> BmiRoute(weightViewModel)
+                        AppTab.MEASUREMENTS -> MeasurementsRoute(
+                            viewModel = bodyMeasurementsViewModel,
+                            weightViewModel = weightViewModel,
+                        )
+                        AppTab.PROFILE -> ProfileRoute(
+                            viewModel = profileViewModel,
+                            onOpenWeightHistory = { mainViewModel.navigateTo(Destination.WeightHistory) },
+                            onOpenMeasurementsHistory = {
+                                mainViewModel.navigateTo(Destination.MeasurementsHistory)
+                            },
+                        )
+                    }
+                }
+                entry<Destination.WeightHistory> {
+                    WeightHistoryRoute(
+                        viewModel = weightViewModel,
+                        onBackClick = mainViewModel::onBack,
+                    )
+                }
+                entry<Destination.MeasurementsHistory> {
+                    MeasurementsHistoryRoute(
+                        viewModel = bodyMeasurementsViewModel,
+                        onBackClick = mainViewModel::onBack,
+                    )
+                }
+            },
+        )
     }
 }
 
@@ -333,7 +336,7 @@ private fun WeightHistoryPage(
                 onClick = onBackClick,
                 shape = RoundedCornerShape(20.dp),
             ) {
-                Text("Zurück zur Gewichtsseite")
+                Text("Zurück zum Profil")
             }
         }
 
