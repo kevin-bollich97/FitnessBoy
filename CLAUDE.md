@@ -65,10 +65,4 @@ Use Cases nur, wo sie Logik enthalten (Validierung, Berechnung, z. B. `AddWeight
 
 ## Umbau-Plan
 
-Laufende Verbesserung in Phasen (jeweils lauffähig abschließen):
-
-0. ✅ Grundlagen: Tests für `GoalProgress`, `WeightTrend`, BMI, `InputParser`; Room-Schema-Export
-1. ✅ Datenschicht: `WeightEntry` mit `id`, einzelne insert/delete statt Tabelle neu schreiben; DAOs/Repositories auf `suspend`/`Flow`
-2. ✅ State: reaktiver UI-State via `combine`, ViewModel pro Bereich, Formular-State getrennt vom persistierten State, `AppContainer`
-3. Navigation & UI: Navigation Compose statt `WeightPage`/`ProfilePage`-Enums (`WeightPage.HISTORY` ist toter Code); große Dateien aufteilen; Strings in Ressourcen; `formatNumber` locale-unabhängig/konsistent machen; Maße-Tab zeigt als „Letzter Wert“ das Gewicht; Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil
-4. Aufräumen: Legacy `WeightStore`/`WeightEntryCodec` entfernen, README aktualisieren, CI für Tests/Lint
+Der laufende Umbau wird in [`PLAN.md`](PLAN.md) verfolgt. Erledigte Punkte dort abhaken (mit Commit-Hash) und neu gefundene Bugs unter „Unterwegs gefundene Bugs“ eintragen.
