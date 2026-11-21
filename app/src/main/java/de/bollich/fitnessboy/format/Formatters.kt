@@ -9,11 +9,8 @@ import java.util.Locale
 import kotlin.math.absoluteValue
 
 private val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-private val shortDateFormatter = DateTimeFormatter.ofPattern("dd.MM.")
 
 fun WeightEntry.formattedDate(): String = date.format(dateFormatter)
-
-fun WeightEntry.formattedShortDate(): String = date.format(shortDateFormatter)
 
 fun LocalDate.formattedDate(): String = format(dateFormatter)
 
