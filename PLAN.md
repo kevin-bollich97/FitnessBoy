@@ -2,19 +2,15 @@
 
 Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne dass die App zwischendurch kaputt ist. Jede Phase endet lauffähig, getestet (`./gradlew test`) und auf dem Emulator geprüft. Regeln dazu stehen in [`CLAUDE.md`](CLAUDE.md).
 
-## ▶ Nächste Schritte (Stand 20.11.2026)
+## ▶ Nächste Schritte (Stand 21.11.2026)
 
-Phasen 0–3 sind erledigt. Weiter geht es mit **Phase 4 – Aufräumen**, in dieser Reihenfolge:
+Phasen 0–4 sind erledigt. Offen sind nur noch Punkte, die eine Entscheidung oder einen Push brauchen:
 
-1. ~~Legacy-Migration entfernen~~ – erledigt (`cb53095`); alle Installationen nutzen bereits Room.
-2. ~~Template-Reste entfernen~~ – erledigt (`275951b`).
-3. ~~README aktualisieren~~ – erledigt (`6b521ae`).
-4. ~~CI-Workflow~~ – angelegt (`88e45bf`), läuft erst nach dem ersten Push; Ergebnis dann prüfen.
-5. Bibliotheken aktualisieren (Lint: `GradleDependency`, `NewerVersionAvailable`, `AndroidGradlePluginVersion`), jeweils einzeln committen und auf dem Emulator prüfen.
-6. Restliche Lint-Warnungen (`UseKtx`, `RedundantLabel`) abarbeiten.
+1. **Pushen** und den ersten Lauf des CI-Workflows (`.github/workflows/ci.yml`) auf GitHub prüfen.
+2. **Entscheidung:** `targetSdk` von 36 auf 37 anheben (Lint `OldTargetApi`)? Ändert das Laufzeitverhalten – vorher die Verhaltensänderungen von Android 17 durchgehen und auf dem Emulator testen.
 
-Hinweise für den Start:
-- Emulator `Medium_Phone_API_36.1` enthält Testdaten aus den Prüfläufen (Größe 175 statt 180 cm, Gewichtseintrag 125 kg und Maße-Eintrag vom 20.11.2026). Die Sicherung des Stands davor lag nur im temporären Session-Verzeichnis und ist evtl. nicht mehr vorhanden – Testdaten ggf. in der App löschen bzw. Größe zurücksetzen.
+Hinweise:
+- Emulator `Medium_Phone_API_36.1` enthält Testdaten aus den Prüfläufen (Größe 175 statt 180 cm, Gewichtseintrag 125 kg und Maße-Eintrag vom 20.11.2026) – ggf. in der App löschen bzw. Größe zurücksetzen.
 - Nichts ist gepusht; alle Commits liegen lokal auf `main`.
 
 ## Phase 0 – Grundlagen ✅
@@ -59,12 +55,16 @@ Hinweise für den Start:
 - [x] Bug: Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil (`4b1489a`)
 - [x] Auf Emulator geprüft: Navigation inkl. System-Zurück, alle Screens, deutsche Zahlenformatierung
 
-## Phase 4 – Aufräumen
+## Phase 4 – Aufräumen ✅
 
 - [x] Legacy `WeightStore`/`WeightEntryCodec` samt SharedPreferences-Migration und ungenutzter DAO-Methoden entfernen (`cb53095`)
 - [x] README aktualisieren (Maße, Architektur, Tests) (`6b521ae`)
 - [x] CI-Workflow für Tests und Lint bei Push/PR (`88e45bf`) – erster Lauf auf GitHub steht noch aus
-- [ ] Lint-Warnungen abarbeiten (Library-Updates, `UseKtx`, `RedundantLabel`)
+- [x] Bibliotheken aktualisiert, jeweils einzeln und auf dem Emulator geprüft (`399a36b`…`a7d9ec6`)
+  - [x] AGP 9.5.2, Gradle 9.9.2 (`e84c5ff`)
+  - [x] `compileSdk` 37.1 – von Core 1.19, Lifecycle 2.11 und Compose 1.13 verlangt; `minSdk`/`targetSdk` bleiben 36 (`1a1fbe0`, `6b94e56`)
+  - [x] Kotlin 2.4.21, KSP 2.3.14; Übergangsschalter `android.disallowKotlinSourceSets` entfernt (`a7d9ec6`)
+- [x] Lint-Warnungen: `UseKtx` mit `WeightStore` entfallen, `RedundantLabel` behoben (`5bc7aba`); übrig nur `OldTargetApi` (Entscheidung, siehe oben)
 - [x] Template-Reste entfernt: `ExampleInstrumentedTest`, ungenutzte `colors.xml`, Instrumentation-Abhängigkeiten (`275951b`)
 
 ## Unterwegs gefundene Bugs
