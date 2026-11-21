@@ -1,26 +1,24 @@
 package de.bollich.fitnessboy.domain
 
-/** WHO BMI classification for adults. */
-enum class BmiCategory {
-    UNDERWEIGHT,
-    NORMAL_WEIGHT,
-    OVERWEIGHT,
-    OBESITY_CLASS_I,
-    OBESITY_CLASS_II,
-    OBESITY_CLASS_III,
+/**
+ * WHO BMI classification for adults. Each category covers [lowerBound] (inclusive) up to
+ * [upperBound] (exclusive); `null` means unbounded.
+ */
+enum class BmiCategory(
+    val lowerBound: Double?,
+    val upperBound: Double?,
+) {
+    UNDERWEIGHT(null, 18.5),
+    NORMAL_WEIGHT(18.5, 25.0),
+    OVERWEIGHT(25.0, 30.0),
+    OBESITY_CLASS_I(30.0, 35.0),
+    OBESITY_CLASS_II(35.0, 40.0),
+    OBESITY_CLASS_III(40.0, null),
 }
 
 fun classifyBmi(bmi: Double?): BmiCategory? {
     if (bmi == null) return null
-
-    return when {
-        bmi < 18.5 -> BmiCategory.UNDERWEIGHT
-        bmi < 25.0 -> BmiCategory.NORMAL_WEIGHT
-        bmi < 30.0 -> BmiCategory.OVERWEIGHT
-        bmi < 35.0 -> BmiCategory.OBESITY_CLASS_I
-        bmi < 40.0 -> BmiCategory.OBESITY_CLASS_II
-        else -> BmiCategory.OBESITY_CLASS_III
-    }
+    return BmiCategory.entries.first { category -> category.upperBound?.let { bmi < it } ?: true }
 }
 
 fun calculateBmi(weightInKg: Double?, heightInCm: Double?): Double? {

@@ -31,6 +31,16 @@ class HealthMetricsTest {
     }
 
     @Test
+    fun bmiCategories_coverAllValuesWithoutGaps() {
+        val categories = BmiCategory.entries
+        assertNull(categories.first().lowerBound)
+        assertNull(categories.last().upperBound)
+        categories.zipWithNext().forEach { (lower, upper) ->
+            assertEquals(lower.upperBound, upper.lowerBound)
+        }
+    }
+
+    @Test
     fun calculateHealthyWeightRange_usesBmiBounds() {
         val range = calculateHealthyWeightRange(180.0)!!
         assertEquals(59.94, range.minimumInKg, 0.01)
