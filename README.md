@@ -1,38 +1,40 @@
 # FitnessBoy
 
-FitnessBoy ist eine Android-Fitness-App zum lokalen Tracken von Gewicht, BMI und persönlichen Körperdaten.
+FitnessBoy ist eine Android-App zum lokalen Tracken von Gewicht, BMI und Körpermaßen. Alle Daten bleiben auf dem Gerät – die App macht keine Netzwerkzugriffe.
 
-Der aktuelle Stand der App bietet:
+## Funktionen
 
-- Gewichtseinträge mit frei wählbarem Datum
-- Verlauf als Chart
-- eigene Verlaufsseite mit Löschfunktion für Einträge
-- Profil mit Größe und Zielgewicht
-- BMI-Bereich mit Einordnung, Zielgewicht und gesundem Gewichtsbereich
-- GitHub-Release-Flow für signierte APKs per Tag wie `v0.1.0`
+- **Gewicht:** Einträge mit frei wählbarem Datum, Verlauf als Chart, Trends über 7 Tage, 30 Tage und seit Start, eigene Verlaufsseite mit Löschfunktion
+- **BMI:** BMI mit Einordnung, gesunder Gewichtsbereich und Optimalgewicht auf Basis der Körpergröße, Fortschritt zum Zielgewicht
+- **Körpermaße:** Taille, Hüfte und Schultern mit Datum erfassen, grafische Übersicht, Verlaufsseite mit Löschfunktion
+- **Profil:** Körpergröße und Zielgewicht
+- Zahlen im Format der Geräte-Sprache
+- Signierte Release-APKs per Git-Tag über GitHub Actions
 
 ## Tech Stack
 
-- Kotlin
-- Jetpack Compose
-- Material 3
-- Gradle Kotlin DSL
+- Kotlin, Jetpack Compose, Material 3
+- Navigation 3
+- Room (Einträge) und DataStore (Profil, Einstellungen)
+- ViewModel + `StateFlow`, Coroutines
+- Gradle Kotlin DSL mit Version Catalog (`gradle/libs.versions.toml`)
 - GitHub Actions für Release-Builds
 
-## Projektstruktur
+## Architektur
 
-Die wichtigsten Bereiche:
+Package `de.bollich.fitnessboy` unter `app/src/main/java/`:
 
-- `app/src/main/java/de/bollich/fitnessboy/ui`
-  Compose-Screens und Navigation
-- `app/src/main/java/de/bollich/fitnessboy/ui/components`
-  Wiederverwendbare UI-Komponenten
-- `app/src/main/java/de/bollich/fitnessboy/domain`
-  Berechnungen und fachliche Logik
-- `app/src/main/java/de/bollich/fitnessboy/data`
-  Lokale Speicherung und Codec
-- `app/src/main/java/de/bollich/fitnessboy/model`
-  Datenmodelle
+| Paket | Inhalt |
+| --- | --- |
+| `model/` | Reine Datenklassen |
+| `domain/` | Berechnungen (BMI, Trends, Zielfortschritt), Eingabe-Validierung, Use Cases, Repository-Interfaces – reines Kotlin ohne Android-Abhängigkeiten |
+| `data/` | Repository-Implementierungen: Room-Datenbank (`data/local/`) und DataStore |
+| `format/` | Zahlen- und Einheitenformatierung |
+| `ui/` | Compose-Screens und ViewModels, ein Unterpaket pro Bereich (`weight/`, `bmi/`, `measurements/`, `profile/`), dazu `navigation/`, `components/` und `theme/` |
+
+Abhängigkeitsrichtung: `ui → domain ← data`. Die Abhängigkeiten werden manuell über einen `AppContainer` in der `Application`-Klasse erzeugt, ohne DI-Library. Jeder Bereich hat ein ViewModel, das seinen UI-State reaktiv aus den Repository-Flows baut.
+
+Die verbindlichen Architektur- und Code-Regeln stehen in [`CLAUDE.md`](CLAUDE.md), der laufende Umbau ist in [`PLAN.md`](PLAN.md) dokumentiert.
 
 ## Voraussetzungen
 
@@ -56,17 +58,12 @@ app/build/outputs/apk/debug/app-debug.apk
 
 ## Tests und Checks
 
-Kompilierung prüfen:
-
 ```bash
-./gradlew compileDebugKotlin
+./gradlew test    # Unit-Tests (JVM)
+./gradlew lint    # Android Lint
 ```
 
-Unit-Tests ausführen:
-
-```bash
-./gradlew testDebugUnitTest
-```
+Die Unit-Tests decken die Domain-Logik (Berechnungen, Validierung, Use Cases), die Formatierung und die ViewModels ab. Die ViewModel-Tests nutzen Fake-Repositories aus `app/src/test/.../testing/`.
 
 ## Release-Build lokal
 
@@ -110,7 +107,7 @@ Für signierte Releases per GitHub Actions brauchst du diese Repository Secrets:
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-Eine genauere Anleitung steht in [RELEASES.md](/home/bollich/workspace/github/FitnessBoy/RELEASES.md).
+Eine genauere Anleitung steht in [RELEASES.md](RELEASES.md).
 
 Kurzfassung:
 
@@ -131,9 +128,7 @@ Wenn Android fragt, muss die Installation aus Browser oder Dateimanager erlaubt 
 
 - weitere Fitnessmetriken
 - bessere Verlaufsanalyse
-- Ziele und Fortschrittsanzeigen
 - Datenexport
-- ViewModel-basierte State-Verwaltung
 
 ## Lizenz
 
