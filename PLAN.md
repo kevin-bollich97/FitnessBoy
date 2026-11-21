@@ -1,87 +1,61 @@
-# Plan: Redesign & neue Funktionen
+# Plan
 
-Ziel: Die App übersichtlicher und verständlicher machen (Dashboard statt verstreuter Kennzahlen) und die offenen GitHub-Issues umsetzen. Jeder Schritt endet lauffähig, getestet (`./gradlew test`, `./gradlew lint`) und auf dem Emulator geprüft. Regeln stehen in [`CLAUDE.md`](CLAUDE.md).
+Jeder Schritt endet lauffähig, getestet (`./gradlew test`, `./gradlew lint`) und auf dem Emulator geprüft – auch mit großer Schrift. Regeln stehen in [`CLAUDE.md`](CLAUDE.md).
 
-Der vorherige Architektur-Umbau (Phasen 0–4) ist abgeschlossen und steht in der Git-History dieser Datei.
+## Stand (21.11.2026)
 
-**Stand 21.11.2026:** Alle sechs Schritte sind erledigt. Auf GitHub noch offen: Issues #1, #3 und #4 schließen (#2 und #6 schließen sich beim Push), #5 ist zurückgestellt.
+Architektur-Umbau (Phasen 0–4) und Redesign des Aufbaus (Schritte 1–6) sind abgeschlossen; Details stehen in der Git-History dieser Datei. Die App hat:
 
-## Zielbild
+- Tabs **Übersicht · Gewicht · Maße · Profil**, Eintragen über FAB + Bottom Sheet
+- Diagramme mit Achsen, Zeitraum-Chips und automatischer Gruppierung (Tag/Woche/Monat, Durchschnitt); Ziellinie nur, wenn sie den Verlauf nicht staucht
+- Listen, die dem Zeitraum folgen, nach Monaten gegliedert sind (mitlaufende Überschriften) und zugeklappt die 3 neuesten Einträge zeigen
+- Optionale Maße Oberarm, Brust, Oberschenkel (DB-Version 3, Migrationstest auf Robolectric)
 
-Vier Tabs mit je einer klaren Aufgabe: **Übersicht · Gewicht · Maße · Profil**. Der bisherige BMI-Tab entfällt, seine Inhalte gehen im Dashboard auf.
+**Nicht gepusht:** Zuletzt gepusht ist `c1c0661`; alle Commits danach liegen nur lokal auf `main`.
 
-| Tab | Inhalt |
-| --- | --- |
-| **Übersicht** (Start) | Aktuelles Gewicht mit Datum und Veränderung in Worten („↓ 3 kg in den letzten 7 Tagen“, „↓ 7 kg seit dem 07.03.“); Ziel mit Fortschrittsbalken („Noch 25 kg · 7 kg geschafft“); BMI mit Einordnung – Antippen öffnet Erklärung mit gesundem Bereich und Optimalgewicht; letzte Körpermaße – Antippen öffnet den Maße-Tab |
-| **Gewicht** | Diagramm mit Achsen, darunter alle Einträge mit damaligem BMI, Löschen direkt in der Liste |
-| **Maße** | Figur mit den letzten Werten, Diagramm mit Auswahl des Maßes, darunter alle Messungen mit damaligem BMI |
-| **Profil** | Nur Einstellungen: Größe, Zielgewicht |
+## ▶ Nächste Schritte
 
-Grundregeln für das Design:
-- Jede Zahl hat einen erklärenden Text – keine nackten Werte wie „7 Tage −3 kg“ oder „Spanne 32 kg“.
-- Nichts doppelt anzeigen (heute z. B. BMI an vier Stellen, doppelte Überschriften, doppeltes Datum).
-- Keine großen Kopfkarten mit Erklärtext; schlichte Titel, Inhalt steht oben.
-- Eintragen über einen FAB unten rechts, der ein Bottom Sheet (Datum + Wert) öffnet. Auf dem Maße-Tab öffnet er die Maße-Eingabe.
-- Standard-Bausteine von Material 3: `NavigationBar` (volle Breite), FAB, `ModalBottomSheet`, `LinearProgressIndicator`, Listen, `FilterChip`.
-- **Große Schrift und Anzeigezoom müssen sauber umbrechen** – kein Umbruch mitten im Wort. Keine festen Reihen mit Wert-Kästchen; wo Werte nebeneinanderstehen, `FlowRow` o. Ä. Jeder Screen wird auf dem Emulator mit Schriftgröße 130 % und erhöhter Anzeigegröße geprüft.
+### 1. Visuelles Design der App überarbeiten
+Der Aufbau steht, jetzt soll sich das Aussehen ändern. Zu Beginn klären: Was genau gefällt nicht (Farben, Schrift, Karten, Abstände, Gesamteindruck)? Gibt es Vorbilder? Dann Entwürfe für einen Screen zeigen und erst danach umsetzen.
 
-## Schritte
+### 2. Diagramm-Filter als Auswahlfeld statt Chips
+Die Filter-Chips über dem Diagramm brauchen zu viel Platz. Stattdessen ein Auswahlfeld (Material 3 `ExposedDropdownMenuBox`).
+- [ ] Zeitraum (1 Monat · 3 Monate · 1 Jahr · Alles) als Auswahlfeld – Gewicht und Maße
+- [ ] Klären: Soll auch die Auswahl des Maßes (Bauch, Hüfte, …) im Maße-Diagramm ein Auswahlfeld werden?
+- [ ] Mit großer Schrift prüfen
 
-### 1. Grundgerüst ✅
-- [x] Tabs auf Übersicht · Gewicht · Maße · Profil umstellen, BMI-Tab entfernen (Navigation, gespeicherter Tab) (`c518659`)
-- [x] Standard-`NavigationBar` über die volle Breite bis zum unteren Rand (Issue #2) (`5782576`)
-- [x] Dashboard „Übersicht“ mit Gewicht, Ziel, BMI (inkl. Erklärung) und letzten Körpermaßen (`c518659`)
-- [x] FAB + Bottom Sheet zum Eintragen des Gewichts; auf dem Maße-Tab öffnet der FAB vorerst den bestehenden Dialog (`63303a9`)
+### 3. Aufgeklappte Liste auch oben wieder zuklappen
+Ist die Liste aufgeklappt, soll „Weniger anzeigen“ auch direkt bei der Überschrift „Einträge“/„Messungen“ stehen, nicht nur am Ende der Liste.
+- [ ] Gewicht und Maße
 
-### 2. Gewicht-Tab ✅
-- [x] Wiederverwendbares Diagramm: x-Achse mit Datum, y-Achse mit Werten und Hilfslinien; Punkte zeitlich verteilt (Issue #1) (`4aaa7f2`)
-- [x] Antippen eines Punkts zeigt Details: Datum, Wert, damaliger BMI (Issue #1) (`4aaa7f2`)
-- [x] Liste aller Einträge mit damaligem BMI und Löschen (mit Rückfrage); eigene Verlaufsseite entfällt (`4aaa7f2`)
-- BMI eines Gewichtseintrags = sein Gewicht + aktuelle Größe; die Suche nach dem letzten Gewicht vor einem Datum kommt erst in Schritt 4, wo sie gebraucht wird.
-
-### 3. Datenmodell neue Maße (Issue #4) ✅
-- [x] `BodyMeasurementsEntry` um Oberarm (nur einer), Brust, Oberschenkel erweitern – alle drei optional; Bauch, Hüfte, Schultern bleiben Pflicht (`c67505b`)
-- [x] Room-Migration 2 → 3 und erster Migrationstest mit `MigrationTestHelper` auf Robolectric – läuft in `./gradlew test` und CI (`c67505b`)
-- [x] Validierung und Use Case `AddBodyMeasurementsEntry` generisch über `BodyMeasurement`-Enum, meldet alle ungültigen Felder (mit Tests) (`2b36671`)
-- [x] Eingabe aller Maße im Bottom Sheet statt Dialog; Pflichtfelder oben, „Optional“ darunter (`2b36671`)
-
-### 4. Maße-Tab (Issue #6) ✅
-- [x] Diagramm (aus Schritt 2) mit `FilterChip`-Auswahl des Maßes (`0144734`)
-- [x] Figur mit Ring an allen sechs Messstellen, das gewählte Maß hervorgehoben; Werte daneben, bei wenig Platz darunter (`0144734`)
-- [x] Domain: BMI zu einem Datum = Gewicht an dem Tag bzw. letzter Eintrag davor + aktuelle Größe (mit Tests) (`0144734`)
-- [x] Liste aller Messungen mit damaligem BMI und Löschen mit Rückfrage; eigene Verlaufsseite und Unterseiten-Navigation entfallen (`0144734`)
-
-### 5. Profil ✅
-- [x] Profil auf Größe und Zielgewicht reduzieren, doppelte Anzeigen (BMI, Überschrift) entfernen; Hinweis pro Feld, Speichern nur bei Änderungen mit Bestätigung (`c94f020`)
-
-### 6. Listen kürzen, Diagramme gruppieren ✅
-Gilt für Gewicht und Maße gleichermaßen.
-- [x] Listen zeigen die 3 neuesten Einträge; „Alle N Einträge anzeigen“ klappt die Liste auf derselben Seite auf, „Weniger anzeigen“ wieder zu (`e2c687d`, `ce0d04f`)
-- [x] Zeitraum-Chips über dem Diagramm: 1 Monat · 3 Monate · 1 Jahr · Alles (Standard „Alles“, nicht gespeichert) (`e2c687d`, `ce0d04f`)
-- [x] Domain: automatische Gruppierung nach Länge des angezeigten Zeitraums – bis 3 Monate pro Tag, bis 1 Jahr pro Woche (ISO-KW), darüber pro Monat; Wert = Durchschnitt; Punkt liegt in der Mitte seiner Einträge (mit Tests) (`e2c687d`, `ab6e071`)
-- [x] Antippen eines gruppierten Punkts zeigt Zeitraum, Durchschnitt und Anzahl, z. B. „KW 12/2026 · Ø 82,4 kg · 3 Einträge“; BMI nur bei Punkten aus genau einem Eintrag, dann mit dessen Datum (`ce0d04f`)
-- [x] Listen folgen dem gewählten Zeitraum und sind nach Monaten gegliedert (mitlaufende Überschriften) – statt Paging (`70ffb26`)
-- [x] Ziellinie nur, wenn die Werte noch mindestens die halbe Diagrammhöhe nutzen, sonst Hinweis „liegt unterhalb/oberhalb“; y-Achse mindestens 4 kg bzw. 4 cm (`f2d7cf3`)
+### Außerdem offen
+- [ ] Pushen und den CI-Lauf prüfen (er führt erstmals den Robolectric-Migrationstest aus)
+- [ ] GitHub-Issues #1, #3 und #4 schließen (#2 und #6 schließen sich beim Push)
 
 ## GitHub-Issues
 
 | Issue | Status |
 | --- | --- |
-| #1 Diagramm Skala anzeigen | Erledigt (`4aaa7f2`) – Issue auf GitHub schließen |
-| #2 Fussleiste nutzt nicht ganze Breite | Erledigt (`5782576`) – Issue auf GitHub schließen |
-| #3 Geschlecht fehlt in der BMI Rechnung | **Entfällt** – BMI-Formel und WHO-Einordnung sind für Erwachsene geschlechtsunabhängig. Issue auf GitHub schließen. |
-| #4 Hinzufügen von Daten wie Oberarm | Erledigt (`2b36671`, `0144734`) – Issue auf GitHub schließen |
+| #1 Diagramm Skala anzeigen | Erledigt – auf GitHub schließen |
+| #2 Fussleiste nutzt nicht ganze Breite | Erledigt – schließt sich beim Push |
+| #3 Geschlecht fehlt in der BMI Rechnung | Entfällt (BMI-Formel geschlechtsunabhängig) – auf GitHub schließen |
+| #4 Hinzufügen von Daten wie Oberarm | Erledigt – auf GitHub schließen |
 | #5 Ausschalten der BMI-Anzeige | **Zurückgestellt** – später entscheiden, ob ein Schalter den BMI außerhalb der Übersicht ausblendet |
-| #6 Visualisierung von Daten wie Oberarm | Erledigt (`0144734`) – schließt sich beim Push |
+| #6 Visualisierung von Daten wie Oberarm | Erledigt – schließt sich beim Push |
+
+## Entscheidungen
+
+- Nicht gemessene optionale Maße zeigen in „Letzte Messung“ „–“, nicht den letzten bekannten Wert.
+- Lange Listen: kein Paging, sondern Zeitraum-Filter + Monatsgliederung.
+- Diagramm-Zeitraum startet immer mit „Alles“ (wird nicht gespeichert).
 
 ## Unterwegs gefundene Bugs
 
-- [x] Diagrammpunkte lagen am Wochen-/Monatsanfang statt bei ihren Einträgen; Einzelpunkte trugen die KW statt ihres Datums (`ab6e071`). Beim Maße-Diagramm hätte das einen falschen BMI ergeben – vor dem Commit bemerkt.
-- [x] Eintragen-Button (FAB) hatte keinen Text für Screenreader (`NAF`); Ursache war die `icon`/`text`-Variante von `ExtendedFloatingActionButton` (`eed001e`)
+_(noch keine)_
 
 ## Notizen
 
 - Schema von DB-Version 1 existiert nicht mehr; die Migration 1→2 ist nicht automatisiert testbar.
 - Migrationstests laufen auf Robolectric; dafür liegen die Room-Schemas in den Debug-Assets (nicht im Release). Jede künftige Migration bekommt einen Test in `FitnessBoyDatabaseMigrationTest`.
 - Die Größe wird ohne Verlauf gespeichert; der „damalige BMI“ nutzt immer die aktuelle Größe.
-- Geprüft wird auf dem Emulator `Medium_Phone_Android_17` (API 37); er enthält dieselben Testdaten wie das API-36-Gerät (Größe 175 statt 180 cm, Gewichtseintrag 125 kg, Maße-Eintrag vom 20.11.2026).
+- Geprüft wird auf dem Emulator `Medium_Phone_Android_17` (API 37). Er enthält **zusätzliche Testdaten** (20 Gewichtseinträge April–November, 10 Messungen) neben den ursprünglichen Testdaten (Größe 175 cm, Ziel 100 kg, Messung vom 27.03. mit überall 100 cm). Die Sicherung des Stands davor lag nur im temporären Session-Verzeichnis und ist nächstes Mal vermutlich weg – Testdaten ggf. in der App löschen.
