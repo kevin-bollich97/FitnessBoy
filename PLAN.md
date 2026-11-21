@@ -4,10 +4,10 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
 
 ## ▶ Nächste Schritte (Stand 21.11.2026)
 
-Phasen 0–4 sind erledigt. Offen sind nur noch Punkte, die eine Entscheidung oder einen Push brauchen:
+Phasen 0–4 sind erledigt. Offen ist nur noch:
 
 1. **Pushen** und den ersten Lauf des CI-Workflows (`.github/workflows/ci.yml`) auf GitHub prüfen.
-2. **Entscheidung:** `targetSdk` von 36 auf 37 anheben (Lint `OldTargetApi`)? Ändert das Laufzeitverhalten – vorher die Verhaltensänderungen von Android 17 durchgehen und auf dem Emulator testen.
+2. ~~`targetSdk` auf 37 anheben~~ – erledigt (`4497a91`). Nur auf dem API-36-Emulator geprüft; bei Gelegenheit auf einem Android-17-Gerät/-Image durchklicken.
 
 Hinweise:
 - Emulator `Medium_Phone_API_36.1` enthält Testdaten aus den Prüfläufen (Größe 175 statt 180 cm, Gewichtseintrag 125 kg und Maße-Eintrag vom 20.11.2026) – ggf. in der App löschen bzw. Größe zurücksetzen.
@@ -62,9 +62,9 @@ Hinweise:
 - [x] CI-Workflow für Tests und Lint bei Push/PR (`88e45bf`) – erster Lauf auf GitHub steht noch aus
 - [x] Bibliotheken aktualisiert, jeweils einzeln und auf dem Emulator geprüft (`399a36b`…`a7d9ec6`)
   - [x] AGP 9.5.2, Gradle 9.9.2 (`e84c5ff`)
-  - [x] `compileSdk` 37.1 – von Core 1.19, Lifecycle 2.11 und Compose 1.13 verlangt; `minSdk`/`targetSdk` bleiben 36 (`1a1fbe0`, `6b94e56`)
+  - [x] `compileSdk` 37.1 – von Core 1.19, Lifecycle 2.11 und Compose 1.13 verlangt; `minSdk` bleibt 36 (`1a1fbe0`, `6b94e56`)
   - [x] Kotlin 2.4.21, KSP 2.3.14; Übergangsschalter `android.disallowKotlinSourceSets` entfernt (`a7d9ec6`)
-- [x] Lint-Warnungen: `UseKtx` mit `WeightStore` entfallen, `RedundantLabel` behoben (`5bc7aba`); übrig nur `OldTargetApi` (Entscheidung, siehe oben)
+- [x] Lint-Warnungen: `UseKtx` mit `WeightStore` entfallen, `RedundantLabel` behoben (`5bc7aba`); `OldTargetApi` durch `targetSdk` 37 behoben (`4497a91`); Lint ist warnungsfrei
 - [x] Template-Reste entfernt: `ExampleInstrumentedTest`, ungenutzte `colors.xml`, Instrumentation-Abhängigkeiten (`275951b`)
 
 ## Unterwegs gefundene Bugs
