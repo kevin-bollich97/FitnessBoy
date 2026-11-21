@@ -63,7 +63,7 @@
     <string name="weight_chart_target_below">Ziel: %1$s – liegt unterhalb des angezeigten Bereichs.</string>
     <string name="weight_chart_target_above">Ziel: %1$s – liegt oberhalb des angezeigten Bereichs.</string>
     <string name="weight_chart_description">Gewichtsverlauf von %1$s bis %2$s, zwischen %3$s und %4$s</string>
-    <string name="value_with_bmi">%1$s · BMI %2$s</string>
+    <string name="value_with_bmi">%1$s · BMI\u00A0%2$s</string>
     <string name="weight_entries_title">Einträge</string>
     <string name="weight_delete_text">Der Eintrag vom %1$s mit %2$s wird endgültig gelöscht.</string>
     <string name="weight_add_title">Gewicht eintragen</string>
@@ -92,7 +92,7 @@
     <!-- BMI explanation -->
     <string name="bmi_info_title">Was ist der BMI?</string>
     <string name="bmi_info_text">Der Body-Mass-Index setzt dein Gewicht ins Verhältnis zu deiner Größe: Gewicht in kg geteilt durch Größe in Metern zum Quadrat. Er ist nur eine grobe Orientierung und berücksichtigt zum Beispiel keine Muskelmasse.</string>
-    <string name="bmi_info_your_value">Dein BMI: %1$s</string>
+    <string name="bmi_info_your_value">Dein BMI:\u00A0%1$s</string>
     <string name="bmi_info_categories_title">Einordnung nach WHO</string>
     <string name="bmi_info_current_category">Deine Einordnung</string>
     <string name="bmi_range_below">unter %1$s</string>
@@ -130,7 +130,7 @@
     <string name="measurements_chart_description">Verlauf %1$s von %2$s bis %3$s, zwischen %4$s und %5$s</string>
     <string name="measurements_entries_title">Messungen</string>
     <string name="measurements_delete_text">Die Messung vom %1$s wird endgültig gelöscht.</string>
-    <string name="measurement_value">%1$s: %2$s</string>
+    <string name="measurement_value">%1$s:\u00A0%2$s</string>
 
     <!-- Profile -->
     <string name="profile_height_label">Größe in cm</string>
