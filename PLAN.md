@@ -26,7 +26,7 @@ Die Filter-Chips über dem Diagramm brauchen zu viel Platz. Stattdessen ein Ausw
 
 ### 3. Aufgeklappte Liste auch oben wieder zuklappen
 Ist die Liste aufgeklappt, soll „Weniger anzeigen“ auch direkt bei der Überschrift „Einträge“/„Messungen“ stehen, nicht nur am Ende der Liste.
-- [ ] Gewicht und Maße
+- [x] Gewicht und Maße (`3a34a11`)
 
 ### Außerdem offen
 - [x] Pushen und den CI-Lauf prüfen
@@ -51,7 +51,7 @@ Ist die Liste aufgeklappt, soll „Weniger anzeigen“ auch direkt bei der Über
 
 ## Unterwegs gefundene Bugs
 
-_(noch keine)_
+- [ ] Mit großer Schrift trennt die Messungsliste Maß und Wert auf zwei Zeilen („Hüfte:“ / „115 cm“). Beides sollte zusammenbleiben (z. B. geschütztes Leerzeichen in `measurement_value`).
 
 ## Notizen
 
