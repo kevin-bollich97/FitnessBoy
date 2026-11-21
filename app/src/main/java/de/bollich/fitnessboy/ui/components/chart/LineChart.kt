@@ -51,6 +51,7 @@ private val multiYearDateFormatter = DateTimeFormatter.ofPattern("dd.MM.yy")
  * @param formatValue formats axis values, e.g. "120".
  * @param unit shown above the value axis, e.g. "kg".
  * @param referenceValue optional dashed horizontal line, e.g. the target weight.
+ * @param minValueSpan the value axis covers at least this range, e.g. 4 kg.
  * @param description spoken by screen readers instead of the drawing.
  */
 @Composable
@@ -63,6 +64,7 @@ fun LineChart(
     description: String,
     modifier: Modifier = Modifier,
     referenceValue: Double? = null,
+    minValueSpan: Double = 0.0,
     height: Dp = 240.dp,
 ) {
     if (points.isEmpty()) return
@@ -78,8 +80,8 @@ fun LineChart(
     )
     val labelStyle = MaterialTheme.typography.labelMedium.copy(color = colors.label)
     val textMeasurer = rememberTextMeasurer()
-    val valueAxis = remember(points, referenceValue) {
-        valueAxisFor(points.map(ChartPoint::value) + listOfNotNull(referenceValue))
+    val valueAxis = remember(points, referenceValue, minValueSpan) {
+        valueAxisFor(points.map(ChartPoint::value) + listOfNotNull(referenceValue), minSpan = minValueSpan)
     }
     val dateAxis = remember(points) { dateAxisFor(points.map(ChartPoint::date)) }
     val dateFormatter = if (dateAxis.start.year == dateAxis.end.year) sameYearDateFormatter else multiYearDateFormatter

@@ -58,6 +58,8 @@
     </plurals>
     <string name="chart_hint">Tippe auf einen Punkt im Diagramm, um dessen Werte zu sehen.</string>
     <string name="weight_chart_target_legend">Gestrichelte Linie: Ziel %1$s</string>
+    <string name="weight_chart_target_below">Ziel: %1$s – liegt unterhalb des angezeigten Bereichs.</string>
+    <string name="weight_chart_target_above">Ziel: %1$s – liegt oberhalb des angezeigten Bereichs.</string>
     <string name="weight_chart_description">Gewichtsverlauf von %1$s bis %2$s, zwischen %3$s und %4$s</string>
     <string name="value_with_bmi">%1$s · BMI %2$s</string>
     <string name="weight_entries_title">Alle Einträge</string>

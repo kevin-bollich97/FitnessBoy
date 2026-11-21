@@ -77,6 +77,7 @@ internal fun MeasurementsChartCard(
                 onSelect = { onGroupSelected(groups[it]) },
                 formatValue = ::formatNumber,
                 unit = stringResource(R.string.unit_cm),
+                minValueSpan = MIN_CHART_SPAN,
                 description = stringResource(
                     R.string.measurements_chart_description,
                     label,
@@ -92,3 +93,6 @@ internal fun MeasurementsChartCard(
         }
     }
 }
+
+/** Smallest range of the value axis, so day-to-day fluctuations do not look dramatic. */
+private const val MIN_CHART_SPAN = 4.0

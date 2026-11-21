@@ -32,14 +32,21 @@ data class ValueAxis(
 
 /**
  * Builds an axis that contains all [values] and uses round steps of 1, 2 or 5 times a power of ten,
- * aiming for about [targetTickCount] ticks.
+ * aiming for about [targetTickCount] ticks. The axis spans at least [minSpan] around the values,
+ * so small fluctuations are not blown up to the full chart height.
  */
-fun valueAxisFor(values: List<Double>, targetTickCount: Int = 5): ValueAxis {
+fun valueAxisFor(values: List<Double>, targetTickCount: Int = 5, minSpan: Double = 0.0): ValueAxis {
     require(values.isNotEmpty()) { "values must not be empty" }
     require(targetTickCount >= 2) { "targetTickCount must be at least 2" }
+    require(minSpan >= 0) { "minSpan must not be negative" }
 
     var minValue = values.min()
     var maxValue = values.max()
+    val missingSpan = minSpan - (maxValue - minValue)
+    if (missingSpan > 0) {
+        minValue -= missingSpan / 2
+        maxValue += missingSpan / 2
+    }
     if (minValue == maxValue) {
         minValue -= 1.0
         maxValue += 1.0
@@ -89,3 +96,34 @@ fun dateAxisFor(dates: List<LocalDate>): DateAxis {
     require(dates.isNotEmpty()) { "dates must not be empty" }
     return DateAxis(start = dates.min(), end = dates.max())
 }
+
+/** Where a reference value (e.g. the target weight) lies relative to the plotted values. */
+enum class ReferencePosition {
+    /** Close enough to draw it as a line without squeezing the values. */
+    INSIDE,
+    BELOW,
+    ABOVE,
+}
+
+/**
+ * Decides whether [reference] can be drawn in the chart of [values]: only if the values would
+ * still use at least half of the chart height. Otherwise it lies [ReferencePosition.BELOW] or
+ * [ReferencePosition.ABOVE] and should be mentioned outside the chart.
+ */
+fun referencePositionFor(values: List<Double>, reference: Double): ReferencePosition {
+    require(values.isNotEmpty()) { "values must not be empty" }
+    val min = values.min()
+    val max = values.max()
+    if (reference in min..max) return ReferencePosition.INSIDE
+
+    val valueSpan = (max - min).coerceAtLeast(MIN_VALUE_SPAN)
+    val combinedSpan = maxOf(max, reference) - minOf(min, reference)
+    return when {
+        valueSpan * 2 >= combinedSpan -> ReferencePosition.INSIDE
+        reference < min -> ReferencePosition.BELOW
+        else -> ReferencePosition.ABOVE
+    }
+}
+
+/** Span assumed for (nearly) constant values, so a single value does not hide a close target. */
+private const val MIN_VALUE_SPAN = 2.0

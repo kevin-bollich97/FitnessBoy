@@ -75,4 +75,37 @@ class ChartAxesTest {
         assertEquals(listOf(day), axis.ticks(maxCount = 4))
         assertEquals(0.5f, axis.fractionOf(day), 0f)
     }
+
+    @Test
+    fun reference_withinValues_isInside() {
+        assertEquals(ReferencePosition.INSIDE, referencePositionFor(listOf(80.0, 90.0), 85.0))
+    }
+
+    @Test
+    fun reference_closeToValues_isInside() {
+        // Values 124..128 (span 4) and target 121: combined span 7, values still use more than half.
+        assertEquals(ReferencePosition.INSIDE, referencePositionFor(listOf(124.0, 128.0), 121.0))
+    }
+
+    @Test
+    fun reference_farFromValues_isBelowOrAbove() {
+        assertEquals(ReferencePosition.BELOW, referencePositionFor(listOf(124.0, 128.0), 100.0))
+        assertEquals(ReferencePosition.ABOVE, referencePositionFor(listOf(55.0, 57.0), 70.0))
+    }
+
+    @Test
+    fun reference_nearSingleValue_isInside() {
+        assertEquals(ReferencePosition.INSIDE, referencePositionFor(listOf(80.0), 78.0))
+        assertEquals(ReferencePosition.BELOW, referencePositionFor(listOf(80.0), 70.0))
+    }
+
+    @Test
+    fun valueAxis_coversAtLeastMinSpanAroundValues() {
+        val axis = valueAxisFor(listOf(124.5, 126.0), minSpan = 4.0)
+
+        assertTrue(axis.max - axis.min >= 4.0)
+        assertTrue(axis.min <= 124.5 && axis.max >= 126.0)
+        assertEquals(123.0, axis.min, 0.0)
+        assertEquals(128.0, axis.max, 0.0)
+    }
 }

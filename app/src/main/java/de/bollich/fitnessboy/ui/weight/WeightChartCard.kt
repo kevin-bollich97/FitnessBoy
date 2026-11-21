@@ -1,5 +1,6 @@
 package de.bollich.fitnessboy.ui.weight
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +21,9 @@ import de.bollich.fitnessboy.ui.components.chart.ChartGroupDetails
 import de.bollich.fitnessboy.ui.components.chart.ChartPeriodChips
 import de.bollich.fitnessboy.ui.components.chart.ChartPoint
 import de.bollich.fitnessboy.ui.components.chart.LineChart
+import de.bollich.fitnessboy.ui.components.chart.ReferencePosition
 import de.bollich.fitnessboy.ui.components.chart.chartGroupLabel
+import de.bollich.fitnessboy.ui.components.chart.referencePositionFor
 import de.bollich.fitnessboy.ui.components.formatKg
 import de.bollich.fitnessboy.ui.components.withBmi
 
@@ -52,13 +55,15 @@ internal fun WeightChartCard(
             }
 
             val points = remember(groups) { groups.map { ChartPoint(it.centerDate, it.average) } }
+            val targetPosition = targetWeightInKg?.let { referencePositionFor(groups.map(ChartGroup::average), it) }
             LineChart(
                 points = points,
                 selectedIndex = groups.indexOf(selectedGroup).takeIf { it >= 0 },
                 onSelect = { onGroupSelected(groups[it]) },
                 formatValue = ::formatNumber,
                 unit = stringResource(R.string.unit_kg),
-                referenceValue = targetWeightInKg,
+                minValueSpan = MIN_CHART_SPAN,
+                referenceValue = targetWeightInKg.takeIf { targetPosition == ReferencePosition.INSIDE },
                 description = stringResource(
                     R.string.weight_chart_description,
                     chartGroupLabel(groups.first()),
@@ -67,9 +72,9 @@ internal fun WeightChartCard(
                     formatKg(groups.maxOf { it.average }),
                 ),
             )
-            if (targetWeightInKg != null) {
+            if (targetWeightInKg != null && targetPosition != null) {
                 Text(
-                    text = stringResource(R.string.weight_chart_target_legend, formatKg(targetWeightInKg)),
+                    text = stringResource(targetPosition.legendRes, formatKg(targetWeightInKg)),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -79,6 +84,17 @@ internal fun WeightChartCard(
     }
 }
 
+@get:StringRes
+private val ReferencePosition.legendRes: Int
+    get() = when (this) {
+        ReferencePosition.INSIDE -> R.string.weight_chart_target_legend
+        ReferencePosition.BELOW -> R.string.weight_chart_target_below
+        ReferencePosition.ABOVE -> R.string.weight_chart_target_above
+    }
+
 /** "125 kg · BMI 40,8", or just the weight if the height is unknown. */
 @Composable
 internal fun weightWithBmi(item: WeightListItem): String = withBmi(formatKg(item.entry.weightInKg), item.bmi)
+
+/** Smallest range of the value axis, so day-to-day fluctuations do not look dramatic. */
+private const val MIN_CHART_SPAN = 4.0
