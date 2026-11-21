@@ -40,6 +40,7 @@
     <string name="weight_title">Gewicht</string>
     <string name="weight_empty">Noch kein Gewicht eingetragen. Tippe auf „Gewicht eintragen“, um zu starten.</string>
     <string name="weight_chart_title">Verlauf</string>
+    <string name="chart_period_label">Zeitraum</string>
     <string name="chart_period_one_month">1 Monat</string>
     <string name="chart_period_three_months">3 Monate</string>
     <string name="chart_period_one_year">1 Jahr</string>
@@ -124,6 +125,7 @@
     <string name="measurement_not_measured">nicht gemessen</string>
     <string name="value_missing">–</string>
     <string name="measurements_chart_title">Verlauf</string>
+    <string name="measurements_chart_measurement_label">Maß</string>
     <string name="measurements_chart_empty">Für %1$s gibt es noch keine Werte.</string>
     <string name="measurements_chart_description">Verlauf %1$s von %2$s bis %3$s, zwischen %4$s und %5$s</string>
     <string name="measurements_entries_title">Messungen</string>

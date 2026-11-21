@@ -17,8 +17,9 @@ import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.ChartGroup
 import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.format.formatNumber
+import de.bollich.fitnessboy.ui.components.chart.ChartFilterRow
 import de.bollich.fitnessboy.ui.components.chart.ChartGroupDetails
-import de.bollich.fitnessboy.ui.components.chart.ChartPeriodChips
+import de.bollich.fitnessboy.ui.components.chart.ChartPeriodField
 import de.bollich.fitnessboy.ui.components.chart.ChartPoint
 import de.bollich.fitnessboy.ui.components.chart.LineChart
 import de.bollich.fitnessboy.ui.components.chart.ReferencePosition
@@ -48,7 +49,7 @@ internal fun WeightChartCard(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            ChartPeriodChips(selected = period, onSelect = onPeriodChange)
+            ChartFilterRow { ChartPeriodField(selected = period, onSelect = onPeriodChange) }
             if (groups.isEmpty()) {
                 Text(text = stringResource(R.string.chart_period_empty), style = MaterialTheme.typography.bodyLarge)
                 return@Column

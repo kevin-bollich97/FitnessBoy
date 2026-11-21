@@ -2,11 +2,9 @@ package de.bollich.fitnessboy.ui.measurements
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +18,9 @@ import de.bollich.fitnessboy.domain.ChartGroup
 import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.ui.components.chart.ChartGroupDetails
-import de.bollich.fitnessboy.ui.components.chart.ChartPeriodChips
+import de.bollich.fitnessboy.ui.components.WrappingSelectionField
+import de.bollich.fitnessboy.ui.components.chart.ChartFilterRow
+import de.bollich.fitnessboy.ui.components.chart.ChartPeriodField
 import de.bollich.fitnessboy.ui.components.chart.ChartPoint
 import de.bollich.fitnessboy.ui.components.chart.LineChart
 import de.bollich.fitnessboy.ui.components.chart.chartGroupLabel
@@ -51,20 +51,22 @@ internal fun MeasurementsChartCard(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                BodyMeasurement.entries.forEach {
-                    FilterChip(
-                        selected = it == measurement,
-                        onClick = { onMeasurementChange(it) },
-                        label = { Text(stringResource(it.labelRes)) },
-                    )
+            ChartFilterRow {
+                WrappingSelectionField(
+                    label = stringResource(R.string.measurements_chart_measurement_label),
+                    options = BodyMeasurement.entries,
+                    selected = measurement,
+                    optionLabel = { stringResource(it.labelRes) },
+                    onSelect = onMeasurementChange,
+                )
+                if (hasAnyValue) {
+                    ChartPeriodField(selected = period, onSelect = onPeriodChange)
                 }
             }
             if (!hasAnyValue) {
                 Text(text = stringResource(R.string.measurements_chart_empty, label), style = MaterialTheme.typography.bodyLarge)
                 return@Column
             }
-            ChartPeriodChips(selected = period, onSelect = onPeriodChange)
             if (groups.isEmpty()) {
                 Text(text = stringResource(R.string.chart_period_empty), style = MaterialTheme.typography.bodyLarge)
                 return@Column

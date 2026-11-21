@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.material3.FilterChip
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +18,7 @@ import de.bollich.fitnessboy.domain.ChartGrouping
 import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.format.formattedMonth
+import de.bollich.fitnessboy.ui.components.WrappingSelectionField
 import de.bollich.fitnessboy.ui.components.withBmi
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -34,21 +35,29 @@ private val ChartPeriod.labelRes: Int
         ChartPeriod.ALL -> R.string.chart_period_all
     }
 
-/** Chips to choose the time range of a chart. */
+/** Row of fields that filter a chart; it wraps them with large font. */
 @Composable
-fun ChartPeriodChips(
+fun ChartFilterRow(content: @Composable FlowRowScope.() -> Unit) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        content = content,
+    )
+}
+
+/** Field to choose the time range of a chart. */
+@Composable
+fun FlowRowScope.ChartPeriodField(
     selected: ChartPeriod,
     onSelect: (ChartPeriod) -> Unit,
 ) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        ChartPeriod.entries.forEach { period ->
-            FilterChip(
-                selected = period == selected,
-                onClick = { onSelect(period) },
-                label = { Text(stringResource(period.labelRes)) },
-            )
-        }
-    }
+    WrappingSelectionField(
+        label = stringResource(R.string.chart_period_label),
+        options = ChartPeriod.entries,
+        selected = selected,
+        optionLabel = { stringResource(it.labelRes) },
+        onSelect = onSelect,
+    )
 }
 
 /**
