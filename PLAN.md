@@ -7,7 +7,7 @@ Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne da
 Phasen 0–3 sind erledigt. Weiter geht es mit **Phase 4 – Aufräumen**, in dieser Reihenfolge:
 
 1. ~~Legacy-Migration entfernen~~ – erledigt (`cb53095`); alle Installationen nutzen bereits Room.
-2. Template-Reste entfernen: ungenutzte Farben in `res/values/colors.xml`, `ExampleInstrumentedTest` (oder durch echten Room-/Migrationstest ersetzen).
+2. ~~Template-Reste entfernen~~ – erledigt (`275951b`).
 3. README aktualisieren: Funktionen (inkl. Körpermaße), Architektur (Feature-Pakete, ViewModels, Navigation 3), Tests, Verweis auf `CLAUDE.md`/`PLAN.md`.
 4. CI-Workflow (GitHub Actions) für `./gradlew testDebugUnitTest lintDebug` bei Push/PR.
 5. Bibliotheken aktualisieren (Lint: `GradleDependency`, `NewerVersionAvailable`, `AndroidGradlePluginVersion`), jeweils einzeln committen und auf dem Emulator prüfen.
@@ -64,8 +64,8 @@ Hinweise für den Start:
 - [x] Legacy `WeightStore`/`WeightEntryCodec` samt SharedPreferences-Migration und ungenutzter DAO-Methoden entfernen (`cb53095`)
 - [ ] README aktualisieren (Maße, Architektur, Tests)
 - [ ] CI-Workflow für Tests und Lint bei Push/PR
-- [ ] Lint-Warnungen abarbeiten (Library-Updates, ungenutzte Template-Farben in `colors.xml`)
-- [ ] Template-Test `ExampleInstrumentedTest` entfernen oder durch echten Room-/Migrationstest ersetzen
+- [ ] Lint-Warnungen abarbeiten (Library-Updates, `UseKtx`, `RedundantLabel`)
+- [x] Template-Reste entfernt: `ExampleInstrumentedTest`, ungenutzte `colors.xml`, Instrumentation-Abhängigkeiten (`275951b`)
 
 ## Unterwegs gefundene Bugs
 
@@ -78,3 +78,4 @@ Hinweise für den Start:
 ## Offene Punkte / Notizen
 
 - Schema von DB-Version 1 existiert nicht mehr; die Migration 1→2 ist daher nicht automatisiert testbar.
+- Gerätetests bewusst weggelassen (DAOs sind trivial). Bei der ersten Schemaänderung (2→3) einen Migrationstest mit `MigrationTestHelper` (`room-testing`) auf Basis von `schemas/.../2.json` ergänzen.
