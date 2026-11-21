@@ -1,80 +1,74 @@
-# Umbau-Plan
+# Plan: Redesign & neue Funktionen
 
-Ziel: FitnessBoy auf eine saubere, wartbare Android-Architektur bringen, ohne dass die App zwischendurch kaputt ist. Jede Phase endet lauffähig, getestet (`./gradlew test`) und auf dem Emulator geprüft. Regeln dazu stehen in [`CLAUDE.md`](CLAUDE.md).
+Ziel: Die App übersichtlicher und verständlicher machen (Dashboard statt verstreuter Kennzahlen) und die offenen GitHub-Issues umsetzen. Jeder Schritt endet lauffähig, getestet (`./gradlew test`, `./gradlew lint`) und auf dem Emulator geprüft. Regeln stehen in [`CLAUDE.md`](CLAUDE.md).
 
-## ▶ Nächste Schritte (Stand 21.11.2026)
+Der vorherige Architektur-Umbau (Phasen 0–4) ist abgeschlossen und steht in der Git-History dieser Datei.
 
-Phasen 0–4 sind erledigt, der Umbau ist abgeschlossen.
+## Zielbild
 
-1. ~~Pushen und ersten CI-Lauf prüfen~~ – erledigt, erster Lauf am 21.11.2026 grün.
-2. ~~`targetSdk` auf 37 anheben~~ – erledigt (`4497a91`). Nur auf dem API-36-Emulator geprüft; bei Gelegenheit auf einem Android-17-Gerät/-Image durchklicken.
+Vier Tabs mit je einer klaren Aufgabe: **Übersicht · Gewicht · Maße · Profil**. Der bisherige BMI-Tab entfällt, seine Inhalte gehen im Dashboard auf.
 
-Hinweise:
-- Emulator `Medium_Phone_API_36.1` enthält Testdaten aus den Prüfläufen (Größe 175 statt 180 cm, Gewichtseintrag 125 kg und Maße-Eintrag vom 20.11.2026) – ggf. in der App löschen bzw. Größe zurücksetzen.
+| Tab | Inhalt |
+| --- | --- |
+| **Übersicht** (Start) | Aktuelles Gewicht mit Datum und Veränderung in Worten („↓ 3 kg in den letzten 7 Tagen“, „↓ 7 kg seit dem 07.03.“); Ziel mit Fortschrittsbalken („Noch 25 kg · 7 kg geschafft“); BMI mit Einordnung – Antippen öffnet Erklärung mit gesundem Bereich und Optimalgewicht; letzte Körpermaße – Antippen öffnet den Maße-Tab |
+| **Gewicht** | Diagramm mit Achsen, darunter alle Einträge mit damaligem BMI, Löschen direkt in der Liste |
+| **Maße** | Figur mit den letzten Werten, Diagramm mit Auswahl des Maßes, darunter alle Messungen mit damaligem BMI |
+| **Profil** | Nur Einstellungen: Größe, Zielgewicht |
 
-## Phase 0 – Grundlagen ✅
+Grundregeln für das Design:
+- Jede Zahl hat einen erklärenden Text – keine nackten Werte wie „7 Tage −3 kg“ oder „Spanne 32 kg“.
+- Nichts doppelt anzeigen (heute z. B. BMI an vier Stellen, doppelte Überschriften, doppeltes Datum).
+- Keine großen Kopfkarten mit Erklärtext; schlichte Titel, Inhalt steht oben.
+- Eintragen über einen FAB unten rechts, der ein Bottom Sheet (Datum + Wert) öffnet. Auf dem Maße-Tab öffnet er die Maße-Eingabe.
+- Standard-Bausteine von Material 3: `NavigationBar` (volle Breite), FAB, `ModalBottomSheet`, `LinearProgressIndicator`, Listen, `FilterChip`.
+- **Große Schrift und Anzeigezoom müssen sauber umbrechen** – kein Umbruch mitten im Wort. Keine festen Reihen mit Wert-Kästchen; wo Werte nebeneinanderstehen, `FlowRow` o. Ä. Jeder Screen wird auf dem Emulator mit Schriftgröße 130 % und erhöhter Anzeigegröße geprüft.
 
-- [x] `CLAUDE.md` mit Architektur und gemeinsamen Regeln (`8fd9f3e`)
-- [x] Tests für `InputParser`, BMI/Gewichtsbereich, `GoalProgress` (`d17440d`)
-- [x] Tests für `WeightTrend` (`562aa4a`)
-- [x] Room-Schema-Export über Room-Gradle-Plugin (`d13ba74`)
+## Schritte
 
-## Phase 1 – Datenschicht ✅
+### 1. Grundgerüst
+- [ ] Tabs auf Übersicht · Gewicht · Maße · Profil umstellen, BMI-Tab entfernen (Navigation, gespeicherter Tab)
+- [ ] Standard-`NavigationBar` über die volle Breite bis zum unteren Rand (Issue #2)
+- [ ] Dashboard „Übersicht“ mit Gewicht, Ziel, BMI (inkl. Erklärung) und letzten Körpermaßen
+- [ ] FAB + Bottom Sheet zum Eintragen des Gewichts
 
-- [x] `WeightEntry` bekommt eine `id` (`1770c63`)
-- [x] Einzelnes Insert/Delete statt „Tabelle löschen und neu schreiben“ (`1770c63`)
-- [x] DAOs und Repositories auf `suspend`/`Flow`; kein `allowMainThreadQueries()`, kein `runBlocking` (`1770c63`)
-- [x] Legacy-Migration aus SharedPreferences in einer Transaktion (`1770c63`)
-- [x] Use-Case-Tests mit Fake-Repositories (`1770c63`)
-- [x] Auf Emulator geprüft: Update mit Bestandsdaten, Hinzufügen, Löschen, Neustart
+### 2. Gewicht-Tab
+- [ ] Wiederverwendbares Diagramm: x-Achse mit Datum, y-Achse mit Werten und Hilfslinien (Issue #1)
+- [ ] Antippen eines Punkts zeigt Details: Datum, Wert, damaliger BMI (Issue #1)
+- [ ] Liste aller Einträge mit damaligem BMI und Löschen; eigene Verlaufsseite entfällt
+- [ ] Domain: BMI zu einem Datum = Gewicht an dem Tag bzw. letzter Eintrag davor + aktuelle Größe (mit Tests)
 
-## Phase 2 – State & ViewModels ✅
+### 3. Datenmodell neue Maße (Issue #4)
+- [ ] `BodyMeasurementsEntry` um Oberarm (nur einer), Brust, Oberschenkel erweitern – alle drei optional; Bauch, Hüfte, Schultern bleiben Pflicht
+- [ ] Room-Migration 2 → 3 und erster Migrationstest mit `MigrationTestHelper` (`room-testing`) auf Basis von `schemas/.../2.json`
+- [ ] Validierung und Use Case `AddBodyMeasurementsEntry` erweitern (mit Tests)
+- [ ] Eingabe der neuen Felder im Bottom Sheet
 
-- [x] `AppContainer` + `FitnessBoyApplication` statt handgebauter Singletons (`83e8b14`)
-- [x] Ein ViewModel pro Bereich: Main, Weight, BodyMeasurements, Profile (`83e8b14`)
-- [x] UI-State reaktiv via `combine(...).stateIn(...)`, `deriveState()` entfernt (`83e8b14`)
-- [x] Formular-State getrennt vom gespeicherten Zustand (`83e8b14`)
-- [x] Route/Screen-Muster: Routes sammeln State, Screens sind stateless (`83e8b14`)
-- [x] Durchreicher-Use-Cases entfernt (`83e8b14`)
-- [x] ViewModel-Tests mit `MainDispatcherRule` (`83e8b14`)
-- [x] Auf Emulator geprüft: Tab-Wiederherstellung, Validierung, Profil → BMI reaktiv, Maße-Dialog
+### 4. Maße-Tab (Issue #6)
+- [ ] Diagramm (aus Schritt 2) mit `FilterChip`-Auswahl des Maßes
+- [ ] Figur zeigt auch die neuen Maße
+- [ ] Liste aller Messungen mit damaligem BMI und Löschen; eigene Verlaufsseite entfällt
 
-## Phase 3 – Navigation & UI ✅
+### 5. Profil
+- [ ] Profil auf Größe und Zielgewicht reduzieren, doppelte Anzeigen (BMI, Überschrift) entfernen
 
-- [x] Navigation 3 statt `WeightPage`/`ProfilePage`-Enums; Back-Stack im `MainViewModel` (`4b1489a`)
-  - [x] Compose-BOM auf 2026.06.01 (Navigation 3 braucht Compose UI 1.11) (`8eedef7`)
-  - [x] Totes `WeightPage.HISTORY` entfernt (inkl. gespeicherter Einstellung) (`4b1489a`)
-  - [x] Zurück-Taste des Systems funktioniert auf Unterseiten und Tabs (`4b1489a`)
-- [x] `FitnessBoyApp.kt` (~590 Zeilen) aufteilen: ein Screen pro Datei im jeweiligen Feature-Paket, jeder Screen mit Preview (`4a1c3aa`)
-- [x] `ui/components/Cards.kt` (~700 Zeilen) aufteilen; ungenutzte `SummaryCard` entfernt (`4a1c3aa`)
-- [x] Domain liefert typisierte Werte statt deutscher Texte (BMI-Kategorie, Fehler, Trendperioden) (`74990f5`)
-- [x] Alle UI-Texte nach `res/values/strings.xml` (`d03a1f2`)
-- [x] `formatNumber` über `NumberFormat` mit Geräte-Locale, max. 1 Nachkommastelle; Einheiten aus Ressourcen (`d03a1f2`)
-- [x] Bug: Maße-Tab zeigt als „Letzter Wert“ das Gewicht statt der Körpermaße; `HeadlineSection` generisch gemacht (`5830ce5`)
-- [x] Bug: Zurück-Button im Gewichtsverlauf heißt „Zurück zur Gewichtsseite“, führt aber zum Profil (`4b1489a`)
-- [x] Auf Emulator geprüft: Navigation inkl. System-Zurück, alle Screens, deutsche Zahlenformatierung
+## GitHub-Issues
 
-## Phase 4 – Aufräumen ✅
-
-- [x] Legacy `WeightStore`/`WeightEntryCodec` samt SharedPreferences-Migration und ungenutzter DAO-Methoden entfernen (`cb53095`)
-- [x] README aktualisieren (Maße, Architektur, Tests) (`6b521ae`)
-- [x] CI-Workflow für Tests und Lint bei Push/PR (`88e45bf`) – erster Lauf auf GitHub grün
-- [x] Bibliotheken aktualisiert, jeweils einzeln und auf dem Emulator geprüft (`399a36b`…`a7d9ec6`)
-  - [x] AGP 9.5.2, Gradle 9.9.2 (`e84c5ff`)
-  - [x] `compileSdk` 37.1 – von Core 1.19, Lifecycle 2.11 und Compose 1.13 verlangt; `minSdk` bleibt 36 (`1a1fbe0`, `6b94e56`)
-  - [x] Kotlin 2.4.21, KSP 2.3.14; Übergangsschalter `android.disallowKotlinSourceSets` entfernt (`a7d9ec6`)
-- [x] Lint-Warnungen: `UseKtx` mit `WeightStore` entfallen, `RedundantLabel` behoben (`5bc7aba`); `OldTargetApi` durch `targetSdk` 37 behoben (`4497a91`); Lint ist warnungsfrei
-- [x] Template-Reste entfernt: `ExampleInstrumentedTest`, ungenutzte `colors.xml`, Instrumentation-Abhängigkeiten (`275951b`)
+| Issue | Status |
+| --- | --- |
+| #1 Diagramm Skala anzeigen | Schritt 2 |
+| #2 Fussleiste nutzt nicht ganze Breite | Schritt 1 |
+| #3 Geschlecht fehlt in der BMI Rechnung | **Entfällt** – BMI-Formel und WHO-Einordnung sind für Erwachsene geschlechtsunabhängig. Issue auf GitHub schließen. |
+| #4 Hinzufügen von Daten wie Oberarm | Schritt 3 |
+| #5 Ausschalten der BMI-Anzeige | **Zurückgestellt** – später entscheiden, ob ein Schalter den BMI außerhalb der Übersicht ausblendet |
+| #6 Visualisierung von Daten wie Oberarm | Schritt 4 |
 
 ## Unterwegs gefundene Bugs
 
-- [x] 7-/30-Tage-Trend verglich mit dem ältesten statt dem jüngsten Eintrag vor dem Stichtag (`562aa4a`)
-- [x] `fallbackToDestructiveMigration` hätte bei fehlender Migration alle Daten gelöscht (`2a1c846`)
-- [x] Absturz bei zwei Gewichtseinträgen mit gleichem Datum und Gewicht (doppelter Listen-Key) (`1770c63`)
-- [x] Maße-Tab „Letzter Wert“ zeigt Gewicht (`5830ce5`)
-- [x] Falsche Beschriftung des Zurück-Buttons im Gewichtsverlauf (`4b1489a`)
+_(noch keine)_
 
-## Offene Punkte / Notizen
+## Notizen
 
-- Schema von DB-Version 1 existiert nicht mehr; die Migration 1→2 ist daher nicht automatisiert testbar.
-- Gerätetests bewusst weggelassen (DAOs sind trivial). Bei der ersten Schemaänderung (2→3) einen Migrationstest mit `MigrationTestHelper` (`room-testing`) auf Basis von `schemas/.../2.json` ergänzen.
+- Schema von DB-Version 1 existiert nicht mehr; die Migration 1→2 ist nicht automatisiert testbar.
+- Die Größe wird ohne Verlauf gespeichert; der „damalige BMI“ nutzt immer die aktuelle Größe.
+- `targetSdk` 37 ist nur auf dem API-36-Emulator geprüft; bei Gelegenheit auf einem Android-17-Gerät/-Image durchklicken.
+- Emulator `Medium_Phone_API_36.1` enthält Testdaten aus Prüfläufen (Größe 175 statt 180 cm, Gewichtseintrag 125 kg, Maße-Eintrag vom 20.11.2026).

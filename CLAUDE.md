@@ -51,6 +51,7 @@ Use Cases nur, wo sie Logik enthalten (Validierung, Berechnung, z. B. `AddWeight
 - Domain liefert keine Texte, sondern Werte/Enums/typisierte Fehler; die UI übersetzt (`@StringRes` in Form-States, `labelRes`-Mappings). Zahlen mit `formatNumber` (Geräte-Locale), Einheiten über `formatKg`/`formatCm`.
 - Ein ViewModel pro Bereich. UI-State wird reaktiv gebaut: `combine(Repository-Flows, Formular-State).stateIn(viewModelScope, WhileSubscribed(5_000), …)`. Kein manuelles Nachrechnen abgeleiteter Werte.
 - Formular-Eingaben (`…FormState`) sind getrennt vom gespeicherten Zustand und werden nie von Repository-Updates überschrieben.
+- Layouts müssen mit großer Schrift und Anzeigezoom funktionieren: kein Umbruch mitten im Wort, keine festen Reihen mit Wert-Kästchen (stattdessen `FlowRow` o. Ä.); auf dem Emulator mit Schriftgröße 130 % prüfen.
 - Route/Screen-Muster: `XRoute(viewModel)` sammelt den State, `XScreen(uiState, callbacks)` ist stateless und hat eine Preview.
 - ViewModel-Tests nutzen `MainDispatcherRule` und Fakes aus `src/test/.../testing/`; ViewModels in Tests `by lazy` erzeugen (erst nach dem Setzen des Main-Dispatchers).
 
@@ -64,6 +65,6 @@ Use Cases nur, wo sie Logik enthalten (Validierung, Berechnung, z. B. `AddWeight
 - Direkt auf `main`, kleine in sich lauffähige Commits.
 - Conventional Commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`.
 
-## Umbau-Plan
+## Plan
 
-Der laufende Umbau wird in [`PLAN.md`](PLAN.md) verfolgt. Erledigte Punkte dort abhaken (mit Commit-Hash) und neu gefundene Bugs unter „Unterwegs gefundene Bugs“ eintragen.
+Die laufende Arbeit wird in [`PLAN.md`](PLAN.md) verfolgt. Erledigte Punkte dort abhaken (mit Commit-Hash) und neu gefundene Bugs unter „Unterwegs gefundene Bugs“ eintragen.

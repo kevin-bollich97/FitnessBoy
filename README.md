@@ -34,7 +34,7 @@ Package `de.bollich.fitnessboy` unter `app/src/main/java/`:
 
 Abhängigkeitsrichtung: `ui → domain ← data`. Die Abhängigkeiten werden manuell über einen `AppContainer` in der `Application`-Klasse erzeugt, ohne DI-Library. Jeder Bereich hat ein ViewModel, das seinen UI-State reaktiv aus den Repository-Flows baut.
 
-Die verbindlichen Architektur- und Code-Regeln stehen in [`CLAUDE.md`](CLAUDE.md), der laufende Umbau ist in [`PLAN.md`](PLAN.md) dokumentiert.
+Die verbindlichen Architektur- und Code-Regeln stehen in [`CLAUDE.md`](CLAUDE.md), die laufende Planung steht in [`PLAN.md`](PLAN.md).
 
 ## Voraussetzungen
 
