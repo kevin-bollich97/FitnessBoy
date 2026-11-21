@@ -37,11 +37,11 @@ Grundregeln für das Design:
 - [x] Liste aller Einträge mit damaligem BMI und Löschen (mit Rückfrage); eigene Verlaufsseite entfällt (`4aaa7f2`)
 - BMI eines Gewichtseintrags = sein Gewicht + aktuelle Größe; die Suche nach dem letzten Gewicht vor einem Datum kommt erst in Schritt 4, wo sie gebraucht wird.
 
-### 3. Datenmodell neue Maße (Issue #4)
-- [ ] `BodyMeasurementsEntry` um Oberarm (nur einer), Brust, Oberschenkel erweitern – alle drei optional; Bauch, Hüfte, Schultern bleiben Pflicht
-- [ ] Room-Migration 2 → 3 und erster Migrationstest mit `MigrationTestHelper` (`room-testing`) auf Basis von `schemas/.../2.json`
-- [ ] Validierung und Use Case `AddBodyMeasurementsEntry` erweitern (mit Tests)
-- [ ] Eingabe der neuen Felder im Bottom Sheet
+### 3. Datenmodell neue Maße (Issue #4) ✅
+- [x] `BodyMeasurementsEntry` um Oberarm (nur einer), Brust, Oberschenkel erweitern – alle drei optional; Bauch, Hüfte, Schultern bleiben Pflicht (`c67505b`)
+- [x] Room-Migration 2 → 3 und erster Migrationstest mit `MigrationTestHelper` auf Robolectric – läuft in `./gradlew test` und CI (`c67505b`)
+- [x] Validierung und Use Case `AddBodyMeasurementsEntry` generisch über `BodyMeasurement`-Enum, meldet alle ungültigen Felder (mit Tests) (`2b36671`)
+- [x] Eingabe aller Maße im Bottom Sheet statt Dialog; Pflichtfelder oben, „Optional“ darunter (`2b36671`)
 
 ### 4. Maße-Tab (Issue #6)
 - [ ] Diagramm (aus Schritt 2) mit `FilterChip`-Auswahl des Maßes
@@ -59,16 +59,17 @@ Grundregeln für das Design:
 | #1 Diagramm Skala anzeigen | Erledigt (`4aaa7f2`) – Issue auf GitHub schließen |
 | #2 Fussleiste nutzt nicht ganze Breite | Erledigt (`5782576`) – Issue auf GitHub schließen |
 | #3 Geschlecht fehlt in der BMI Rechnung | **Entfällt** – BMI-Formel und WHO-Einordnung sind für Erwachsene geschlechtsunabhängig. Issue auf GitHub schließen. |
-| #4 Hinzufügen von Daten wie Oberarm | Schritt 3 |
+| #4 Hinzufügen von Daten wie Oberarm | Erfassen erledigt (`2b36671`); Anzeige an der Figur in Schritt 4 |
 | #5 Ausschalten der BMI-Anzeige | **Zurückgestellt** – später entscheiden, ob ein Schalter den BMI außerhalb der Übersicht ausblendet |
 | #6 Visualisierung von Daten wie Oberarm | Schritt 4 |
 
 ## Unterwegs gefundene Bugs
 
-_(noch keine)_
+- [x] Eintragen-Button (FAB) hatte keinen Text für Screenreader (`NAF`); Ursache war die `icon`/`text`-Variante von `ExtendedFloatingActionButton` (`eed001e`)
 
 ## Notizen
 
 - Schema von DB-Version 1 existiert nicht mehr; die Migration 1→2 ist nicht automatisiert testbar.
+- Migrationstests laufen auf Robolectric; dafür liegen die Room-Schemas in den Debug-Assets (nicht im Release). Jede künftige Migration bekommt einen Test in `FitnessBoyDatabaseMigrationTest`.
 - Die Größe wird ohne Verlauf gespeichert; der „damalige BMI“ nutzt immer die aktuelle Größe.
 - Geprüft wird auf dem Emulator `Medium_Phone_Android_17` (API 37); er enthält dieselben Testdaten wie das API-36-Gerät (Größe 175 statt 180 cm, Gewichtseintrag 125 kg, Maße-Eintrag vom 20.11.2026).
