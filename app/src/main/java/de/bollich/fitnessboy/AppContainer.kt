@@ -5,7 +5,6 @@ import de.bollich.fitnessboy.data.AppSettingsStore
 import de.bollich.fitnessboy.data.ProfileDataStore
 import de.bollich.fitnessboy.data.RoomBodyMeasurementsRepository
 import de.bollich.fitnessboy.data.RoomWeightRepository
-import de.bollich.fitnessboy.data.WeightStore
 import de.bollich.fitnessboy.data.local.FitnessBoyDatabase
 import de.bollich.fitnessboy.domain.repository.BodyMeasurementsRepository
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
@@ -18,10 +17,7 @@ class AppContainer(context: Context) {
     private val database by lazy { FitnessBoyDatabase.create(appContext) }
 
     val weightRepository: WeightRepository by lazy {
-        RoomWeightRepository(
-            weightEntryDao = database.weightEntryDao(),
-            legacyWeightStore = WeightStore(appContext),
-        )
+        RoomWeightRepository(database.weightEntryDao())
     }
 
     val bodyMeasurementsRepository: BodyMeasurementsRepository by lazy {
