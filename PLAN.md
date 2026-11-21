@@ -4,7 +4,7 @@ Ziel: Die App übersichtlicher und verständlicher machen (Dashboard statt verst
 
 Der vorherige Architektur-Umbau (Phasen 0–4) ist abgeschlossen und steht in der Git-History dieser Datei.
 
-**Stand 21.11.2026: Alle fünf Schritte sind erledigt.** Offen sind nur noch das Schließen der Issues #1, #3 und #4 auf GitHub (#2 und #6 schließen sich beim Push) und das zurückgestellte Issue #5.
+**Stand 21.11.2026:** Schritte 1–5 sind erledigt, Schritt 6 (Listen kürzen, Diagramme gruppieren) ist in Arbeit. Auf GitHub noch offen: Issues #1, #3 und #4 schließen (#2 und #6 schließen sich beim Push), #5 ist zurückgestellt.
 
 ## Zielbild
 
@@ -53,6 +53,13 @@ Grundregeln für das Design:
 
 ### 5. Profil ✅
 - [x] Profil auf Größe und Zielgewicht reduzieren, doppelte Anzeigen (BMI, Überschrift) entfernen; Hinweis pro Feld, Speichern nur bei Änderungen mit Bestätigung (`c94f020`)
+
+### 6. Listen kürzen, Diagramme gruppieren
+Gilt für Gewicht und Maße gleichermaßen.
+- [ ] Listen zeigen die 3 neuesten Einträge; „Alle N Einträge anzeigen“ klappt die Liste auf derselben Seite auf, „Weniger anzeigen“ wieder zu
+- [ ] Zeitraum-Chips über dem Diagramm: 1 Monat · 3 Monate · 1 Jahr · Alles (Standard „Alles“, nicht gespeichert)
+- [ ] Domain: automatische Gruppierung nach Länge des angezeigten Zeitraums – bis 3 Monate pro Tag, bis 1 Jahr pro Woche (ISO-KW), darüber pro Monat; Wert = Durchschnitt (mit Tests)
+- [ ] Antippen eines gruppierten Punkts zeigt Zeitraum, Durchschnitt und Anzahl, z. B. „KW 12/2026 · Ø 82,4 kg · 3 Einträge“; BMI nur bei Punkten aus genau einem Eintrag
 
 ## GitHub-Issues
 
