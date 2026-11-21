@@ -25,11 +25,11 @@ Grundregeln für das Design:
 
 ## Schritte
 
-### 1. Grundgerüst
-- [ ] Tabs auf Übersicht · Gewicht · Maße · Profil umstellen, BMI-Tab entfernen (Navigation, gespeicherter Tab)
-- [ ] Standard-`NavigationBar` über die volle Breite bis zum unteren Rand (Issue #2)
-- [ ] Dashboard „Übersicht“ mit Gewicht, Ziel, BMI (inkl. Erklärung) und letzten Körpermaßen
-- [ ] FAB + Bottom Sheet zum Eintragen des Gewichts
+### 1. Grundgerüst ✅
+- [x] Tabs auf Übersicht · Gewicht · Maße · Profil umstellen, BMI-Tab entfernen (Navigation, gespeicherter Tab) (`c518659`)
+- [x] Standard-`NavigationBar` über die volle Breite bis zum unteren Rand (Issue #2) (`5782576`)
+- [x] Dashboard „Übersicht“ mit Gewicht, Ziel, BMI (inkl. Erklärung) und letzten Körpermaßen (`c518659`)
+- [x] FAB + Bottom Sheet zum Eintragen des Gewichts; auf dem Maße-Tab öffnet der FAB vorerst den bestehenden Dialog (`63303a9`)
 
 ### 2. Gewicht-Tab
 - [ ] Wiederverwendbares Diagramm: x-Achse mit Datum, y-Achse mit Werten und Hilfslinien (Issue #1)
@@ -56,7 +56,7 @@ Grundregeln für das Design:
 | Issue | Status |
 | --- | --- |
 | #1 Diagramm Skala anzeigen | Schritt 2 |
-| #2 Fussleiste nutzt nicht ganze Breite | Schritt 1 |
+| #2 Fussleiste nutzt nicht ganze Breite | Erledigt (`5782576`) – Issue auf GitHub schließen |
 | #3 Geschlecht fehlt in der BMI Rechnung | **Entfällt** – BMI-Formel und WHO-Einordnung sind für Erwachsene geschlechtsunabhängig. Issue auf GitHub schließen. |
 | #4 Hinzufügen von Daten wie Oberarm | Schritt 3 |
 | #5 Ausschalten der BMI-Anzeige | **Zurückgestellt** – später entscheiden, ob ein Schalter den BMI außerhalb der Übersicht ausblendet |
@@ -70,5 +70,4 @@ _(noch keine)_
 
 - Schema von DB-Version 1 existiert nicht mehr; die Migration 1→2 ist nicht automatisiert testbar.
 - Die Größe wird ohne Verlauf gespeichert; der „damalige BMI“ nutzt immer die aktuelle Größe.
-- `targetSdk` 37 ist nur auf dem API-36-Emulator geprüft; bei Gelegenheit auf einem Android-17-Gerät/-Image durchklicken.
-- Emulator `Medium_Phone_API_36.1` enthält Testdaten aus Prüfläufen (Größe 175 statt 180 cm, Gewichtseintrag 125 kg, Maße-Eintrag vom 20.11.2026).
+- Geprüft wird auf dem Emulator `Medium_Phone_Android_17` (API 37); er enthält dieselben Testdaten wie das API-36-Gerät (Größe 175 statt 180 cm, Gewichtseintrag 125 kg, Maße-Eintrag vom 20.11.2026).
