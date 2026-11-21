@@ -24,7 +24,7 @@ android {
     defaultConfig {
         applicationId = "de.bollich.fitnessboy"
         minSdk = 36
-        targetSdk = 36
+        targetSdk = 37
         versionCode = releaseVersionCode
         versionName = releaseVersionName
     }
