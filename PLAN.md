@@ -59,7 +59,7 @@ Ist die Liste aufgeklappt, soll „Weniger anzeigen“ auch direkt bei der Über
 
 ## Unterwegs gefundene Bugs
 
-- [ ] Mit großer Schrift trennt die Messungsliste Maß und Wert auf zwei Zeilen („Hüfte:“ / „115 cm“). Beides sollte zusammenbleiben (z. B. geschütztes Leerzeichen in `measurement_value`).
+- [x] Mit großer Schrift trennte die Messungsliste Maß und Wert („Hüfte:“ / „115 cm“, ebenso „BMI“ / „40.8“) – geschützte Leerzeichen (`cf95ac9`)
 
 ## Notizen
 
