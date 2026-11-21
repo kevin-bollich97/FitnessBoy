@@ -2,7 +2,6 @@ package de.bollich.fitnessboy.ui.weight
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -23,6 +22,7 @@ import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.COLLAPSED_ENTRY_COUNT
 import de.bollich.fitnessboy.ui.components.ConfirmDeleteDialog
+import de.bollich.fitnessboy.ui.components.EntryListHeader
 import de.bollich.fitnessboy.ui.components.MonthHeader
 import de.bollich.fitnessboy.ui.components.ScreenContentPadding
 import de.bollich.fitnessboy.ui.components.ShowAllButton
@@ -90,11 +90,12 @@ private fun WeightScreen(
             )
         }
         if (uiState.items.isEmpty()) return@LazyColumn
+        val canExpand = uiState.items.size > COLLAPSED_ENTRY_COUNT
         item {
-            Text(
-                text = stringResource(R.string.weight_entries_title),
-                modifier = Modifier.padding(top = 12.dp),
-                style = MaterialTheme.typography.titleMedium,
+            EntryListHeader(
+                title = stringResource(R.string.weight_entries_title),
+                isExpanded = canExpand && uiState.showAllEntries,
+                onCollapse = onShowAllEntriesToggle,
             )
         }
         uiState.entrySections.forEach { section ->
@@ -104,7 +105,7 @@ private fun WeightScreen(
                 HorizontalDivider()
             }
         }
-        if (uiState.items.size > COLLAPSED_ENTRY_COUNT) {
+        if (canExpand) {
             item {
                 ShowAllButton(
                     isExpanded = uiState.showAllEntries,
