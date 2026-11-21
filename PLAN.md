@@ -10,13 +10,17 @@ Architektur-Umbau (Phasen 0–4) und Redesign des Aufbaus (Schritte 1–6) sind 
 - Diagramme mit Achsen, Auswahlfeldern für Zeitraum und Maß und automatischer Gruppierung (Tag/Woche/Monat, Durchschnitt); Ziellinie nur, wenn sie den Verlauf nicht staucht
 - Listen, die dem Zeitraum folgen, nach Monaten gegliedert sind (mitlaufende Überschriften) und zugeklappt die 3 neuesten Einträge zeigen
 - Optionale Maße Oberarm, Brust, Oberschenkel (DB-Version 3, Migrationstest auf Robolectric)
+- Freundliches, rundes Design: Blau als einziger Akzent auf ruhigen Neutraltönen, Schrift Nunito, stark abgerundete Formen, Emoji-Badges in der Übersicht
 
 **Gepusht** bis `ee681cf`.
 
 ## ▶ Nächste Schritte
 
 ### 1. Visuelles Design der App überarbeiten
-Der Aufbau steht, jetzt soll sich das Aussehen ändern. Zu Beginn klären: Was genau gefällt nicht (Farben, Schrift, Karten, Abstände, Gesamteindruck)? Gibt es Vorbilder? Dann Entwürfe für einen Screen zeigen und erst danach umsetzen.
+- [x] Verspielter, aber ruhiger Look: Blau statt Koralle, nur die Gewichtskarte farbig, Nunito, runde Formen (`64bdf80`)
+
+### 4. Körperfigur bei den Maßen schöner machen
+Ideen: durchgehende weiche Silhouette, Ringe als Maßband (Vorder- und Rückseite), Animation beim Wechsel des Maßes, Ringe antippbar, Gesicht. Umfang noch mit dem Nutzer klären.
 
 ### 2. Diagramm-Filter als Auswahlfeld statt Chips
 Die Filter-Chips über dem Diagramm brauchen zu viel Platz. Stattdessen ein Auswahlfeld (Material 3 `ExposedDropdownMenuBox`).
@@ -44,6 +48,8 @@ Ist die Liste aufgeklappt, soll „Weniger anzeigen“ auch direkt bei der Über
 | #6 Visualisierung von Daten wie Oberarm | Erledigt – schließt sich beim Push |
 
 ## Entscheidungen
+
+- Design: ein einziger Akzent (Blau); Rot/Koralle und mehrere bunte Kartenfarben wurden ausprobiert und verworfen (zu unruhig bzw. nicht gewünscht). Grün/Amber/Rot nur als Signalfarben beim BMI.
 
 - Nicht gemessene optionale Maße zeigen in „Letzte Messung“ „–“, nicht den letzten bekannten Wert.
 - Lange Listen: kein Paging, sondern Zeitraum-Filter + Monatsgliederung.
