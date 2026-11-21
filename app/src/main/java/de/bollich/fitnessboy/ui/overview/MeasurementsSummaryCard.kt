@@ -20,6 +20,7 @@ internal fun MeasurementsSummaryCard(
 ) {
     OverviewCard(
         title = stringResource(R.string.overview_measurements_title),
+        emojiRes = R.string.emoji_measurements,
         onClick = onClick,
     ) {
         if (latestMeasurements == null) {
@@ -33,7 +34,7 @@ internal fun MeasurementsSummaryCard(
         Text(
             text = stringResource(R.string.overview_measurements_measured_on, latestMeasurements.date.formattedDate()),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = overviewSecondaryTextColor,
         )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),

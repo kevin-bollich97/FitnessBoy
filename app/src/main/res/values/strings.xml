@@ -142,4 +142,10 @@
     <string name="profile_target_weight_label">Zielgewicht in kg</string>
     <string name="profile_target_weight_placeholder">z.B. 75</string>
     <string name="profile_title">Profil</string>
+
+    <!-- Decorative emoji badges of the overview cards -->
+    <string name="emoji_weight" translatable="false">⚖️</string>
+    <string name="emoji_goal" translatable="false">🎯</string>
+    <string name="emoji_bmi" translatable="false">💪</string>
+    <string name="emoji_measurements" translatable="false">📏</string>
 </resources>

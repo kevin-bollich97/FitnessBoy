@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.format.formatNumber
@@ -21,6 +22,7 @@ internal fun BmiCard(
     when {
         !hasHeight -> OverviewCard(
             title = stringResource(R.string.overview_bmi_title),
+            emojiRes = R.string.emoji_bmi,
             onClick = onOpenProfile,
         ) {
             Text(
@@ -31,12 +33,12 @@ internal fun BmiCard(
 
         bmi != null && bmiCategory != null -> OverviewCard(
             title = stringResource(R.string.overview_bmi_title),
+            emojiRes = R.string.emoji_bmi,
             onClick = onShowExplanation,
         ) {
             Text(
                 text = formatNumber(bmi),
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = stringResource(bmiCategory.labelRes),
@@ -47,7 +49,7 @@ internal fun BmiCard(
             Text(
                 text = stringResource(R.string.overview_bmi_explain),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline,
             )
         }
 

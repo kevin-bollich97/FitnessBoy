@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.format.formatNumber
+import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 
 @get:StringRes
 val BmiCategory.labelRes: Int
@@ -37,9 +38,9 @@ fun BmiCategory.rangeText(): String {
 fun BmiCategory.color(): Color {
     val colorScheme = MaterialTheme.colorScheme
     return when (this) {
-        BmiCategory.NORMAL_WEIGHT -> colorScheme.primary
+        BmiCategory.NORMAL_WEIGHT -> FitnessBoyTheme.extendedColors.success
         BmiCategory.UNDERWEIGHT,
-        BmiCategory.OVERWEIGHT -> colorScheme.secondary
+        BmiCategory.OVERWEIGHT -> FitnessBoyTheme.extendedColors.warning
         BmiCategory.OBESITY_CLASS_I,
         BmiCategory.OBESITY_CLASS_II,
         BmiCategory.OBESITY_CLASS_III -> colorScheme.error

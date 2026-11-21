@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,7 +46,6 @@ private fun ProfileScreen(
             Text(
                 text = stringResource(R.string.profile_title),
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
             )
         }
         item {

@@ -3,6 +3,7 @@ package de.bollich.fitnessboy.ui.overview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import kotlin.math.absoluteValue
 internal fun GoalCard(goalProgress: GoalProgress) {
     OverviewCard(
         title = stringResource(R.string.overview_goal_title, formatKg(goalProgress.targetWeightInKg)),
+        emojiRes = R.string.emoji_goal,
         onClick = null,
     ) {
         Row(
@@ -30,7 +32,13 @@ internal fun GoalCard(goalProgress: GoalProgress) {
         ) {
             LinearProgressIndicator(
                 progress = { goalProgress.progressPercent / 100f },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(12.dp),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primaryContainer,
+                gapSize = 0.dp,
+                drawStopIndicator = {},
             )
             Text(
                 text = stringResource(R.string.value_percent, goalProgress.progressPercent),
@@ -50,6 +58,7 @@ internal fun GoalCard(goalProgress: GoalProgress) {
 internal fun MissingGoalCard(onClick: () -> Unit) {
     OverviewCard(
         title = stringResource(R.string.overview_goal_missing_title),
+        emojiRes = R.string.emoji_goal,
         onClick = onClick,
     ) {
         Text(

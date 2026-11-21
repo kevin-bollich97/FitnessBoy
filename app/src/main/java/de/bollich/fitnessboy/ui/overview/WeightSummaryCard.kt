@@ -4,7 +4,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.WeightTrend
 import de.bollich.fitnessboy.format.formatSignedNumber
@@ -21,6 +20,8 @@ internal fun WeightSummaryCard(
 ) {
     OverviewCard(
         title = stringResource(R.string.overview_weight_title),
+        emojiRes = R.string.emoji_weight,
+        highlighted = true,
         onClick = onClick.takeIf { latestWeight != null },
     ) {
         if (latestWeight == null) {
@@ -34,12 +35,11 @@ internal fun WeightSummaryCard(
         Text(
             text = formatKg(latestWeight.weightInKg),
             style = MaterialTheme.typography.displaySmall,
-            fontWeight = FontWeight.Bold,
         )
         Text(
             text = stringResource(R.string.overview_weight_measured_on, latestWeight.formattedDate()),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = overviewSecondaryTextColor,
         )
         recentTrend?.let {
             TrendText(stringResource(R.string.overview_trend_since_date, signedKg(it), it.referenceDate.formattedDate()))

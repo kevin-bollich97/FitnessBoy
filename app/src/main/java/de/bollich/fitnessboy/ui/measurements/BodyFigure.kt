@@ -14,8 +14,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import de.bollich.fitnessboy.domain.BodyMeasurement
 
-private val RingColor = Color(0xFFD98F4E)
-
 /** Where each measurement is taken, as fractions of the figure: center and size of the ring. */
 private data class RingPosition(val centerX: Float, val centerY: Float, val width: Float, val height: Float)
 
@@ -35,11 +33,12 @@ fun BodyFigure(
     highlighted: BodyMeasurement,
     modifier: Modifier = Modifier,
 ) {
-    val bodyColor = MaterialTheme.colorScheme.primary
+    val bodyColor = MaterialTheme.colorScheme.outline
+    val ringColor = MaterialTheme.colorScheme.primary
     Canvas(modifier = modifier) {
         drawSilhouette(bodyColor)
         BodyMeasurement.entries.forEach { measurement ->
-            drawRing(measurement.ringPosition, isHighlighted = measurement == highlighted)
+            drawRing(measurement.ringPosition, ringColor, isHighlighted = measurement == highlighted)
         }
     }
 }
@@ -65,10 +64,10 @@ private fun DrawScope.drawSilhouette(bodyColor: Color) {
     ).forEach { (start, end) -> drawLine(bodyColor, start, end, strokeWidth = limbWidth * 1.2f, cap = StrokeCap.Round) }
 }
 
-private fun DrawScope.drawRing(position: RingPosition, isHighlighted: Boolean) {
+private fun DrawScope.drawRing(position: RingPosition, color: Color, isHighlighted: Boolean) {
     val ringSize = Size(size.width * position.width, size.height * position.height)
     drawRoundRect(
-        color = if (isHighlighted) RingColor else RingColor.copy(alpha = 0.35f),
+        color = if (isHighlighted) color else color.copy(alpha = 0.35f),
         topLeft = Offset(size.width * position.centerX - ringSize.width / 2f, size.height * position.centerY - ringSize.height / 2f),
         size = ringSize,
         cornerRadius = CornerRadius(ringSize.height / 2f),

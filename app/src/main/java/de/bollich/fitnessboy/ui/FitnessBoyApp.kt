@@ -100,7 +100,11 @@ private fun AddEntryButton(
 
 @Composable
 private fun AddEntryButton(@StringRes textRes: Int, onClick: () -> Unit) {
-    ExtendedFloatingActionButton(onClick = onClick) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+    ) {
         Icon(painterResource(R.drawable.ic_add), contentDescription = null)
         Spacer(Modifier.width(12.dp))
         Text(stringResource(textRes))

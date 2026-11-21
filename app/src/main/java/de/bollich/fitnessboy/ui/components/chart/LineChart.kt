@@ -202,8 +202,8 @@ private fun DrawScope.drawSeries(offsets: List<Offset>, plot: Rect, colors: Char
             lineTo(offsets.first().x, plot.bottom)
             close()
         }
-        drawPath(area, Brush.verticalGradient(listOf(colors.line.copy(alpha = 0.18f), Color.Transparent), plot.top, plot.bottom))
-        drawPath(line, colors.line, style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+        drawPath(area, Brush.verticalGradient(listOf(colors.line.copy(alpha = 0.3f), Color.Transparent), plot.top, plot.bottom))
+        drawPath(line, colors.line, style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
     }
     offsets.forEach { drawCircle(colors.point, radius = 3.5.dp.toPx(), center = it) }
 }
