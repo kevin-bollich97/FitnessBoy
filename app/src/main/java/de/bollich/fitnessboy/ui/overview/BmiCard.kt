@@ -5,7 +5,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.format.formatNumber
@@ -49,7 +48,7 @@ internal fun BmiCard(
             Text(
                 text = stringResource(R.string.overview_bmi_explain),
                 style = MaterialTheme.typography.bodyMedium,
-                textDecoration = TextDecoration.Underline,
+                color = overviewSecondaryTextColor,
             )
         }
 
