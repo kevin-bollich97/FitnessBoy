@@ -11,31 +11,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.domain.ChartGroup
+import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.format.formatNumber
-import de.bollich.fitnessboy.format.formattedDate
-import de.bollich.fitnessboy.model.WeightEntry
+import de.bollich.fitnessboy.ui.components.chart.ChartGroupDetails
+import de.bollich.fitnessboy.ui.components.chart.ChartPeriodChips
 import de.bollich.fitnessboy.ui.components.chart.ChartPoint
 import de.bollich.fitnessboy.ui.components.chart.LineChart
+import de.bollich.fitnessboy.ui.components.chart.chartGroupLabel
 import de.bollich.fitnessboy.ui.components.formatKg
 import de.bollich.fitnessboy.ui.components.withBmi
 
-/** Weight over time with the target as dashed line; tapping a point shows its details below. */
+/** Weight over a chosen period with the target as dashed line; tapping a point shows its details. */
 @Composable
 internal fun WeightChartCard(
-    items: List<WeightListItem>,
-    selectedItem: WeightListItem?,
+    period: ChartPeriod,
+    groups: List<ChartGroup>,
+    selectedGroup: ChartGroup?,
+    selectedGroupBmi: Double?,
     targetWeightInKg: Double?,
-    onEntrySelected: (WeightEntry) -> Unit,
+    onPeriodChange: (ChartPeriod) -> Unit,
+    onGroupSelected: (ChartGroup) -> Unit,
 ) {
-    val chronological = remember(items) { items.reversed() }
-    val points = remember(chronological) { chronological.map { ChartPoint(it.entry.date, it.entry.weightInKg) } }
-    val first = chronological.first().entry
-    val last = chronological.last().entry
-    val weights = chronological.map { it.entry.weightInKg }
-
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -46,19 +45,26 @@ internal fun WeightChartCard(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            ChartPeriodChips(selected = period, onSelect = onPeriodChange)
+            if (groups.isEmpty()) {
+                Text(text = stringResource(R.string.chart_period_empty), style = MaterialTheme.typography.bodyLarge)
+                return@Column
+            }
+
+            val points = remember(groups) { groups.map { ChartPoint(it.start, it.average) } }
             LineChart(
                 points = points,
-                selectedIndex = chronological.indexOf(selectedItem).takeIf { it >= 0 },
-                onSelect = { onEntrySelected(chronological[it].entry) },
+                selectedIndex = groups.indexOf(selectedGroup).takeIf { it >= 0 },
+                onSelect = { onGroupSelected(groups[it]) },
                 formatValue = ::formatNumber,
                 unit = stringResource(R.string.unit_kg),
                 referenceValue = targetWeightInKg,
                 description = stringResource(
                     R.string.weight_chart_description,
-                    first.formattedDate(),
-                    last.formattedDate(),
-                    formatKg(weights.min()),
-                    formatKg(weights.max()),
+                    chartGroupLabel(groups.first()),
+                    chartGroupLabel(groups.last()),
+                    formatKg(groups.minOf { it.average }),
+                    formatKg(groups.maxOf { it.average }),
                 ),
             )
             if (targetWeightInKg != null) {
@@ -68,29 +74,8 @@ internal fun WeightChartCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            selectedItem?.let { SelectedEntryDetails(it) }
+            selectedGroup?.let { ChartGroupDetails(group = it, singleEntryBmi = selectedGroupBmi) { value -> formatKg(value) } }
         }
-    }
-}
-
-@Composable
-private fun SelectedEntryDetails(item: WeightListItem) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(
-            text = item.entry.formattedDate(),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = weightWithBmi(item),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(
-            text = stringResource(R.string.chart_hint),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 

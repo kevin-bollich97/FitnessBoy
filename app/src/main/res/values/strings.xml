@@ -40,9 +40,25 @@
     <string name="weight_title">Gewicht</string>
     <string name="weight_empty">Noch kein Gewicht eingetragen. Tippe auf „Gewicht eintragen“, um zu starten.</string>
     <string name="weight_chart_title">Verlauf</string>
+    <string name="chart_period_one_month">1 Monat</string>
+    <string name="chart_period_three_months">3 Monate</string>
+    <string name="chart_period_one_year">1 Jahr</string>
+    <string name="chart_period_all">Alles</string>
+    <string name="chart_period_empty">Im gewählten Zeitraum gibt es keine Einträge.</string>
+    <string name="chart_group_week">KW %1$d/%2$d · %3$s–%4$s</string>
+    <string name="chart_group_average">Ø %1$s · %2$s</string>
+    <plurals name="entry_count">
+        <item quantity="one">%d Eintrag</item>
+        <item quantity="other">%d Einträge</item>
+    </plurals>
+    <string name="action_show_less">Weniger anzeigen</string>
+    <plurals name="action_show_all_entries">
+        <item quantity="one">%d Eintrag anzeigen</item>
+        <item quantity="other">Alle %d Einträge anzeigen</item>
+    </plurals>
     <string name="chart_hint">Tippe auf einen Punkt im Diagramm, um dessen Werte zu sehen.</string>
     <string name="weight_chart_target_legend">Gestrichelte Linie: Ziel %1$s</string>
-    <string name="weight_chart_description">Gewichtsverlauf vom %1$s bis %2$s, zwischen %3$s und %4$s</string>
+    <string name="weight_chart_description">Gewichtsverlauf von %1$s bis %2$s, zwischen %3$s und %4$s</string>
     <string name="value_with_bmi">%1$s · BMI %2$s</string>
     <string name="weight_entries_title">Alle Einträge</string>
     <string name="weight_delete_text">Der Eintrag vom %1$s mit %2$s wird endgültig gelöscht.</string>
@@ -106,7 +122,7 @@
     <string name="value_missing">–</string>
     <string name="measurements_chart_title">Verlauf</string>
     <string name="measurements_chart_empty">Für %1$s gibt es noch keine Werte.</string>
-    <string name="measurements_chart_description">Verlauf %1$s vom %2$s bis %3$s, zwischen %4$s und %5$s</string>
+    <string name="measurements_chart_description">Verlauf %1$s von %2$s bis %3$s, zwischen %4$s und %5$s</string>
     <string name="measurements_entries_title">Alle Messungen</string>
     <string name="measurements_delete_text">Die Messung vom %1$s wird endgültig gelöscht.</string>
     <string name="measurement_value">%1$s: %2$s</string>

@@ -5,9 +5,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.domain.ChartGroup
+import de.bollich.fitnessboy.domain.ChartPeriod
+import de.bollich.fitnessboy.domain.DatedValue
 import de.bollich.fitnessboy.domain.calculateBmi
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
 import de.bollich.fitnessboy.domain.repository.WeightRepository
+import de.bollich.fitnessboy.domain.summarizeForChart
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.appContainer
@@ -25,6 +29,7 @@ class WeightViewModel(
     private val weightRepository: WeightRepository,
     profileRepository: ProfileRepository,
     private val addWeightEntry: AddWeightEntry,
+    private val today: () -> LocalDate = LocalDate::now,
 ) : ViewModel() {
     private val form = MutableStateFlow(WeightFormState())
     private val selection = MutableStateFlow(Selection())
@@ -36,12 +41,17 @@ class WeightViewModel(
             form,
             selection,
         ) { entries, profile, form, selection ->
-            val items = entries.map { WeightListItem(it, calculateBmi(it.weightInKg, profile.heightInCm)) }
+            val groups = summarizeForChart(entries.map { DatedValue(it.date, it.weightInKg) }, selection.chartPeriod, today())
+            val selectedGroup = groups.firstOrNull { it.start == selection.selectedGroupStart } ?: groups.lastOrNull()
             WeightUiState(
                 isLoading = false,
-                items = items,
+                items = entries.map { WeightListItem(it, calculateBmi(it.weightInKg, profile.heightInCm)) },
                 targetWeightInKg = profile.targetWeightInKg,
-                selectedItem = items.firstOrNull { it.entry.id == selection.selectedEntryId } ?: items.firstOrNull(),
+                chartPeriod = selection.chartPeriod,
+                chartGroups = groups,
+                selectedGroup = selectedGroup,
+                selectedGroupBmi = selectedGroup?.takeIf { it.count == 1 }?.let { calculateBmi(it.average, profile.heightInCm) },
+                showAllEntries = selection.showAllEntries,
                 entryPendingDeletion = selection.entryPendingDeletion,
                 form = form,
             )
@@ -76,16 +86,24 @@ class WeightViewModel(
             when (addWeightEntry(current.weightInput, current.selectedDate)) {
                 AddWeightEntry.Result.Success -> {
                     form.value = WeightFormState()
-                    // Show the newest entry, which is usually the one just added.
-                    selection.update { it.copy(selectedEntryId = null) }
+                    // Show the newest point, which usually contains the entry just added.
+                    selection.update { it.copy(selectedGroupStart = null) }
                 }
                 AddWeightEntry.Result.InvalidWeight -> form.update { it.copy(errorRes = R.string.error_invalid_weight) }
             }
         }
     }
 
-    fun onChartEntrySelected(entry: WeightEntry) {
-        selection.update { it.copy(selectedEntryId = entry.id) }
+    fun onChartPeriodChange(period: ChartPeriod) {
+        selection.update { it.copy(chartPeriod = period, selectedGroupStart = null) }
+    }
+
+    fun onChartGroupSelected(group: ChartGroup) {
+        selection.update { it.copy(selectedGroupStart = group.start) }
+    }
+
+    fun onShowAllEntriesToggle() {
+        selection.update { it.copy(showAllEntries = !it.showAllEntries) }
     }
 
     fun onDeleteRequest(entry: WeightEntry?) {
@@ -99,7 +117,9 @@ class WeightViewModel(
     }
 
     private data class Selection(
-        val selectedEntryId: Long? = null,
+        val chartPeriod: ChartPeriod = ChartPeriod.ALL,
+        val selectedGroupStart: LocalDate? = null,
+        val showAllEntries: Boolean = false,
         val entryPendingDeletion: WeightEntry? = null,
     )
 

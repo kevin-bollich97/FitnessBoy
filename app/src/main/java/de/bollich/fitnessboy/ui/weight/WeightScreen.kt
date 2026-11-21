@@ -17,10 +17,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.domain.ChartGroup
+import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.WeightEntry
+import de.bollich.fitnessboy.ui.components.COLLAPSED_ENTRY_COUNT
 import de.bollich.fitnessboy.ui.components.ConfirmDeleteDialog
 import de.bollich.fitnessboy.ui.components.ScreenContentPadding
+import de.bollich.fitnessboy.ui.components.ShowAllButton
 import de.bollich.fitnessboy.ui.components.formatKg
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import java.time.LocalDate
@@ -32,7 +36,9 @@ fun WeightRoute(viewModel: WeightViewModel) {
 
     WeightScreen(
         uiState = uiState,
-        onEntrySelected = viewModel::onChartEntrySelected,
+        onPeriodChange = viewModel::onChartPeriodChange,
+        onGroupSelected = viewModel::onChartGroupSelected,
+        onShowAllEntriesToggle = viewModel::onShowAllEntriesToggle,
         onDeleteRequest = viewModel::onDeleteRequest,
         onDeleteConfirm = viewModel::onDeleteConfirm,
     )
@@ -41,7 +47,9 @@ fun WeightRoute(viewModel: WeightViewModel) {
 @Composable
 private fun WeightScreen(
     uiState: WeightUiState,
-    onEntrySelected: (WeightEntry) -> Unit,
+    onPeriodChange: (ChartPeriod) -> Unit,
+    onGroupSelected: (ChartGroup) -> Unit,
+    onShowAllEntriesToggle: () -> Unit,
     onDeleteRequest: (WeightEntry?) -> Unit,
     onDeleteConfirm: () -> Unit,
 ) {
@@ -70,10 +78,13 @@ private fun WeightScreen(
 
         item {
             WeightChartCard(
-                items = uiState.items,
-                selectedItem = uiState.selectedItem,
+                period = uiState.chartPeriod,
+                groups = uiState.chartGroups,
+                selectedGroup = uiState.selectedGroup,
+                selectedGroupBmi = uiState.selectedGroupBmi,
                 targetWeightInKg = uiState.targetWeightInKg,
-                onEntrySelected = onEntrySelected,
+                onPeriodChange = onPeriodChange,
+                onGroupSelected = onGroupSelected,
             )
         }
         item {
@@ -83,9 +94,19 @@ private fun WeightScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-        items(uiState.items, key = { it.entry.id }) { item ->
+        val visibleItems = if (uiState.showAllEntries) uiState.items else uiState.items.take(COLLAPSED_ENTRY_COUNT)
+        items(visibleItems, key = { it.entry.id }) { item ->
             WeightEntryRow(item = item, onDelete = { onDeleteRequest(item.entry) })
             HorizontalDivider()
+        }
+        if (uiState.items.size > COLLAPSED_ENTRY_COUNT) {
+            item {
+                ShowAllButton(
+                    isExpanded = uiState.showAllEntries,
+                    totalCount = uiState.items.size,
+                    onToggle = onShowAllEntriesToggle,
+                )
+            }
         }
     }
 
@@ -112,9 +133,10 @@ private fun WeightScreenPreview() {
                 isLoading = false,
                 items = items,
                 targetWeightInKg = 78.0,
-                selectedItem = items.first(),
             ),
-            onEntrySelected = {},
+            onPeriodChange = {},
+            onGroupSelected = {},
+            onShowAllEntriesToggle = {},
             onDeleteRequest = {},
             onDeleteConfirm = {},
         )

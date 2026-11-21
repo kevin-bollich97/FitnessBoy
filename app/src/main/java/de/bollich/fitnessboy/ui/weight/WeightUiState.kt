@@ -1,6 +1,8 @@
 package de.bollich.fitnessboy.ui.weight
 
 import androidx.annotation.StringRes
+import de.bollich.fitnessboy.domain.ChartGroup
+import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.model.WeightEntry
 import java.time.LocalDate
 
@@ -22,8 +24,14 @@ data class WeightUiState(
     /** Newest first. */
     val items: List<WeightListItem> = emptyList(),
     val targetWeightInKg: Double? = null,
-    /** Item highlighted in the chart; the newest one unless the user tapped another. */
-    val selectedItem: WeightListItem? = null,
+    val chartPeriod: ChartPeriod = ChartPeriod.ALL,
+    /** Chart points for [chartPeriod], oldest first. */
+    val chartGroups: List<ChartGroup> = emptyList(),
+    /** Point highlighted in the chart; the newest one unless the user tapped another. */
+    val selectedGroup: ChartGroup? = null,
+    /** BMI of [selectedGroup] if it stands for exactly one entry. */
+    val selectedGroupBmi: Double? = null,
+    val showAllEntries: Boolean = false,
     val entryPendingDeletion: WeightEntry? = null,
     val form: WeightFormState = WeightFormState(),
 )

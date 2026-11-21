@@ -1,5 +1,6 @@
 package de.bollich.fitnessboy.ui
 
+import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
@@ -15,6 +16,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
@@ -30,8 +32,10 @@ class WeightViewModelTest {
             weightRepository = weightRepository,
             profileRepository = profileRepository,
             addWeightEntry = AddWeightEntry(weightRepository),
+            today = { today },
         )
     }
+    private val today = LocalDate.of(2026, 3, 31)
 
     private fun TestScope.collectUiState() {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
@@ -65,30 +69,84 @@ class WeightViewModelTest {
     }
 
     @Test
-    fun selection_defaultsToNewestAndFollowsChartTaps() = runTest {
+    fun chart_defaultsToAllAndSelectsNewestPoint() = runTest {
         collectUiState()
         addWeight(LocalDate.of(2026, 3, 1), 81.0)
         addWeight(LocalDate.of(2026, 3, 8), 80.0)
-        val (newest, oldest) = viewModel.uiState.value.items
 
-        assertEquals(newest, viewModel.uiState.value.selectedItem)
-
-        viewModel.onChartEntrySelected(oldest.entry)
-        assertEquals(oldest, viewModel.uiState.value.selectedItem)
+        val state = viewModel.uiState.value
+        assertEquals(ChartPeriod.ALL, state.chartPeriod)
+        assertEquals(listOf(81.0, 80.0), state.chartGroups.map { it.average })
+        assertEquals(state.chartGroups.last(), state.selectedGroup)
     }
 
     @Test
-    fun selection_fallsBackToNewestWhenSelectedEntryIsDeleted() = runTest {
+    fun chartTap_selectsThatPoint() = runTest {
         collectUiState()
         addWeight(LocalDate.of(2026, 3, 1), 81.0)
         addWeight(LocalDate.of(2026, 3, 8), 80.0)
-        val (newest, oldest) = viewModel.uiState.value.items
-        viewModel.onChartEntrySelected(oldest.entry)
+        val oldest = viewModel.uiState.value.chartGroups.first()
 
-        viewModel.onDeleteRequest(oldest.entry)
+        viewModel.onChartGroupSelected(oldest)
+
+        assertEquals(oldest, viewModel.uiState.value.selectedGroup)
+    }
+
+    @Test
+    fun selection_fallsBackToNewestWhenSelectedPointDisappears() = runTest {
+        collectUiState()
+        addWeight(LocalDate.of(2026, 3, 1), 81.0)
+        addWeight(LocalDate.of(2026, 3, 8), 80.0)
+        viewModel.onChartGroupSelected(viewModel.uiState.value.chartGroups.first())
+
+        viewModel.onDeleteRequest(viewModel.uiState.value.items.last().entry)
         viewModel.onDeleteConfirm()
 
-        assertEquals(newest, viewModel.uiState.value.selectedItem)
+        val state = viewModel.uiState.value
+        assertEquals(listOf(LocalDate.of(2026, 3, 8)), state.chartGroups.map { it.start })
+        assertEquals(state.chartGroups.single(), state.selectedGroup)
+    }
+
+    @Test
+    fun chartPeriod_filtersPointsAndResetsSelection() = runTest {
+        collectUiState()
+        addWeight(LocalDate.of(2025, 12, 1), 85.0)
+        addWeight(LocalDate.of(2026, 3, 20), 81.0)
+        addWeight(LocalDate.of(2026, 3, 30), 80.0)
+        viewModel.onChartGroupSelected(viewModel.uiState.value.chartGroups.first())
+
+        viewModel.onChartPeriodChange(ChartPeriod.ONE_MONTH)
+
+        val state = viewModel.uiState.value
+        assertEquals(listOf(LocalDate.of(2026, 3, 20), LocalDate.of(2026, 3, 30)), state.chartGroups.map { it.start })
+        assertEquals(state.chartGroups.last(), state.selectedGroup)
+        assertEquals(3, state.items.size)
+    }
+
+    @Test
+    fun selectedGroupBmi_onlyForPointsFromASingleEntry() = runTest {
+        collectUiState()
+        profileRepository.save(UserProfile(heightInCm = 180.0))
+        addWeight(LocalDate.of(2026, 3, 1), 81.0)
+        addWeight(LocalDate.of(2026, 3, 8), 80.0)
+        addWeight(LocalDate.of(2026, 3, 8), 78.0)
+
+        assertNull(viewModel.uiState.value.selectedGroupBmi)
+
+        viewModel.onChartGroupSelected(viewModel.uiState.value.chartGroups.first())
+        assertEquals(25.0, viewModel.uiState.value.selectedGroupBmi!!, 0.01)
+    }
+
+    @Test
+    fun showAllEntries_toggles() = runTest {
+        collectUiState()
+        assertFalse(viewModel.uiState.value.showAllEntries)
+
+        viewModel.onShowAllEntriesToggle()
+        assertTrue(viewModel.uiState.value.showAllEntries)
+
+        viewModel.onShowAllEntriesToggle()
+        assertFalse(viewModel.uiState.value.showAllEntries)
     }
 
     @Test
