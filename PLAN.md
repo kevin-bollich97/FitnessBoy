@@ -8,7 +8,7 @@ Phasen 0–3 sind erledigt. Weiter geht es mit **Phase 4 – Aufräumen**, in di
 
 1. ~~Legacy-Migration entfernen~~ – erledigt (`cb53095`); alle Installationen nutzen bereits Room.
 2. ~~Template-Reste entfernen~~ – erledigt (`275951b`).
-3. README aktualisieren: Funktionen (inkl. Körpermaße), Architektur (Feature-Pakete, ViewModels, Navigation 3), Tests, Verweis auf `CLAUDE.md`/`PLAN.md`.
+3. ~~README aktualisieren~~ – erledigt (`6b521ae`).
 4. CI-Workflow (GitHub Actions) für `./gradlew testDebugUnitTest lintDebug` bei Push/PR.
 5. Bibliotheken aktualisieren (Lint: `GradleDependency`, `NewerVersionAvailable`, `AndroidGradlePluginVersion`), jeweils einzeln committen und auf dem Emulator prüfen.
 6. Restliche Lint-Warnungen (`UseKtx`, `RedundantLabel`) abarbeiten.
@@ -62,7 +62,7 @@ Hinweise für den Start:
 ## Phase 4 – Aufräumen
 
 - [x] Legacy `WeightStore`/`WeightEntryCodec` samt SharedPreferences-Migration und ungenutzter DAO-Methoden entfernen (`cb53095`)
-- [ ] README aktualisieren (Maße, Architektur, Tests)
+- [x] README aktualisieren (Maße, Architektur, Tests) (`6b521ae`)
 - [ ] CI-Workflow für Tests und Lint bei Push/PR
 - [ ] Lint-Warnungen abarbeiten (Library-Updates, `UseKtx`, `RedundantLabel`)
 - [x] Template-Reste entfernt: `ExampleInstrumentedTest`, ungenutzte `colors.xml`, Instrumentation-Abhängigkeiten (`275951b`)
