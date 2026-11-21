@@ -43,11 +43,11 @@ Grundregeln für das Design:
 - [x] Validierung und Use Case `AddBodyMeasurementsEntry` generisch über `BodyMeasurement`-Enum, meldet alle ungültigen Felder (mit Tests) (`2b36671`)
 - [x] Eingabe aller Maße im Bottom Sheet statt Dialog; Pflichtfelder oben, „Optional“ darunter (`2b36671`)
 
-### 4. Maße-Tab (Issue #6)
-- [ ] Diagramm (aus Schritt 2) mit `FilterChip`-Auswahl des Maßes
-- [ ] Figur zeigt auch die neuen Maße
-- [ ] Domain: BMI zu einem Datum = Gewicht an dem Tag bzw. letzter Eintrag davor + aktuelle Größe (mit Tests)
-- [ ] Liste aller Messungen mit damaligem BMI und Löschen (`ConfirmDeleteDialog` wiederverwenden); eigene Verlaufsseite entfällt
+### 4. Maße-Tab (Issue #6) ✅
+- [x] Diagramm (aus Schritt 2) mit `FilterChip`-Auswahl des Maßes (`0144734`)
+- [x] Figur mit Ring an allen sechs Messstellen, das gewählte Maß hervorgehoben; Werte daneben, bei wenig Platz darunter (`0144734`)
+- [x] Domain: BMI zu einem Datum = Gewicht an dem Tag bzw. letzter Eintrag davor + aktuelle Größe (mit Tests) (`0144734`)
+- [x] Liste aller Messungen mit damaligem BMI und Löschen mit Rückfrage; eigene Verlaufsseite und Unterseiten-Navigation entfallen (`0144734`)
 
 ### 5. Profil
 - [ ] Profil auf Größe und Zielgewicht reduzieren, doppelte Anzeigen (BMI, Überschrift) entfernen
@@ -59,9 +59,9 @@ Grundregeln für das Design:
 | #1 Diagramm Skala anzeigen | Erledigt (`4aaa7f2`) – Issue auf GitHub schließen |
 | #2 Fussleiste nutzt nicht ganze Breite | Erledigt (`5782576`) – Issue auf GitHub schließen |
 | #3 Geschlecht fehlt in der BMI Rechnung | **Entfällt** – BMI-Formel und WHO-Einordnung sind für Erwachsene geschlechtsunabhängig. Issue auf GitHub schließen. |
-| #4 Hinzufügen von Daten wie Oberarm | Erfassen erledigt (`2b36671`); Anzeige an der Figur in Schritt 4 |
+| #4 Hinzufügen von Daten wie Oberarm | Erledigt (`2b36671`, `0144734`) – Issue auf GitHub schließen |
 | #5 Ausschalten der BMI-Anzeige | **Zurückgestellt** – später entscheiden, ob ein Schalter den BMI außerhalb der Übersicht ausblendet |
-| #6 Visualisierung von Daten wie Oberarm | Schritt 4 |
+| #6 Visualisierung von Daten wie Oberarm | Erledigt (`0144734`) – schließt sich beim Push |
 
 ## Unterwegs gefundene Bugs
 
