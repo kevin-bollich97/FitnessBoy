@@ -3,8 +3,10 @@ package de.bollich.fitnessboy.ui
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
@@ -107,11 +110,11 @@ private fun AddEntryButton(
 
 @Composable
 private fun AddEntryButton(@StringRes textRes: Int, onClick: () -> Unit) {
-    ExtendedFloatingActionButton(
-        onClick = onClick,
-        icon = { Icon(painterResource(R.drawable.ic_add), contentDescription = null) },
-        text = { Text(stringResource(textRes)) },
-    )
+    ExtendedFloatingActionButton(onClick = onClick) {
+        Icon(painterResource(R.drawable.ic_add), contentDescription = null)
+        Spacer(Modifier.width(12.dp))
+        Text(stringResource(textRes))
+    }
 }
 
 @Composable
