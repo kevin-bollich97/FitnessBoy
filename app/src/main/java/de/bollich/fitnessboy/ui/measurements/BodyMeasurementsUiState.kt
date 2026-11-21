@@ -1,18 +1,14 @@
 package de.bollich.fitnessboy.ui.measurements
 
-import androidx.annotation.StringRes
+import de.bollich.fitnessboy.domain.BodyMeasurement
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import java.time.LocalDate
 
 data class BodyMeasurementsFormState(
-    val isDialogVisible: Boolean = false,
+    val isSheetVisible: Boolean = false,
     val selectedDate: LocalDate = LocalDate.now(),
-    val waistInput: String = "",
-    @StringRes val waistErrorRes: Int? = null,
-    val hipsInput: String = "",
-    @StringRes val hipsErrorRes: Int? = null,
-    val shouldersInput: String = "",
-    @StringRes val shouldersErrorRes: Int? = null,
+    val inputs: Map<BodyMeasurement, String> = emptyMap(),
+    val invalidMeasurements: Set<BodyMeasurement> = emptySet(),
 )
 
 data class BodyMeasurementsUiState(

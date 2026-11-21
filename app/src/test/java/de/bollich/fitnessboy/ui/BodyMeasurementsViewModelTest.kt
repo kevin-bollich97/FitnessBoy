@@ -1,5 +1,10 @@
 package de.bollich.fitnessboy.ui
 
+import de.bollich.fitnessboy.domain.BodyMeasurement.CHEST
+import de.bollich.fitnessboy.domain.BodyMeasurement.HIPS
+import de.bollich.fitnessboy.domain.BodyMeasurement.SHOULDERS
+import de.bollich.fitnessboy.domain.BodyMeasurement.UPPER_ARM
+import de.bollich.fitnessboy.domain.BodyMeasurement.WAIST
 import de.bollich.fitnessboy.domain.usecase.AddBodyMeasurementsEntry
 import de.bollich.fitnessboy.testing.FakeBodyMeasurementsRepository
 import de.bollich.fitnessboy.testing.MainDispatcherRule
@@ -10,11 +15,11 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 
 class BodyMeasurementsViewModelTest {
     @get:Rule
@@ -32,60 +37,75 @@ class BodyMeasurementsViewModelTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
     }
 
-    private fun enterValidMeasurements() {
-        viewModel.onWaistValueChange("88")
-        viewModel.onHipsValueChange("96")
-        viewModel.onShouldersValueChange("48")
+    private fun enterRequiredMeasurements() {
+        viewModel.onValueChange(WAIST, "88")
+        viewModel.onValueChange(HIPS, "96")
+        viewModel.onValueChange(SHOULDERS, "48")
     }
 
     @Test
-    fun saveValidMeasurements_addsEntryAndClosesDialog() = runTest {
+    fun saveValidMeasurements_addsEntryAndClosesSheet() = runTest {
         collectUiState()
-        viewModel.onDialogVisibilityChange(true)
-        enterValidMeasurements()
+        viewModel.onSheetVisibilityChange(true)
+        enterRequiredMeasurements()
+        viewModel.onValueChange(UPPER_ARM, "35")
 
         viewModel.onSaveClick()
 
         val state = viewModel.uiState.value
         assertEquals(88.0, state.latestEntry!!.waistInCm, 0.0)
-        assertFalse(state.form.isDialogVisible)
-        assertEquals("", state.form.waistInput)
+        assertEquals(35.0, state.latestEntry!!.upperArmInCm!!, 0.0)
+        assertNull(state.latestEntry!!.chestInCm)
+        assertFalse(state.form.isSheetVisible)
+        assertTrue(state.form.inputs.isEmpty())
     }
 
     @Test
-    fun saveInvalidMeasurements_keepsDialogOpenWithError() = runTest {
+    fun saveInvalidMeasurements_keepsSheetOpenAndMarksAllInvalidFields() = runTest {
         collectUiState()
-        viewModel.onDialogVisibilityChange(true)
-        enterValidMeasurements()
-        viewModel.onHipsValueChange("x")
+        viewModel.onSheetVisibilityChange(true)
+        viewModel.onValueChange(WAIST, "88")
+        viewModel.onValueChange(CHEST, "abc")
 
         viewModel.onSaveClick()
 
         val state = viewModel.uiState.value
-        assertTrue(state.form.isDialogVisible)
-        assertNotNull(state.form.hipsErrorRes)
+        assertTrue(state.form.isSheetVisible)
+        assertEquals(setOf(HIPS, SHOULDERS, CHEST), state.form.invalidMeasurements)
         assertTrue(state.entries.isEmpty())
     }
 
     @Test
-    fun dismissDialog_clearsErrorsButKeepsInput() = runTest {
+    fun editingField_clearsOnlyItsError() = runTest {
         collectUiState()
-        viewModel.onDialogVisibilityChange(true)
-        viewModel.onWaistValueChange("x")
         viewModel.onSaveClick()
 
-        viewModel.onDialogVisibilityChange(false)
+        viewModel.onValueChange(WAIST, "8")
+
+        assertEquals(setOf(HIPS, SHOULDERS), viewModel.uiState.value.form.invalidMeasurements)
+    }
+
+    @Test
+    fun dismissSheet_clearsErrorsAndDateButKeepsInput() = runTest {
+        collectUiState()
+        viewModel.onSheetVisibilityChange(true)
+        viewModel.onValueChange(WAIST, "x")
+        viewModel.onDateChange(LocalDate.of(2026, 3, 1))
+        viewModel.onSaveClick()
+
+        viewModel.onSheetVisibilityChange(false)
 
         val form = viewModel.uiState.value.form
-        assertFalse(form.isDialogVisible)
-        assertNull(form.waistErrorRes)
-        assertEquals("x", form.waistInput)
+        assertFalse(form.isSheetVisible)
+        assertTrue(form.invalidMeasurements.isEmpty())
+        assertEquals(LocalDate.now(), form.selectedDate)
+        assertEquals("x", form.inputs[WAIST])
     }
 
     @Test
     fun deleteEntry_removesIt() = runTest {
         collectUiState()
-        enterValidMeasurements()
+        enterRequiredMeasurements()
         viewModel.onSaveClick()
 
         viewModel.onDeleteEntry(viewModel.uiState.value.latestEntry!!)

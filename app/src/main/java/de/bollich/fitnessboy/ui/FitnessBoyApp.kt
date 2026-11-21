@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.ui.measurements.AddBodyMeasurementsSheetHost
 import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsViewModel
 import de.bollich.fitnessboy.ui.measurements.MeasurementsHistoryRoute
 import de.bollich.fitnessboy.ui.measurements.MeasurementsRoute
@@ -55,7 +56,7 @@ fun FitnessBoyApp(
             AddEntryButton(
                 destination = mainState.currentDestination,
                 onAddWeight = { weightViewModel.onAddWeightSheetVisibilityChange(true) },
-                onAddMeasurements = { bodyMeasurementsViewModel.onDialogVisibilityChange(true) },
+                onAddMeasurements = { bodyMeasurementsViewModel.onSheetVisibilityChange(true) },
             )
         },
     ) {
@@ -90,6 +91,7 @@ fun FitnessBoyApp(
             },
         )
         AddWeightSheetHost(weightViewModel)
+        AddBodyMeasurementsSheetHost(bodyMeasurementsViewModel)
     }
 }
 

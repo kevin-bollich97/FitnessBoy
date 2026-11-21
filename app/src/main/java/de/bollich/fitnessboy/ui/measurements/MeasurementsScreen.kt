@@ -26,26 +26,12 @@ fun MeasurementsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     if (uiState.isLoading) return
 
-    MeasurementsScreen(
-        uiState = uiState,
-        onBodyMeasurementsDialogChange = viewModel::onDialogVisibilityChange,
-        onBodyMeasurementsDateChange = viewModel::onDateChange,
-        onWaistValueChange = viewModel::onWaistValueChange,
-        onHipsValueChange = viewModel::onHipsValueChange,
-        onShouldersValueChange = viewModel::onShouldersValueChange,
-        onAddBodyMeasurementsClick = viewModel::onSaveClick,
-    )
+    MeasurementsScreen(uiState = uiState)
 }
 
 @Composable
 private fun MeasurementsScreen(
     uiState: BodyMeasurementsUiState,
-    onBodyMeasurementsDialogChange: (Boolean) -> Unit,
-    onBodyMeasurementsDateChange: (LocalDate) -> Unit,
-    onWaistValueChange: (String) -> Unit,
-    onHipsValueChange: (String) -> Unit,
-    onShouldersValueChange: (String) -> Unit,
-    onAddBodyMeasurementsClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -70,23 +56,6 @@ private fun MeasurementsScreen(
 
     }
 
-    if (uiState.form.isDialogVisible) {
-        AddBodyMeasurementsDialog(
-            selectedDate = uiState.form.selectedDate,
-            waistInput = uiState.form.waistInput,
-            waistErrorText = uiState.form.waistErrorRes?.let { stringResource(it) },
-            hipsInput = uiState.form.hipsInput,
-            hipsErrorText = uiState.form.hipsErrorRes?.let { stringResource(it) },
-            shouldersInput = uiState.form.shouldersInput,
-            shouldersErrorText = uiState.form.shouldersErrorRes?.let { stringResource(it) },
-            onDateChange = onBodyMeasurementsDateChange,
-            onWaistChange = onWaistValueChange,
-            onHipsChange = onHipsValueChange,
-            onShouldersChange = onShouldersValueChange,
-            onDismiss = { onBodyMeasurementsDialogChange(false) },
-            onSave = onAddBodyMeasurementsClick,
-        )
-    }
 }
 
 @Preview(showBackground = true)
@@ -98,12 +67,6 @@ private fun MeasurementsScreenPreview() {
                 isLoading = false,
                 entries = listOf(previewBodyMeasurementsEntry),
             ),
-            onBodyMeasurementsDialogChange = {},
-            onBodyMeasurementsDateChange = {},
-            onWaistValueChange = {},
-            onHipsValueChange = {},
-            onShouldersValueChange = {},
-            onAddBodyMeasurementsClick = {},
         )
     }
 }

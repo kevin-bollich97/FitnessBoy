@@ -110,12 +110,7 @@ fun BodyMeasurementsHistoryRow(
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = stringResource(
-                        R.string.measurements_history_summary,
-                        formatNumber(entry.waistInCm),
-                        formatNumber(entry.hipsInCm),
-                        formatNumber(entry.shouldersInCm),
-                    ),
+                    text = measuredValuesText(entry),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

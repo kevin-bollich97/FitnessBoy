@@ -1,6 +1,5 @@
 package de.bollich.fitnessboy.ui.overview
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.MaterialTheme
@@ -11,7 +10,8 @@ import androidx.compose.ui.unit.dp
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
-import de.bollich.fitnessboy.ui.components.formatCm
+import de.bollich.fitnessboy.domain.measuredValues
+import de.bollich.fitnessboy.ui.measurements.measurementValueText
 
 @Composable
 internal fun MeasurementsSummaryCard(
@@ -39,17 +39,12 @@ internal fun MeasurementsSummaryCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            MeasurementValue(R.string.measurements_waist, latestMeasurements.waistInCm)
-            MeasurementValue(R.string.measurements_hips, latestMeasurements.hipsInCm)
-            MeasurementValue(R.string.measurements_shoulders, latestMeasurements.shouldersInCm)
+            latestMeasurements.measuredValues().forEach { (measurement, valueInCm) ->
+                Text(
+                    text = measurementValueText(measurement, valueInCm),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
-}
-
-@Composable
-private fun MeasurementValue(@StringRes labelRes: Int, valueInCm: Double) {
-    Text(
-        text = stringResource(R.string.overview_measurement_value, stringResource(labelRes), formatCm(valueInCm)),
-        style = MaterialTheme.typography.bodyLarge,
-    )
 }
