@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 data class MainUiState(
     val isLoading: Boolean = true,
-    val backStack: List<Destination> = backStackFor(AppTab.WEIGHT),
+    val backStack: List<Destination> = backStackFor(startTab),
 ) {
     /** The tab highlighted in the bottom bar: the top-most tab on the back stack. */
     val selectedTab: AppTab
@@ -27,7 +27,7 @@ data class MainUiState(
 /**
  * Owns the navigation back stack and restores the last selected tab on start.
  *
- * Back stack shape follows Material guidance: the weight tab is the start destination, every other
+ * Back stack shape follows Material guidance: the overview tab is the start destination, every other
  * tab sits on top of it, and sub-pages are pushed on top of their tab.
  */
 class MainViewModel(
@@ -39,7 +39,7 @@ class MainViewModel(
     init {
         viewModelScope.launch {
             val settings = settingsRepository.observeSettings().first()
-            val tab = AppTab.entries.firstOrNull { it.name == settings.selectedTabName } ?: AppTab.WEIGHT
+            val tab = AppTab.entries.firstOrNull { it.name == settings.selectedTabName } ?: startTab
             _uiState.value = MainUiState(isLoading = false, backStack = backStackFor(tab))
         }
     }
@@ -75,9 +75,11 @@ class MainViewModel(
     }
 }
 
+private val startTab = AppTab.OVERVIEW
+
 private fun backStackFor(tab: AppTab): List<Destination> =
-    if (tab == AppTab.WEIGHT) {
-        listOf(Destination.Tab(AppTab.WEIGHT))
+    if (tab == startTab) {
+        listOf(Destination.Tab(startTab))
     } else {
-        listOf(Destination.Tab(AppTab.WEIGHT), Destination.Tab(tab))
+        listOf(Destination.Tab(startTab), Destination.Tab(tab))
     }

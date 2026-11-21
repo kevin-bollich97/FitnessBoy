@@ -8,8 +8,8 @@ enum class AppTab(
     @StringRes val labelRes: Int,
     @DrawableRes val iconRes: Int,
 ) {
-    WEIGHT(R.string.tab_weight, R.drawable.ic_home),
-    BMI(R.string.tab_bmi, R.drawable.ic_favorite),
+    OVERVIEW(R.string.tab_overview, R.drawable.ic_home),
+    WEIGHT(R.string.tab_weight, R.drawable.ic_show_chart),
     MEASUREMENTS(R.string.tab_measurements, R.drawable.ic_straighten),
     PROFILE(R.string.tab_profile, R.drawable.ic_account_box),
 }

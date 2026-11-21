@@ -1,6 +1,5 @@
 package de.bollich.fitnessboy.ui
 
-import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
 import de.bollich.fitnessboy.domain.usecase.GetHealthOverview
 import de.bollich.fitnessboy.model.UserProfile
@@ -50,7 +49,6 @@ class WeightViewModelTest {
         assertFalse(state.isLoading)
         assertEquals(81.0, state.latestEntry!!.weightInKg, 0.0)
         assertEquals(25.0, state.bmi!!, 0.01)
-        assertEquals(BmiCategory.OVERWEIGHT, state.bmiCategory)
     }
 
     @Test

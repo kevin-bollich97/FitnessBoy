@@ -19,12 +19,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import de.bollich.fitnessboy.ui.bmi.BmiRoute
 import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsViewModel
 import de.bollich.fitnessboy.ui.measurements.MeasurementsHistoryRoute
 import de.bollich.fitnessboy.ui.measurements.MeasurementsRoute
 import de.bollich.fitnessboy.ui.navigation.AppTab
 import de.bollich.fitnessboy.ui.navigation.Destination
+import de.bollich.fitnessboy.ui.overview.OverviewRoute
+import de.bollich.fitnessboy.ui.overview.OverviewViewModel
 import de.bollich.fitnessboy.ui.profile.ProfileRoute
 import de.bollich.fitnessboy.ui.profile.ProfileViewModel
 import de.bollich.fitnessboy.ui.weight.WeightHistoryRoute
@@ -34,6 +35,7 @@ import de.bollich.fitnessboy.ui.weight.WeightViewModel
 @Composable
 fun FitnessBoyApp(
     mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory),
+    overviewViewModel: OverviewViewModel = viewModel(factory = OverviewViewModel.Factory),
     weightViewModel: WeightViewModel = viewModel(factory = WeightViewModel.Factory),
     bodyMeasurementsViewModel: BodyMeasurementsViewModel = viewModel(factory = BodyMeasurementsViewModel.Factory),
     profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModel.Factory),
@@ -52,8 +54,11 @@ fun FitnessBoyApp(
             entryProvider = entryProvider {
                 entry<Destination.Tab> { destination ->
                     when (destination.tab) {
+                        AppTab.OVERVIEW -> OverviewRoute(
+                            viewModel = overviewViewModel,
+                            onOpenTab = mainViewModel::onTabSelected,
+                        )
                         AppTab.WEIGHT -> WeightRoute(weightViewModel)
-                        AppTab.BMI -> BmiRoute(weightViewModel)
                         AppTab.MEASUREMENTS -> MeasurementsRoute(bodyMeasurementsViewModel)
                         AppTab.PROFILE -> ProfileRoute(
                             viewModel = profileViewModel,

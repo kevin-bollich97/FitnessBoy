@@ -1,5 +1,12 @@
 package de.bollich.fitnessboy.domain
 
+/** BMI range that counts as healthy for adults; the basis of [calculateHealthyWeightRange]. */
+const val HEALTHY_BMI_MIN = 18.5
+const val HEALTHY_BMI_MAX = 24.9
+
+/** BMI used as a rough optimum in [calculateOptimalWeight]. */
+const val OPTIMAL_BMI = 22.0
+
 data class WeightRange(
     val minimumInKg: Double,
     val maximumInKg: Double,
@@ -8,14 +15,14 @@ data class WeightRange(
 fun calculateHealthyWeightRange(heightInCm: Double?): WeightRange? {
     val heightInMeters = toHeightInMeters(heightInCm) ?: return null
     return WeightRange(
-        minimumInKg = 18.5 * heightInMeters * heightInMeters,
-        maximumInKg = 24.9 * heightInMeters * heightInMeters,
+        minimumInKg = HEALTHY_BMI_MIN * heightInMeters * heightInMeters,
+        maximumInKg = HEALTHY_BMI_MAX * heightInMeters * heightInMeters,
     )
 }
 
 fun calculateOptimalWeight(heightInCm: Double?): Double? {
     val heightInMeters = toHeightInMeters(heightInCm) ?: return null
-    return 22.0 * heightInMeters * heightInMeters
+    return OPTIMAL_BMI * heightInMeters * heightInMeters
 }
 
 private fun toHeightInMeters(heightInCm: Double?): Double? {

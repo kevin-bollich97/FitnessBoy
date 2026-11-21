@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Weight entries, trends and BMI insights. Shared by the weight, BMI and history screens. */
+/** Weight entries, trends and the add-weight form. Shared by the weight and history screens. */
 class WeightViewModel(
     private val weightRepository: WeightRepository,
     profileRepository: ProfileRepository,
@@ -42,11 +42,7 @@ class WeightViewModel(
                 profile = profile,
                 latestEntry = overview.latestEntry,
                 trends = overview.trends,
-                goalProgress = overview.goalProgress,
                 bmi = overview.bmi,
-                bmiCategory = overview.bmiCategory,
-                healthyWeightRange = overview.healthyWeightRange,
-                optimalWeightInKg = overview.optimalWeightInKg,
                 form = form,
             )
         }.stateIn(

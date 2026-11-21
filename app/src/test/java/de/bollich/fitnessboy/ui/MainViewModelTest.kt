@@ -15,7 +15,7 @@ class MainViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val weightTab = Destination.Tab(AppTab.WEIGHT)
+    private val overviewTab = Destination.Tab(AppTab.OVERVIEW)
     private val profileTab = Destination.Tab(AppTab.PROFILE)
 
     @Test
@@ -26,16 +26,16 @@ class MainViewModelTest {
 
         assertFalse(state.isLoading)
         assertEquals(AppTab.PROFILE, state.selectedTab)
-        assertEquals(listOf(weightTab, profileTab), state.backStack)
+        assertEquals(listOf(overviewTab, profileTab), state.backStack)
     }
 
     @Test
-    fun unknownPersistedTab_fallsBackToWeight() = runTest {
-        val repository = FakeSettingsRepository(AppSettings(selectedTabName = "REMOVED_TAB"))
+    fun removedPersistedTab_fallsBackToOverview() = runTest {
+        val repository = FakeSettingsRepository(AppSettings(selectedTabName = "BMI"))
 
         val state = MainViewModel(repository).uiState.value
 
-        assertEquals(listOf(weightTab), state.backStack)
+        assertEquals(listOf(overviewTab), state.backStack)
     }
 
     @Test
@@ -48,7 +48,7 @@ class MainViewModelTest {
         viewModel.onTabSelected(AppTab.MEASUREMENTS)
 
         assertEquals(
-            listOf(weightTab, Destination.Tab(AppTab.MEASUREMENTS)),
+            listOf(overviewTab, Destination.Tab(AppTab.MEASUREMENTS)),
             viewModel.uiState.value.backStack,
         )
         assertEquals("MEASUREMENTS", repository.settings.value.selectedTabName)
@@ -63,19 +63,19 @@ class MainViewModelTest {
         assertEquals(AppTab.PROFILE, viewModel.uiState.value.selectedTab)
 
         viewModel.onBack()
-        assertEquals(listOf(weightTab, profileTab), viewModel.uiState.value.backStack)
+        assertEquals(listOf(overviewTab, profileTab), viewModel.uiState.value.backStack)
     }
 
     @Test
-    fun backFromOtherTab_returnsToWeightAndPersistsIt() = runTest {
+    fun backFromOtherTab_returnsToOverviewAndPersistsIt() = runTest {
         val repository = FakeSettingsRepository()
         val viewModel = MainViewModel(repository)
-        viewModel.onTabSelected(AppTab.BMI)
+        viewModel.onTabSelected(AppTab.WEIGHT)
 
         viewModel.onBack()
 
-        assertEquals(listOf(weightTab), viewModel.uiState.value.backStack)
-        assertEquals("WEIGHT", repository.settings.value.selectedTabName)
+        assertEquals(listOf(overviewTab), viewModel.uiState.value.backStack)
+        assertEquals("OVERVIEW", repository.settings.value.selectedTabName)
     }
 
     @Test
@@ -84,6 +84,6 @@ class MainViewModelTest {
 
         viewModel.onBack()
 
-        assertEquals(listOf(weightTab), viewModel.uiState.value.backStack)
+        assertEquals(listOf(overviewTab), viewModel.uiState.value.backStack)
     }
 }

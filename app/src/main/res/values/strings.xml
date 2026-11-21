@@ -30,18 +30,16 @@
     <string name="action_delete_entry">Eintrag löschen</string>
     <string name="action_save">Speichern</string>
     <string name="date_range">%1$s bis %2$s</string>
-    <string name="hint_complete_profile">Bitte Profil ausfüllen</string>
     <string name="metric_bmi">BMI</string>
     <string name="metric_latest_measurement">Letzte Messung</string>
     <string name="metric_latest_weight">Letzter Wert</string>
-    <string name="tab_bmi">BMI</string>
+    <string name="tab_overview">Übersicht</string>
     <string name="tab_measurements">Maße</string>
     <string name="tab_profile">Profil</string>
     <string name="tab_weight">Gewicht</string>
-    <string name="value_cm">%1$s cm</string>
-    <string name="value_kg">%1$s kg</string>
-    <string name="value_missing">Offen</string>
-    <string name="value_percent">%1$d %%</string>
+    <string name="value_cm">%1$s\u00A0cm</string>
+    <string name="value_kg">%1$s\u00A0kg</string>
+    <string name="value_percent">%1$d\u00A0%%</string>
 
     <!-- Weight -->
     <string name="chart_empty">Noch keine Gewichtsverläufe vorhanden. Lege oben deinen ersten Wert an.</string>
@@ -59,28 +57,40 @@
     <string name="weight_subtitle">Trage neue Werte ein und beobachte deinen Verlauf.</string>
     <string name="weight_title">Gewicht</string>
 
-    <!-- BMI -->
-    <string name="bmi_category_label">Einordnung: %1$s</string>
-    <string name="bmi_healthy_range_description">Abgeleitet aus BMI %1$s bis %2$s für deine Größe.</string>
-    <string name="bmi_healthy_range_title">Gesunder Bereich</string>
-    <string name="bmi_healthy_range_value">%1$s bis %2$s kg</string>
-    <string name="bmi_insights_height">Größe</string>
-    <string name="bmi_insights_title">Deine Kennzahlen</string>
-    <string name="bmi_insights_weight">Gewicht</string>
-    <string name="bmi_optimal_weight_description">Grobe Orientierung mit BMI %1$s als Zielwert.</string>
-    <string name="bmi_optimal_weight_title">Optimalgewicht</string>
-    <string name="bmi_subtitle">Hier siehst du deinen BMI, Trends und Richtwerte auf Basis deiner Größe.</string>
-    <string name="bmi_title">BMI und Ziele</string>
-    <string name="goal_progress">Fortschritt</string>
-    <string name="goal_progress_summary">Start: %1$s kg, aktuell: %2$s kg, geschafft: %3$s kg.</string>
-    <string name="goal_remaining">Verbleibend</string>
-    <string name="goal_status_gaining">Du arbeitest auf eine Gewichtszunahme hin.</string>
-    <string name="goal_status_losing">Du arbeitest auf eine Gewichtsabnahme hin.</string>
-    <string name="goal_status_maintaining">Du hältst dein aktuelles Gewicht als Ziel.</string>
-    <string name="goal_status_not_started">Noch keine Zielverfolgung aktiv.</string>
-    <string name="goal_status_reached">Ziel erreicht. Du bist bei %1$s kg angekommen.</string>
-    <string name="goal_target">Ziel</string>
-    <string name="goal_title">Zielverfolgung</string>
+    <!-- Overview -->
+    <string name="overview_title">Übersicht</string>
+    <string name="overview_weight_title">Aktuelles Gewicht</string>
+    <string name="overview_weight_measured_on">Gewogen am %1$s</string>
+    <string name="overview_weight_empty">Noch kein Gewicht eingetragen. Sobald du dein erstes Gewicht einträgst, siehst du hier deinen Stand.</string>
+    <string name="overview_trend_since_date">%1$s seit dem %2$s</string>
+    <string name="overview_trend_since_start">%1$s seit Beginn am %2$s</string>
+    <string name="overview_goal_title">Ziel: %1$s</string>
+    <string name="overview_goal_remaining">Noch %1$s bis zum Ziel · %2$s geschafft</string>
+    <string name="overview_goal_reached">Ziel erreicht – du bist bei %1$s.</string>
+    <string name="overview_goal_missing_title">Kein Zielgewicht</string>
+    <string name="overview_goal_missing">Lege im Profil ein Zielgewicht fest, um deinen Fortschritt zu sehen.</string>
+    <string name="overview_bmi_title">BMI</string>
+    <string name="overview_bmi_explain">Was bedeutet das?</string>
+    <string name="overview_bmi_missing_height">Trage im Profil deine Größe ein, um deinen BMI zu sehen.</string>
+    <string name="overview_measurements_title">Letzte Körpermaße</string>
+    <string name="overview_measurements_measured_on">Gemessen am %1$s</string>
+    <string name="overview_measurements_empty">Noch keine Körpermaße erfasst. Im Tab „Maße“ kannst du sie eintragen.</string>
+    <string name="overview_measurement_value">%1$s: %2$s</string>
+
+    <!-- BMI explanation -->
+    <string name="bmi_info_title">Was ist der BMI?</string>
+    <string name="bmi_info_text">Der Body-Mass-Index setzt dein Gewicht ins Verhältnis zu deiner Größe: Gewicht in kg geteilt durch Größe in Metern zum Quadrat. Er ist nur eine grobe Orientierung und berücksichtigt zum Beispiel keine Muskelmasse.</string>
+    <string name="bmi_info_your_value">Dein BMI: %1$s</string>
+    <string name="bmi_info_categories_title">Einordnung nach WHO</string>
+    <string name="bmi_info_current_category">Deine Einordnung</string>
+    <string name="bmi_range_below">unter %1$s</string>
+    <string name="bmi_range_between">%1$s bis unter %2$s</string>
+    <string name="bmi_range_from">ab %1$s</string>
+    <string name="bmi_info_healthy_range_title">Gesunder Gewichtsbereich</string>
+    <string name="bmi_info_healthy_range_value">%1$s bis %2$s\u00A0kg</string>
+    <string name="bmi_info_healthy_range_description">Entspricht einem BMI von %1$s bis %2$s bei deiner Größe von %3$s.</string>
+    <string name="bmi_info_optimal_weight_title">Optimalgewicht</string>
+    <string name="bmi_info_optimal_weight_description">Entspricht einem BMI von %1$s – eine grobe Orientierung.</string>
 
     <!-- Body measurements -->
     <string name="measurements_add_action">Körpermaße erfassen</string>
@@ -89,7 +99,7 @@
     <string name="measurements_hips_label">Hüftumfang in cm</string>
     <string name="measurements_hips_placeholder">z.B. 96</string>
     <string name="measurements_history_subtitle">Hier findest du alle gespeicherten Körpermaße und kannst sie bei Bedarf löschen.</string>
-    <string name="measurements_history_summary">Bauch %1$s cm, Hüfte %2$s cm, Schultern %3$s cm</string>
+    <string name="measurements_history_summary">Bauch %1$s\u00A0cm, Hüfte %2$s\u00A0cm, Schultern %3$s\u00A0cm</string>
     <string name="measurements_history_title">Maßverlauf</string>
     <string name="measurements_last_updated">Zuletzt aktualisiert am %1$s</string>
     <string name="measurements_overview_empty">Noch keine Körpermaße gespeichert</string>
