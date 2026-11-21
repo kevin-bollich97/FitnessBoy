@@ -31,11 +31,11 @@ Grundregeln für das Design:
 - [x] Dashboard „Übersicht“ mit Gewicht, Ziel, BMI (inkl. Erklärung) und letzten Körpermaßen (`c518659`)
 - [x] FAB + Bottom Sheet zum Eintragen des Gewichts; auf dem Maße-Tab öffnet der FAB vorerst den bestehenden Dialog (`63303a9`)
 
-### 2. Gewicht-Tab
-- [ ] Wiederverwendbares Diagramm: x-Achse mit Datum, y-Achse mit Werten und Hilfslinien (Issue #1)
-- [ ] Antippen eines Punkts zeigt Details: Datum, Wert, damaliger BMI (Issue #1)
-- [ ] Liste aller Einträge mit damaligem BMI und Löschen; eigene Verlaufsseite entfällt
-- [ ] Domain: BMI zu einem Datum = Gewicht an dem Tag bzw. letzter Eintrag davor + aktuelle Größe (mit Tests)
+### 2. Gewicht-Tab ✅
+- [x] Wiederverwendbares Diagramm: x-Achse mit Datum, y-Achse mit Werten und Hilfslinien; Punkte zeitlich verteilt (Issue #1) (`4aaa7f2`)
+- [x] Antippen eines Punkts zeigt Details: Datum, Wert, damaliger BMI (Issue #1) (`4aaa7f2`)
+- [x] Liste aller Einträge mit damaligem BMI und Löschen (mit Rückfrage); eigene Verlaufsseite entfällt (`4aaa7f2`)
+- BMI eines Gewichtseintrags = sein Gewicht + aktuelle Größe; die Suche nach dem letzten Gewicht vor einem Datum kommt erst in Schritt 4, wo sie gebraucht wird.
 
 ### 3. Datenmodell neue Maße (Issue #4)
 - [ ] `BodyMeasurementsEntry` um Oberarm (nur einer), Brust, Oberschenkel erweitern – alle drei optional; Bauch, Hüfte, Schultern bleiben Pflicht
@@ -46,7 +46,8 @@ Grundregeln für das Design:
 ### 4. Maße-Tab (Issue #6)
 - [ ] Diagramm (aus Schritt 2) mit `FilterChip`-Auswahl des Maßes
 - [ ] Figur zeigt auch die neuen Maße
-- [ ] Liste aller Messungen mit damaligem BMI und Löschen; eigene Verlaufsseite entfällt
+- [ ] Domain: BMI zu einem Datum = Gewicht an dem Tag bzw. letzter Eintrag davor + aktuelle Größe (mit Tests)
+- [ ] Liste aller Messungen mit damaligem BMI und Löschen (`ConfirmDeleteDialog` wiederverwenden); eigene Verlaufsseite entfällt
 
 ### 5. Profil
 - [ ] Profil auf Größe und Zielgewicht reduzieren, doppelte Anzeigen (BMI, Überschrift) entfernen
@@ -55,7 +56,7 @@ Grundregeln für das Design:
 
 | Issue | Status |
 | --- | --- |
-| #1 Diagramm Skala anzeigen | Schritt 2 |
+| #1 Diagramm Skala anzeigen | Erledigt (`4aaa7f2`) – Issue auf GitHub schließen |
 | #2 Fussleiste nutzt nicht ganze Breite | Erledigt (`5782576`) – Issue auf GitHub schließen |
 | #3 Geschlecht fehlt in der BMI Rechnung | **Entfällt** – BMI-Formel und WHO-Einordnung sind für Erwachsene geschlechtsunabhängig. Issue auf GitHub schließen. |
 | #4 Hinzufügen von Daten wie Oberarm | Schritt 3 |
