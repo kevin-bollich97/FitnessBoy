@@ -18,10 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.domain.BodyMeasurement
+import de.bollich.fitnessboy.domain.ChartGroup
+import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
+import de.bollich.fitnessboy.ui.components.COLLAPSED_ENTRY_COUNT
 import de.bollich.fitnessboy.ui.components.ConfirmDeleteDialog
 import de.bollich.fitnessboy.ui.components.ScreenContentPadding
+import de.bollich.fitnessboy.ui.components.ShowAllButton
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import java.time.LocalDate
 
@@ -35,7 +39,9 @@ fun MeasurementsRoute(
     MeasurementsScreen(
         uiState = uiState,
         onMeasurementChange = viewModel::onChartMeasurementChange,
-        onEntrySelected = viewModel::onChartEntrySelected,
+        onPeriodChange = viewModel::onChartPeriodChange,
+        onGroupSelected = viewModel::onChartGroupSelected,
+        onShowAllEntriesToggle = viewModel::onShowAllEntriesToggle,
         onDeleteRequest = viewModel::onDeleteRequest,
         onDeleteConfirm = viewModel::onDeleteConfirm,
     )
@@ -45,7 +51,9 @@ fun MeasurementsRoute(
 private fun MeasurementsScreen(
     uiState: BodyMeasurementsUiState,
     onMeasurementChange: (BodyMeasurement) -> Unit,
-    onEntrySelected: (BodyMeasurementsEntry) -> Unit,
+    onPeriodChange: (ChartPeriod) -> Unit,
+    onGroupSelected: (ChartGroup) -> Unit,
+    onShowAllEntriesToggle: () -> Unit,
     onDeleteRequest: (BodyMeasurementsEntry?) -> Unit,
     onDeleteConfirm: () -> Unit,
 ) {
@@ -78,11 +86,15 @@ private fun MeasurementsScreen(
         }
         item {
             MeasurementsChartCard(
-                items = uiState.items,
                 measurement = uiState.chartMeasurement,
-                selectedItem = uiState.selectedItem,
+                period = uiState.chartPeriod,
+                groups = uiState.chartGroups,
+                selectedGroup = uiState.selectedGroup,
+                selectedGroupBmi = uiState.selectedGroupBmi,
+                hasAnyValue = uiState.chartMeasurementHasValues,
                 onMeasurementChange = onMeasurementChange,
-                onEntrySelected = onEntrySelected,
+                onPeriodChange = onPeriodChange,
+                onGroupSelected = onGroupSelected,
             )
         }
         item {
@@ -92,9 +104,19 @@ private fun MeasurementsScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-        items(uiState.items, key = { it.entry.id }) { item ->
+        val visibleItems = if (uiState.showAllEntries) uiState.items else uiState.items.take(COLLAPSED_ENTRY_COUNT)
+        items(visibleItems, key = { it.entry.id }) { item ->
             MeasurementEntryRow(item = item, onDelete = { onDeleteRequest(item.entry) })
             HorizontalDivider()
+        }
+        if (uiState.items.size > COLLAPSED_ENTRY_COUNT) {
+            item {
+                ShowAllButton(
+                    isExpanded = uiState.showAllEntries,
+                    totalCount = uiState.items.size,
+                    onToggle = onShowAllEntriesToggle,
+                )
+            }
         }
     }
 
@@ -129,9 +151,11 @@ private fun MeasurementsScreenPreview() {
     )
     FitnessBoyTheme {
         MeasurementsScreen(
-            uiState = BodyMeasurementsUiState(isLoading = false, items = items, selectedItem = items.first()),
+            uiState = BodyMeasurementsUiState(isLoading = false, items = items, chartMeasurementHasValues = true),
             onMeasurementChange = {},
-            onEntrySelected = {},
+            onPeriodChange = {},
+            onGroupSelected = {},
+            onShowAllEntriesToggle = {},
             onDeleteRequest = {},
             onDeleteConfirm = {},
         )

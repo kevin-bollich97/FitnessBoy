@@ -5,10 +5,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import de.bollich.fitnessboy.domain.BodyMeasurement
+import de.bollich.fitnessboy.domain.ChartGroup
+import de.bollich.fitnessboy.domain.ChartPeriod
+import de.bollich.fitnessboy.domain.DatedValue
 import de.bollich.fitnessboy.domain.calculateBmiOn
 import de.bollich.fitnessboy.domain.repository.BodyMeasurementsRepository
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
 import de.bollich.fitnessboy.domain.repository.WeightRepository
+import de.bollich.fitnessboy.domain.summarizeForChart
 import de.bollich.fitnessboy.domain.usecase.AddBodyMeasurementsEntry
 import de.bollich.fitnessboy.domain.valueOf
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
@@ -28,6 +32,7 @@ class BodyMeasurementsViewModel(
     weightRepository: WeightRepository,
     profileRepository: ProfileRepository,
     private val addBodyMeasurementsEntry: AddBodyMeasurementsEntry,
+    private val today: () -> LocalDate = LocalDate::now,
 ) : ViewModel() {
     private val form = MutableStateFlow(BodyMeasurementsFormState())
     private val selection = MutableStateFlow(Selection())
@@ -40,14 +45,23 @@ class BodyMeasurementsViewModel(
             form,
             selection,
         ) { entries, weights, profile, form, selection ->
-            val items = entries.map { MeasurementListItem(it, calculateBmiOn(it.date, weights, profile.heightInCm)) }
-            val itemsWithValue = items.filter { it.entry.valueOf(selection.chartMeasurement) != null }
+            val values = entries.mapNotNull { entry ->
+                entry.valueOf(selection.chartMeasurement)?.let { DatedValue(entry.date, it) }
+            }
+            val groups = summarizeForChart(values, selection.chartPeriod, today())
+            val selectedGroup = groups.firstOrNull { it.start == selection.selectedGroupStart } ?: groups.lastOrNull()
             BodyMeasurementsUiState(
                 isLoading = false,
-                items = items,
+                items = entries.map { MeasurementListItem(it, calculateBmiOn(it.date, weights, profile.heightInCm)) },
                 chartMeasurement = selection.chartMeasurement,
-                selectedItem = itemsWithValue.firstOrNull { it.entry.id == selection.selectedEntryId }
-                    ?: itemsWithValue.firstOrNull(),
+                chartMeasurementHasValues = values.isNotEmpty(),
+                chartPeriod = selection.chartPeriod,
+                chartGroups = groups,
+                selectedGroup = selectedGroup,
+                selectedGroupBmi = selectedGroup
+                    ?.takeIf { it.count == 1 }
+                    ?.let { calculateBmiOn(it.lastDate, weights, profile.heightInCm) },
+                showAllEntries = selection.showAllEntries,
                 entryPendingDeletion = selection.entryPendingDeletion,
                 form = form,
             )
@@ -84,8 +98,8 @@ class BodyMeasurementsViewModel(
             when (val result = addBodyMeasurementsEntry(current.selectedDate, current.inputs)) {
                 AddBodyMeasurementsEntry.Result.Success -> {
                     form.value = BodyMeasurementsFormState()
-                    // Show the newest entry, which is usually the one just added.
-                    selection.update { it.copy(selectedEntryId = null) }
+                    // Show the newest point, which usually contains the entry just added.
+                    selection.update { it.copy(selectedGroupStart = null) }
                 }
                 is AddBodyMeasurementsEntry.Result.Invalid ->
                     form.update { it.copy(invalidMeasurements = result.measurements) }
@@ -94,11 +108,19 @@ class BodyMeasurementsViewModel(
     }
 
     fun onChartMeasurementChange(measurement: BodyMeasurement) {
-        selection.update { it.copy(chartMeasurement = measurement) }
+        selection.update { it.copy(chartMeasurement = measurement, selectedGroupStart = null) }
     }
 
-    fun onChartEntrySelected(entry: BodyMeasurementsEntry) {
-        selection.update { it.copy(selectedEntryId = entry.id) }
+    fun onChartPeriodChange(period: ChartPeriod) {
+        selection.update { it.copy(chartPeriod = period, selectedGroupStart = null) }
+    }
+
+    fun onChartGroupSelected(group: ChartGroup) {
+        selection.update { it.copy(selectedGroupStart = group.start) }
+    }
+
+    fun onShowAllEntriesToggle() {
+        selection.update { it.copy(showAllEntries = !it.showAllEntries) }
     }
 
     fun onDeleteRequest(entry: BodyMeasurementsEntry?) {
@@ -113,7 +135,9 @@ class BodyMeasurementsViewModel(
 
     private data class Selection(
         val chartMeasurement: BodyMeasurement = BodyMeasurement.WAIST,
-        val selectedEntryId: Long? = null,
+        val chartPeriod: ChartPeriod = ChartPeriod.ALL,
+        val selectedGroupStart: LocalDate? = null,
+        val showAllEntries: Boolean = false,
         val entryPendingDeletion: BodyMeasurementsEntry? = null,
     )
 

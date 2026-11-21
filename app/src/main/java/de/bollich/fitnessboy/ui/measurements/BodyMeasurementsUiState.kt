@@ -1,6 +1,8 @@
 package de.bollich.fitnessboy.ui.measurements
 
 import de.bollich.fitnessboy.domain.BodyMeasurement
+import de.bollich.fitnessboy.domain.ChartGroup
+import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import java.time.LocalDate
 
@@ -23,8 +25,16 @@ data class BodyMeasurementsUiState(
     val items: List<MeasurementListItem> = emptyList(),
     /** Measurement shown in the chart and highlighted on the figure. */
     val chartMeasurement: BodyMeasurement = BodyMeasurement.WAIST,
-    /** Item highlighted in the chart; the newest one with a value for [chartMeasurement] by default. */
-    val selectedItem: MeasurementListItem? = null,
+    /** Whether [chartMeasurement] was ever measured, regardless of the period. */
+    val chartMeasurementHasValues: Boolean = false,
+    val chartPeriod: ChartPeriod = ChartPeriod.ALL,
+    /** Chart points of [chartMeasurement] for [chartPeriod], oldest first. */
+    val chartGroups: List<ChartGroup> = emptyList(),
+    /** Point highlighted in the chart; the newest one unless the user tapped another. */
+    val selectedGroup: ChartGroup? = null,
+    /** BMI on the date of [selectedGroup] if it stands for exactly one entry. */
+    val selectedGroupBmi: Double? = null,
+    val showAllEntries: Boolean = false,
     val entryPendingDeletion: BodyMeasurementsEntry? = null,
     val form: BodyMeasurementsFormState = BodyMeasurementsFormState(),
 ) {

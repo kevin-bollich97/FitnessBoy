@@ -5,6 +5,8 @@ import de.bollich.fitnessboy.domain.BodyMeasurement.HIPS
 import de.bollich.fitnessboy.domain.BodyMeasurement.SHOULDERS
 import de.bollich.fitnessboy.domain.BodyMeasurement.UPPER_ARM
 import de.bollich.fitnessboy.domain.BodyMeasurement.WAIST
+import de.bollich.fitnessboy.domain.ChartGrouping
+import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.domain.usecase.AddBodyMeasurementsEntry
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.model.UserProfile
@@ -39,8 +41,10 @@ class BodyMeasurementsViewModelTest {
             weightRepository = weightRepository,
             profileRepository = profileRepository,
             addBodyMeasurementsEntry = AddBodyMeasurementsEntry(repository),
+            today = { today },
         )
     }
+    private val today = LocalDate.of(2026, 3, 31)
 
     private suspend fun addMeasurements(date: LocalDate, waistInCm: Double, upperArmInCm: Double? = null) {
         repository.add(
@@ -140,31 +144,86 @@ class BodyMeasurementsViewModelTest {
     }
 
     @Test
-    fun selectedItem_defaultsToNewestWithValueForChartMeasurement() = runTest {
+    fun chart_showsChosenMeasurementAndSelectsNewestPoint() = runTest {
         collectUiState()
         addMeasurements(LocalDate.of(2026, 3, 1), waistInCm = 90.0, upperArmInCm = 35.0)
         addMeasurements(LocalDate.of(2026, 3, 10), waistInCm = 88.0)
-        val (newest, oldest) = viewModel.uiState.value.items
 
-        assertEquals(WAIST, viewModel.uiState.value.chartMeasurement)
-        assertEquals(newest, viewModel.uiState.value.selectedItem)
+        var state = viewModel.uiState.value
+        assertEquals(WAIST, state.chartMeasurement)
+        assertEquals(listOf(90.0, 88.0), state.chartGroups.map { it.average })
+        assertEquals(state.chartGroups.last(), state.selectedGroup)
 
         viewModel.onChartMeasurementChange(UPPER_ARM)
 
-        assertEquals(UPPER_ARM, viewModel.uiState.value.chartMeasurement)
-        assertEquals(oldest, viewModel.uiState.value.selectedItem)
+        state = viewModel.uiState.value
+        assertTrue(state.chartMeasurementHasValues)
+        assertEquals(listOf(35.0), state.chartGroups.map { it.average })
+        assertEquals(state.chartGroups.single(), state.selectedGroup)
     }
 
     @Test
-    fun chartTap_selectsThatEntry() = runTest {
+    fun chart_reportsMeasurementWithoutValues() = runTest {
         collectUiState()
         addMeasurements(LocalDate.of(2026, 3, 1), waistInCm = 90.0)
-        addMeasurements(LocalDate.of(2026, 3, 10), waistInCm = 88.0)
-        val oldest = viewModel.uiState.value.items.last()
 
-        viewModel.onChartEntrySelected(oldest.entry)
+        viewModel.onChartMeasurementChange(CHEST)
 
-        assertEquals(oldest, viewModel.uiState.value.selectedItem)
+        assertFalse(viewModel.uiState.value.chartMeasurementHasValues)
+        assertTrue(viewModel.uiState.value.chartGroups.isEmpty())
+    }
+
+    @Test
+    fun chartTapAndPeriod_controlSelection() = runTest {
+        collectUiState()
+        addMeasurements(LocalDate.of(2025, 12, 1), waistInCm = 94.0)
+        addMeasurements(LocalDate.of(2026, 3, 10), waistInCm = 90.0)
+        addMeasurements(LocalDate.of(2026, 3, 25), waistInCm = 88.0)
+
+        val first = viewModel.uiState.value.chartGroups.first()
+        viewModel.onChartGroupSelected(first)
+        assertEquals(first, viewModel.uiState.value.selectedGroup)
+
+        viewModel.onChartPeriodChange(ChartPeriod.ONE_MONTH)
+        val state = viewModel.uiState.value
+        assertEquals(listOf(90.0, 88.0), state.chartGroups.map { it.average })
+        assertEquals(state.chartGroups.last(), state.selectedGroup)
+    }
+
+    @Test
+    fun selectedGroupBmi_usesWeightOnThatDate() = runTest {
+        collectUiState()
+        profileRepository.save(UserProfile(heightInCm = 180.0))
+        weightRepository.add(WeightEntry(date = LocalDate.of(2026, 3, 1), weightInKg = 81.0))
+        addMeasurements(LocalDate.of(2026, 3, 10), waistInCm = 90.0)
+
+        assertEquals(25.0, viewModel.uiState.value.selectedGroupBmi!!, 0.01)
+    }
+
+    @Test
+    fun selectedGroupBmi_usesEntryDateInsideWeeklyGroup() = runTest {
+        collectUiState()
+        profileRepository.save(UserProfile(heightInCm = 180.0))
+        weightRepository.add(WeightEntry(date = LocalDate.of(2025, 6, 1), weightInKg = 90.0))
+        weightRepository.add(WeightEntry(date = LocalDate.of(2026, 3, 27), weightInKg = 81.0)) // Friday
+        addMeasurements(LocalDate.of(2025, 9, 1), waistInCm = 95.0)
+        addMeasurements(LocalDate.of(2026, 3, 28), waistInCm = 90.0) // Saturday, week starts 23.03.
+
+        val selected = viewModel.uiState.value.selectedGroup!!
+        assertEquals(ChartGrouping.WEEK, selected.grouping)
+        assertEquals(LocalDate.of(2026, 3, 28), selected.lastDate)
+        assertEquals(25.0, viewModel.uiState.value.selectedGroupBmi!!, 0.01)
+    }
+
+    @Test
+    fun showAllEntries_toggles() = runTest {
+        collectUiState()
+
+        viewModel.onShowAllEntriesToggle()
+        assertTrue(viewModel.uiState.value.showAllEntries)
+
+        viewModel.onShowAllEntriesToggle()
+        assertFalse(viewModel.uiState.value.showAllEntries)
     }
 
     @Test
