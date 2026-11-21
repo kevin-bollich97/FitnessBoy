@@ -3,11 +3,7 @@ package de.bollich.fitnessboy.ui.profile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -25,14 +21,12 @@ import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 @Composable
 fun ProfileRoute(
     viewModel: ProfileViewModel,
-    onOpenMeasurementsHistory: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     if (uiState.isLoading) return
 
     ProfileScreen(
         uiState = uiState,
-        onOpenMeasurementsHistory = onOpenMeasurementsHistory,
         onHeightValueChange = viewModel::onHeightValueChange,
         onTargetWeightValueChange = viewModel::onTargetWeightValueChange,
         onSaveProfileClick = viewModel::onSaveClick,
@@ -42,7 +36,6 @@ fun ProfileRoute(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileUiState,
-    onOpenMeasurementsHistory: () -> Unit,
     onHeightValueChange: (String) -> Unit,
     onTargetWeightValueChange: (String) -> Unit,
     onSaveProfileClick: () -> Unit,
@@ -77,15 +70,6 @@ private fun ProfileScreen(
             )
         }
 
-        item {
-            OutlinedButton(
-                onClick = onOpenMeasurementsHistory,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-            ) {
-                Text(stringResource(R.string.profile_manage_measurements_history))
-            }
-        }
     }
 }
 
@@ -100,7 +84,6 @@ private fun ProfileScreenPreview() {
                 bmi = 25.4,
                 form = ProfileFormState(heightInput = "180", targetWeightInput = "78"),
             ),
-            onOpenMeasurementsHistory = {},
             onHeightValueChange = {},
             onTargetWeightValueChange = {},
             onSaveProfileClick = {},

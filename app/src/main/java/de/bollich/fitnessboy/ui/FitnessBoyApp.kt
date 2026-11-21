@@ -27,7 +27,6 @@ import androidx.navigation3.ui.NavDisplay
 import de.bollich.fitnessboy.R
 import de.bollich.fitnessboy.ui.measurements.AddBodyMeasurementsSheetHost
 import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsViewModel
-import de.bollich.fitnessboy.ui.measurements.MeasurementsHistoryRoute
 import de.bollich.fitnessboy.ui.measurements.MeasurementsRoute
 import de.bollich.fitnessboy.ui.navigation.AppTab
 import de.bollich.fitnessboy.ui.navigation.Destination
@@ -74,19 +73,8 @@ fun FitnessBoyApp(
                         )
                         AppTab.WEIGHT -> WeightRoute(weightViewModel)
                         AppTab.MEASUREMENTS -> MeasurementsRoute(bodyMeasurementsViewModel)
-                        AppTab.PROFILE -> ProfileRoute(
-                            viewModel = profileViewModel,
-                            onOpenMeasurementsHistory = {
-                                mainViewModel.navigateTo(Destination.MeasurementsHistory)
-                            },
-                        )
+                        AppTab.PROFILE -> ProfileRoute(viewModel = profileViewModel)
                     }
-                }
-                entry<Destination.MeasurementsHistory> {
-                    MeasurementsHistoryRoute(
-                        viewModel = bodyMeasurementsViewModel,
-                        onBackClick = mainViewModel::onBack,
-                    )
                 }
             },
         )

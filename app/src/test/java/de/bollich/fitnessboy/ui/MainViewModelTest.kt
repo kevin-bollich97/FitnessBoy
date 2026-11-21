@@ -43,7 +43,6 @@ class MainViewModelTest {
         val repository = FakeSettingsRepository()
         val viewModel = MainViewModel(repository)
         viewModel.onTabSelected(AppTab.PROFILE)
-        viewModel.navigateTo(Destination.MeasurementsHistory)
 
         viewModel.onTabSelected(AppTab.MEASUREMENTS)
 
@@ -52,18 +51,6 @@ class MainViewModelTest {
             viewModel.uiState.value.backStack,
         )
         assertEquals("MEASUREMENTS", repository.settings.value.selectedTabName)
-    }
-
-    @Test
-    fun subPage_keepsTabSelectedAndBackReturnsToIt() = runTest {
-        val viewModel = MainViewModel(FakeSettingsRepository())
-        viewModel.onTabSelected(AppTab.PROFILE)
-
-        viewModel.navigateTo(Destination.MeasurementsHistory)
-        assertEquals(AppTab.PROFILE, viewModel.uiState.value.selectedTab)
-
-        viewModel.onBack()
-        assertEquals(listOf(overviewTab, profileTab), viewModel.uiState.value.backStack)
     }
 
     @Test

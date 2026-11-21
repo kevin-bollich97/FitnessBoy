@@ -6,7 +6,12 @@ import de.bollich.fitnessboy.domain.BodyMeasurement.SHOULDERS
 import de.bollich.fitnessboy.domain.BodyMeasurement.UPPER_ARM
 import de.bollich.fitnessboy.domain.BodyMeasurement.WAIST
 import de.bollich.fitnessboy.domain.usecase.AddBodyMeasurementsEntry
+import de.bollich.fitnessboy.model.BodyMeasurementsEntry
+import de.bollich.fitnessboy.model.UserProfile
+import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.testing.FakeBodyMeasurementsRepository
+import de.bollich.fitnessboy.testing.FakeProfileRepository
+import de.bollich.fitnessboy.testing.FakeWeightRepository
 import de.bollich.fitnessboy.testing.MainDispatcherRule
 import de.bollich.fitnessboy.ui.measurements.BodyMeasurementsViewModel
 import kotlinx.coroutines.launch
@@ -26,10 +31,26 @@ class BodyMeasurementsViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository = FakeBodyMeasurementsRepository()
+    private val weightRepository = FakeWeightRepository()
+    private val profileRepository = FakeProfileRepository()
     private val viewModel by lazy {
         BodyMeasurementsViewModel(
             repository = repository,
+            weightRepository = weightRepository,
+            profileRepository = profileRepository,
             addBodyMeasurementsEntry = AddBodyMeasurementsEntry(repository),
+        )
+    }
+
+    private suspend fun addMeasurements(date: LocalDate, waistInCm: Double, upperArmInCm: Double? = null) {
+        repository.add(
+            BodyMeasurementsEntry(
+                date = date,
+                waistInCm = waistInCm,
+                hipsInCm = 100.0,
+                shouldersInCm = 50.0,
+                upperArmInCm = upperArmInCm,
+            )
         )
     }
 
@@ -72,7 +93,7 @@ class BodyMeasurementsViewModelTest {
         val state = viewModel.uiState.value
         assertTrue(state.form.isSheetVisible)
         assertEquals(setOf(HIPS, SHOULDERS, CHEST), state.form.invalidMeasurements)
-        assertTrue(state.entries.isEmpty())
+        assertTrue(state.items.isEmpty())
     }
 
     @Test
@@ -103,13 +124,74 @@ class BodyMeasurementsViewModelTest {
     }
 
     @Test
-    fun deleteEntry_removesIt() = runTest {
+    fun items_haveBmiFromLatestWeightUpToTheirDate() = runTest {
         collectUiState()
-        enterRequiredMeasurements()
-        viewModel.onSaveClick()
+        profileRepository.save(UserProfile(heightInCm = 180.0))
+        weightRepository.add(WeightEntry(date = LocalDate.of(2026, 3, 1), weightInKg = 81.0))
+        weightRepository.add(WeightEntry(date = LocalDate.of(2026, 3, 20), weightInKg = 77.76))
+        addMeasurements(LocalDate.of(2026, 2, 1), waistInCm = 92.0)
+        addMeasurements(LocalDate.of(2026, 3, 10), waistInCm = 90.0)
+        addMeasurements(LocalDate.of(2026, 3, 25), waistInCm = 88.0)
 
-        viewModel.onDeleteEntry(viewModel.uiState.value.latestEntry!!)
+        val bmis = viewModel.uiState.value.items.map { it.bmi }
+        assertEquals(24.0, bmis[0]!!, 0.01)
+        assertEquals(25.0, bmis[1]!!, 0.01)
+        assertNull(bmis[2])
+    }
 
-        assertTrue(viewModel.uiState.value.entries.isEmpty())
+    @Test
+    fun selectedItem_defaultsToNewestWithValueForChartMeasurement() = runTest {
+        collectUiState()
+        addMeasurements(LocalDate.of(2026, 3, 1), waistInCm = 90.0, upperArmInCm = 35.0)
+        addMeasurements(LocalDate.of(2026, 3, 10), waistInCm = 88.0)
+        val (newest, oldest) = viewModel.uiState.value.items
+
+        assertEquals(WAIST, viewModel.uiState.value.chartMeasurement)
+        assertEquals(newest, viewModel.uiState.value.selectedItem)
+
+        viewModel.onChartMeasurementChange(UPPER_ARM)
+
+        assertEquals(UPPER_ARM, viewModel.uiState.value.chartMeasurement)
+        assertEquals(oldest, viewModel.uiState.value.selectedItem)
+    }
+
+    @Test
+    fun chartTap_selectsThatEntry() = runTest {
+        collectUiState()
+        addMeasurements(LocalDate.of(2026, 3, 1), waistInCm = 90.0)
+        addMeasurements(LocalDate.of(2026, 3, 10), waistInCm = 88.0)
+        val oldest = viewModel.uiState.value.items.last()
+
+        viewModel.onChartEntrySelected(oldest.entry)
+
+        assertEquals(oldest, viewModel.uiState.value.selectedItem)
+    }
+
+    @Test
+    fun delete_requiresConfirmation() = runTest {
+        collectUiState()
+        addMeasurements(LocalDate.of(2026, 3, 1), waistInCm = 90.0)
+        val entry = viewModel.uiState.value.latestEntry!!
+
+        viewModel.onDeleteRequest(entry)
+        assertEquals(entry, viewModel.uiState.value.entryPendingDeletion)
+        assertEquals(1, viewModel.uiState.value.items.size)
+
+        viewModel.onDeleteConfirm()
+
+        assertNull(viewModel.uiState.value.entryPendingDeletion)
+        assertTrue(viewModel.uiState.value.items.isEmpty())
+    }
+
+    @Test
+    fun cancellingDelete_keepsEntry() = runTest {
+        collectUiState()
+        addMeasurements(LocalDate.of(2026, 3, 1), waistInCm = 90.0)
+
+        viewModel.onDeleteRequest(viewModel.uiState.value.latestEntry)
+        viewModel.onDeleteRequest(null)
+
+        assertNull(viewModel.uiState.value.entryPendingDeletion)
+        assertEquals(1, viewModel.uiState.value.items.size)
     }
 }

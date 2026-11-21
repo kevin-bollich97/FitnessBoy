@@ -20,6 +20,7 @@ import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.chart.ChartPoint
 import de.bollich.fitnessboy.ui.components.chart.LineChart
 import de.bollich.fitnessboy.ui.components.formatKg
+import de.bollich.fitnessboy.ui.components.withBmi
 
 /** Weight over time with the target as dashed line; tapping a point shows its details below. */
 @Composable
@@ -86,7 +87,7 @@ private fun SelectedEntryDetails(item: WeightListItem) {
             fontWeight = FontWeight.Bold,
         )
         Text(
-            text = stringResource(R.string.weight_chart_hint),
+            text = stringResource(R.string.chart_hint),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -95,7 +96,4 @@ private fun SelectedEntryDetails(item: WeightListItem) {
 
 /** "125 kg · BMI 40,8", or just the weight if the height is unknown. */
 @Composable
-internal fun weightWithBmi(item: WeightListItem): String {
-    val weight = formatKg(item.entry.weightInKg)
-    return item.bmi?.let { stringResource(R.string.weight_with_bmi, weight, formatNumber(it)) } ?: weight
-}
+internal fun weightWithBmi(item: WeightListItem): String = withBmi(formatKg(item.entry.weightInKg), item.bmi)

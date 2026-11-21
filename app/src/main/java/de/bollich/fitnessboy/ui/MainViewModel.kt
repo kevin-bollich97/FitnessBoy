@@ -31,8 +31,8 @@ data class MainUiState(
 /**
  * Owns the navigation back stack and restores the last selected tab on start.
  *
- * Back stack shape follows Material guidance: the overview tab is the start destination, every other
- * tab sits on top of it, and sub-pages are pushed on top of their tab.
+ * Back stack shape follows Material guidance: the overview tab is the start destination and every
+ * other tab sits on top of it, so system back from any tab returns to the overview.
  */
 class MainViewModel(
     private val settingsRepository: SettingsRepository,
@@ -50,10 +50,6 @@ class MainViewModel(
 
     fun onTabSelected(tab: AppTab) {
         updateBackStack { backStackFor(tab) }
-    }
-
-    fun navigateTo(destination: Destination) {
-        updateBackStack { it + destination }
     }
 
     fun onBack() {

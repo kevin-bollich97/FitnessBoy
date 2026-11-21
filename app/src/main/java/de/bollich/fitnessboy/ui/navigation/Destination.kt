@@ -17,5 +17,4 @@ enum class AppTab(
 /** Keys of the Navigation 3 back stack. */
 sealed interface Destination {
     data class Tab(val tab: AppTab) : Destination
-    data object MeasurementsHistory : Destination
 }

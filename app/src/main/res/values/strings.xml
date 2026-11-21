@@ -18,7 +18,6 @@
     
     <!-- Common -->
     <string name="action_apply">Übernehmen</string>
-    <string name="action_back_to_profile">Zurück zum Profil</string>
     <string name="action_cancel">Abbrechen</string>
     <string name="action_change_date">Datum ändern</string>
     <string name="action_delete">Löschen</string>
@@ -28,11 +27,11 @@
     <string name="entry_date_label">Datum</string>
     <string name="list_separator">"\u0020·\u0020"</string>
     <string name="metric_bmi">BMI</string>
-    <string name="metric_latest_measurement">Letzte Messung</string>
     <string name="tab_overview">Übersicht</string>
     <string name="tab_measurements">Maße</string>
     <string name="tab_profile">Profil</string>
     <string name="tab_weight">Gewicht</string>
+    <string name="unit_cm">cm</string>
     <string name="unit_kg">kg</string>
     <string name="value_cm">%1$s\u00A0cm</string>
     <string name="value_kg">%1$s\u00A0kg</string>
@@ -42,10 +41,10 @@
     <string name="weight_title">Gewicht</string>
     <string name="weight_empty">Noch kein Gewicht eingetragen. Tippe auf „Gewicht eintragen“, um zu starten.</string>
     <string name="weight_chart_title">Verlauf</string>
-    <string name="weight_chart_hint">Tippe auf einen Punkt im Diagramm, um dessen Werte zu sehen.</string>
+    <string name="chart_hint">Tippe auf einen Punkt im Diagramm, um dessen Werte zu sehen.</string>
     <string name="weight_chart_target_legend">Gestrichelte Linie: Ziel %1$s</string>
     <string name="weight_chart_description">Gewichtsverlauf vom %1$s bis %2$s, zwischen %3$s und %4$s</string>
-    <string name="weight_with_bmi">%1$s · BMI %2$s</string>
+    <string name="value_with_bmi">%1$s · BMI %2$s</string>
     <string name="weight_entries_title">Alle Einträge</string>
     <string name="weight_delete_text">Der Eintrag vom %1$s mit %2$s wird endgültig gelöscht.</string>
     <string name="weight_add_title">Gewicht eintragen</string>
@@ -90,14 +89,8 @@
     <string name="measurements_add_action">Körpermaße erfassen</string>
     <string name="measurements_hips">Hüfte</string>
     <string name="measurements_hips_label">Hüftumfang in cm</string>
-    <string name="measurements_history_subtitle">Hier findest du alle gespeicherten Körpermaße und kannst sie bei Bedarf löschen.</string>
-    <string name="measurements_history_title">Maßverlauf</string>
-    <string name="measurements_last_updated">Zuletzt aktualisiert am %1$s</string>
-    <string name="measurements_overview_empty">Noch keine Körpermaße gespeichert</string>
-    <string name="measurements_overview_empty_subtitle">Erfasse Bauch, Hüfte und Schultern für spätere Trends.</string>
     <string name="measurements_shoulders">Schultern</string>
     <string name="measurements_shoulders_label">Schulterbreite in cm</string>
-    <string name="measurements_subtitle">Erfasse Bauch, Hüfte und Schultern und nutze die Werte später für Verlauf und Vergleiche.</string>
     <string name="measurements_title">Körpermaße</string>
     <string name="measurements_waist">Bauch</string>
     <string name="measurements_waist_label">Bauchumfang in cm</string>
@@ -108,13 +101,21 @@
     <string name="measurements_thigh">Oberschenkel</string>
     <string name="measurements_thigh_label">Oberschenkelumfang in cm</string>
     <string name="measurements_optional_title">Optional</string>
+    <string name="measurements_empty">Noch keine Körpermaße erfasst. Tippe auf „Körpermaße erfassen“, um zu starten.</string>
+    <string name="measurements_latest_title">Letzte Messung</string>
+    <string name="measurement_not_measured">nicht gemessen</string>
+    <string name="value_missing">–</string>
+    <string name="measurements_chart_title">Verlauf</string>
+    <string name="measurements_chart_empty">Für %1$s gibt es noch keine Werte.</string>
+    <string name="measurements_chart_description">Verlauf %1$s vom %2$s bis %3$s, zwischen %4$s und %5$s</string>
+    <string name="measurements_entries_title">Alle Messungen</string>
+    <string name="measurements_delete_text">Die Messung vom %1$s wird endgültig gelöscht.</string>
     <string name="measurement_value">%1$s: %2$s</string>
 
     <!-- Profile -->
     <string name="profile_current_bmi">Aktueller BMI: %1$s</string>
     <string name="profile_height_label">Größe in cm</string>
     <string name="profile_height_placeholder">z.B. 180</string>
-    <string name="profile_manage_measurements_history">Maßverlauf verwalten</string>
     <string name="profile_save_action">Profil speichern</string>
     <string name="profile_subtitle">Passe hier deine Körperdaten und Zielwerte an.</string>
     <string name="profile_summary_empty">Lege deine Größe fest, damit später BMI und Ziele berechnet werden können.</string>
