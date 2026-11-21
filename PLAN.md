@@ -60,6 +60,7 @@ Gilt für Gewicht und Maße gleichermaßen.
 - [x] Zeitraum-Chips über dem Diagramm: 1 Monat · 3 Monate · 1 Jahr · Alles (Standard „Alles“, nicht gespeichert) (`e2c687d`, `ce0d04f`)
 - [x] Domain: automatische Gruppierung nach Länge des angezeigten Zeitraums – bis 3 Monate pro Tag, bis 1 Jahr pro Woche (ISO-KW), darüber pro Monat; Wert = Durchschnitt; Punkt liegt in der Mitte seiner Einträge (mit Tests) (`e2c687d`, `ab6e071`)
 - [x] Antippen eines gruppierten Punkts zeigt Zeitraum, Durchschnitt und Anzahl, z. B. „KW 12/2026 · Ø 82,4 kg · 3 Einträge“; BMI nur bei Punkten aus genau einem Eintrag, dann mit dessen Datum (`ce0d04f`)
+- [x] Ziellinie nur, wenn die Werte noch mindestens die halbe Diagrammhöhe nutzen, sonst Hinweis „liegt unterhalb/oberhalb“; y-Achse mindestens 4 kg bzw. 4 cm (`f2d7cf3`)
 
 ## GitHub-Issues
 
