@@ -43,7 +43,7 @@ class MainViewModelTest {
         val repository = FakeSettingsRepository()
         val viewModel = MainViewModel(repository)
         viewModel.onTabSelected(AppTab.PROFILE)
-        viewModel.navigateTo(Destination.WeightHistory)
+        viewModel.navigateTo(Destination.MeasurementsHistory)
 
         viewModel.onTabSelected(AppTab.MEASUREMENTS)
 

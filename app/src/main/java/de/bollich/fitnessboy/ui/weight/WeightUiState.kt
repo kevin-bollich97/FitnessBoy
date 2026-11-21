@@ -1,8 +1,6 @@
 package de.bollich.fitnessboy.ui.weight
 
 import androidx.annotation.StringRes
-import de.bollich.fitnessboy.domain.WeightTrend
-import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.model.WeightEntry
 import java.time.LocalDate
 
@@ -13,12 +11,19 @@ data class WeightFormState(
     @StringRes val errorRes: Int? = null,
 )
 
+/** A weight entry with the BMI it corresponds to (based on the current height). */
+data class WeightListItem(
+    val entry: WeightEntry,
+    val bmi: Double?,
+)
+
 data class WeightUiState(
     val isLoading: Boolean = true,
-    val entries: List<WeightEntry> = emptyList(),
-    val profile: UserProfile = UserProfile(),
-    val latestEntry: WeightEntry? = null,
-    val trends: List<WeightTrend> = emptyList(),
-    val bmi: Double? = null,
+    /** Newest first. */
+    val items: List<WeightListItem> = emptyList(),
+    val targetWeightInKg: Double? = null,
+    /** Item highlighted in the chart; the newest one unless the user tapped another. */
+    val selectedItem: WeightListItem? = null,
+    val entryPendingDeletion: WeightEntry? = null,
     val form: WeightFormState = WeightFormState(),
 )

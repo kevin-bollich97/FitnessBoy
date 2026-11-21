@@ -123,7 +123,7 @@ fun BodyMeasurementsHistoryRow(
             IconButton(onClick = onDelete) {
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
-                    contentDescription = stringResource(R.string.action_delete_entry),
+                    contentDescription = stringResource(R.string.action_delete_entry_from, entry.date.formattedDate()),
                     tint = MaterialTheme.colorScheme.error,
                 )
             }

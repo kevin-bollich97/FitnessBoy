@@ -25,7 +25,6 @@ import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 @Composable
 fun ProfileRoute(
     viewModel: ProfileViewModel,
-    onOpenWeightHistory: () -> Unit,
     onOpenMeasurementsHistory: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -33,7 +32,6 @@ fun ProfileRoute(
 
     ProfileScreen(
         uiState = uiState,
-        onOpenWeightHistory = onOpenWeightHistory,
         onOpenMeasurementsHistory = onOpenMeasurementsHistory,
         onHeightValueChange = viewModel::onHeightValueChange,
         onTargetWeightValueChange = viewModel::onTargetWeightValueChange,
@@ -44,7 +42,6 @@ fun ProfileRoute(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileUiState,
-    onOpenWeightHistory: () -> Unit,
     onOpenMeasurementsHistory: () -> Unit,
     onHeightValueChange: (String) -> Unit,
     onTargetWeightValueChange: (String) -> Unit,
@@ -82,16 +79,6 @@ private fun ProfileScreen(
 
         item {
             OutlinedButton(
-                onClick = onOpenWeightHistory,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-            ) {
-                Text(stringResource(R.string.profile_manage_weight_history))
-            }
-        }
-
-        item {
-            OutlinedButton(
                 onClick = onOpenMeasurementsHistory,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -113,7 +100,6 @@ private fun ProfileScreenPreview() {
                 bmi = 25.4,
                 form = ProfileFormState(heightInput = "180", targetWeightInput = "78"),
             ),
-            onOpenWeightHistory = {},
             onOpenMeasurementsHistory = {},
             onHeightValueChange = {},
             onTargetWeightValueChange = {},

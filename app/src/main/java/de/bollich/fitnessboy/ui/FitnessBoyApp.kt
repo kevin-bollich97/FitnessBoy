@@ -32,7 +32,6 @@ import de.bollich.fitnessboy.ui.overview.OverviewViewModel
 import de.bollich.fitnessboy.ui.profile.ProfileRoute
 import de.bollich.fitnessboy.ui.profile.ProfileViewModel
 import de.bollich.fitnessboy.ui.weight.AddWeightSheetHost
-import de.bollich.fitnessboy.ui.weight.WeightHistoryRoute
 import de.bollich.fitnessboy.ui.weight.WeightRoute
 import de.bollich.fitnessboy.ui.weight.WeightViewModel
 
@@ -73,18 +72,11 @@ fun FitnessBoyApp(
                         AppTab.MEASUREMENTS -> MeasurementsRoute(bodyMeasurementsViewModel)
                         AppTab.PROFILE -> ProfileRoute(
                             viewModel = profileViewModel,
-                            onOpenWeightHistory = { mainViewModel.navigateTo(Destination.WeightHistory) },
                             onOpenMeasurementsHistory = {
                                 mainViewModel.navigateTo(Destination.MeasurementsHistory)
                             },
                         )
                     }
-                }
-                entry<Destination.WeightHistory> {
-                    WeightHistoryRoute(
-                        viewModel = weightViewModel,
-                        onBackClick = mainViewModel::onBack,
-                    )
                 }
                 entry<Destination.MeasurementsHistory> {
                     MeasurementsHistoryRoute(

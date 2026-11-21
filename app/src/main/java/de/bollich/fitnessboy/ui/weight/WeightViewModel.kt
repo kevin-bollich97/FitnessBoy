@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.domain.calculateBmi
 import de.bollich.fitnessboy.domain.repository.ProfileRepository
 import de.bollich.fitnessboy.domain.repository.WeightRepository
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
-import de.bollich.fitnessboy.domain.usecase.GetHealthOverview
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.appContainer
 import java.time.LocalDate
@@ -20,29 +20,29 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Weight entries, trends and the add-weight sheet. Shared by the weight and history screens. */
+/** Weight chart, entry list and the add-weight sheet. */
 class WeightViewModel(
     private val weightRepository: WeightRepository,
     profileRepository: ProfileRepository,
     private val addWeightEntry: AddWeightEntry,
-    private val getHealthOverview: GetHealthOverview,
 ) : ViewModel() {
     private val form = MutableStateFlow(WeightFormState())
+    private val selection = MutableStateFlow(Selection())
 
     val uiState: StateFlow<WeightUiState> =
         combine(
             weightRepository.observeEntries(),
             profileRepository.observeProfile(),
             form,
-        ) { entries, profile, form ->
-            val overview = getHealthOverview(entries, profile)
+            selection,
+        ) { entries, profile, form, selection ->
+            val items = entries.map { WeightListItem(it, calculateBmi(it.weightInKg, profile.heightInCm)) }
             WeightUiState(
                 isLoading = false,
-                entries = entries,
-                profile = profile,
-                latestEntry = overview.latestEntry,
-                trends = overview.trends,
-                bmi = overview.bmi,
+                items = items,
+                targetWeightInKg = profile.targetWeightInKg,
+                selectedItem = items.firstOrNull { it.entry.id == selection.selectedEntryId } ?: items.firstOrNull(),
+                entryPendingDeletion = selection.entryPendingDeletion,
                 form = form,
             )
         }.stateIn(
@@ -74,15 +74,34 @@ class WeightViewModel(
         val current = form.value
         viewModelScope.launch {
             when (addWeightEntry(current.weightInput, current.selectedDate)) {
-                AddWeightEntry.Result.Success -> form.value = WeightFormState()
+                AddWeightEntry.Result.Success -> {
+                    form.value = WeightFormState()
+                    // Show the newest entry, which is usually the one just added.
+                    selection.update { it.copy(selectedEntryId = null) }
+                }
                 AddWeightEntry.Result.InvalidWeight -> form.update { it.copy(errorRes = R.string.error_invalid_weight) }
             }
         }
     }
 
-    fun onDeleteEntry(entry: WeightEntry) {
+    fun onChartEntrySelected(entry: WeightEntry) {
+        selection.update { it.copy(selectedEntryId = entry.id) }
+    }
+
+    fun onDeleteRequest(entry: WeightEntry?) {
+        selection.update { it.copy(entryPendingDeletion = entry) }
+    }
+
+    fun onDeleteConfirm() {
+        val entry = selection.value.entryPendingDeletion ?: return
+        selection.update { it.copy(entryPendingDeletion = null) }
         viewModelScope.launch { weightRepository.delete(entry) }
     }
+
+    private data class Selection(
+        val selectedEntryId: Long? = null,
+        val entryPendingDeletion: WeightEntry? = null,
+    )
 
     companion object {
         val Factory = viewModelFactory {
@@ -92,7 +111,6 @@ class WeightViewModel(
                     weightRepository = container.weightRepository,
                     profileRepository = container.profileRepository,
                     addWeightEntry = AddWeightEntry(container.weightRepository),
-                    getHealthOverview = GetHealthOverview(),
                 )
             }
         }
