@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [WeightEntryEntity::class, BodyMeasurementsEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class FitnessBoyDatabase : RoomDatabase() {
@@ -33,13 +33,22 @@ abstract class FitnessBoyDatabase : RoomDatabase() {
             }
         }
 
+        /** Adds the optional upper arm, chest and thigh measurements. */
+        internal val migration2To3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `body_measurements` ADD COLUMN `upper_arm_in_cm` REAL")
+                db.execSQL("ALTER TABLE `body_measurements` ADD COLUMN `chest_in_cm` REAL")
+                db.execSQL("ALTER TABLE `body_measurements` ADD COLUMN `thigh_in_cm` REAL")
+            }
+        }
+
         fun create(context: Context): FitnessBoyDatabase =
             Room.databaseBuilder(
                 context.applicationContext,
                 FitnessBoyDatabase::class.java,
                 "fitnessboy.db",
             )
-                .addMigrations(migration1To2)
+                .addMigrations(migration1To2, migration2To3)
                 .build()
     }
 }

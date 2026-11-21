@@ -61,6 +61,15 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        // Lets Robolectric tests read assets, e.g. the Room schemas for migration tests.
+        unitTests.isIncludeAndroidResources = true
+    }
+    sourceSets {
+        // Robolectric reads the merged debug assets, so MigrationTestHelper finds the exported
+        // Room schemas there. They are table definitions only and never part of release builds.
+        getByName("debug").assets.directories.add("$projectDir/schemas")
+    }
 }
 
 room {
@@ -86,5 +95,8 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.robolectric)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

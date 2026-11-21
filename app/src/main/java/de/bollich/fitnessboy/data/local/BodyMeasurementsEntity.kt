@@ -18,6 +18,12 @@ data class BodyMeasurementsEntity(
     val hipsInCm: Double,
     @ColumnInfo(name = "shoulders_in_cm")
     val shouldersInCm: Double,
+    @ColumnInfo(name = "upper_arm_in_cm")
+    val upperArmInCm: Double? = null,
+    @ColumnInfo(name = "chest_in_cm")
+    val chestInCm: Double? = null,
+    @ColumnInfo(name = "thigh_in_cm")
+    val thighInCm: Double? = null,
 )
 
 fun BodyMeasurementsEntity.toModel(): BodyMeasurementsEntry =
@@ -27,6 +33,9 @@ fun BodyMeasurementsEntity.toModel(): BodyMeasurementsEntry =
         waistInCm = waistInCm,
         hipsInCm = hipsInCm,
         shouldersInCm = shouldersInCm,
+        upperArmInCm = upperArmInCm,
+        chestInCm = chestInCm,
+        thighInCm = thighInCm,
     )
 
 fun BodyMeasurementsEntry.toEntity(): BodyMeasurementsEntity =
@@ -36,4 +45,7 @@ fun BodyMeasurementsEntry.toEntity(): BodyMeasurementsEntity =
         waistInCm = waistInCm,
         hipsInCm = hipsInCm,
         shouldersInCm = shouldersInCm,
+        upperArmInCm = upperArmInCm,
+        chestInCm = chestInCm,
+        thighInCm = thighInCm,
     )
