@@ -3,7 +3,6 @@ package de.bollich.fitnessboy.ui
 import de.bollich.fitnessboy.domain.usecase.SaveProfile
 import de.bollich.fitnessboy.model.UserProfile
 import de.bollich.fitnessboy.testing.FakeProfileRepository
-import de.bollich.fitnessboy.testing.FakeWeightRepository
 import de.bollich.fitnessboy.testing.MainDispatcherRule
 import de.bollich.fitnessboy.ui.profile.ProfileViewModel
 import kotlinx.coroutines.launch
@@ -13,6 +12,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -26,7 +26,6 @@ class ProfileViewModelTest {
     private val viewModel by lazy {
         ProfileViewModel(
             profileRepository = profileRepository,
-            weightRepository = FakeWeightRepository(),
             saveProfile = SaveProfile(profileRepository),
         )
     }
@@ -77,5 +76,29 @@ class ProfileViewModelTest {
 
         assertNotNull(viewModel.uiState.value.form.heightErrorRes)
         assertEquals(180.0, profileRepository.profile.value.heightInCm!!, 0.0)
+    }
+
+    @Test
+    fun unsavedChanges_followEditsAndSaving() = runTest {
+        collectUiState()
+        assertFalse(viewModel.uiState.value.hasUnsavedChanges)
+
+        viewModel.onTargetWeightValueChange("75")
+        assertTrue(viewModel.uiState.value.hasUnsavedChanges)
+
+        viewModel.onSaveClick()
+        assertFalse(viewModel.uiState.value.hasUnsavedChanges)
+    }
+
+    @Test
+    fun savedMessage_isShownAfterSavingUntilNextEdit() = runTest {
+        collectUiState()
+        viewModel.onTargetWeightValueChange("75")
+
+        viewModel.onSaveClick()
+        assertTrue(viewModel.uiState.value.form.isSaved)
+
+        viewModel.onHeightValueChange("181")
+        assertFalse(viewModel.uiState.value.form.isSaved)
     }
 }

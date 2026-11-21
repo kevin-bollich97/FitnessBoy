@@ -1,27 +1,25 @@
 package de.bollich.fitnessboy.ui.profile
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.bollich.fitnessboy.R
-import de.bollich.fitnessboy.format.formatNumber
 import de.bollich.fitnessboy.model.UserProfile
-import de.bollich.fitnessboy.ui.components.HeadlineMetric
-import de.bollich.fitnessboy.ui.components.HeadlineSection
+import de.bollich.fitnessboy.ui.components.ScreenContentPadding
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 
 @Composable
-fun ProfileRoute(
-    viewModel: ProfileViewModel,
-) {
+fun ProfileRoute(viewModel: ProfileViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     if (uiState.isLoading) return
 
@@ -42,34 +40,29 @@ private fun ProfileScreen(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = ScreenContentPadding,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-            HeadlineSection(
-                title = stringResource(R.string.profile_title),
-                subtitle = stringResource(R.string.profile_subtitle),
-                metrics = listOfNotNull(
-                    uiState.bmi?.let { HeadlineMetric(stringResource(R.string.metric_bmi), formatNumber(it)) },
-                ),
+            Text(
+                text = stringResource(R.string.profile_title),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
             )
         }
-
         item {
             ProfileCard(
                 heightValue = uiState.form.heightInput,
                 targetWeightValue = uiState.form.targetWeightInput,
-                savedHeightInCm = uiState.profile.heightInCm,
-                savedTargetWeightInKg = uiState.profile.targetWeightInKg,
                 heightErrorText = uiState.form.heightErrorRes?.let { stringResource(it) },
                 targetWeightErrorText = uiState.form.targetWeightErrorRes?.let { stringResource(it) },
-                bmi = uiState.bmi,
+                canSave = uiState.hasUnsavedChanges,
+                isSaved = uiState.form.isSaved,
                 onHeightValueChange = onHeightValueChange,
                 onTargetWeightValueChange = onTargetWeightValueChange,
                 onSaveClick = onSaveProfileClick,
             )
         }
-
     }
 }
 
@@ -81,8 +74,8 @@ private fun ProfileScreenPreview() {
             uiState = ProfileUiState(
                 isLoading = false,
                 profile = UserProfile(heightInCm = 180.0, targetWeightInKg = 78.0),
-                bmi = 25.4,
-                form = ProfileFormState(heightInput = "180", targetWeightInput = "78"),
+                form = ProfileFormState(heightInput = "180", targetWeightInput = "76"),
+                hasUnsavedChanges = true,
             ),
             onHeightValueChange = {},
             onTargetWeightValueChange = {},

@@ -26,7 +26,6 @@
     <string name="action_save">Speichern</string>
     <string name="entry_date_label">Datum</string>
     <string name="list_separator">"\u0020·\u0020"</string>
-    <string name="metric_bmi">BMI</string>
     <string name="tab_overview">Übersicht</string>
     <string name="tab_measurements">Maße</string>
     <string name="tab_profile">Profil</string>
@@ -113,14 +112,12 @@
     <string name="measurement_value">%1$s: %2$s</string>
 
     <!-- Profile -->
-    <string name="profile_current_bmi">Aktueller BMI: %1$s</string>
     <string name="profile_height_label">Größe in cm</string>
     <string name="profile_height_placeholder">z.B. 180</string>
-    <string name="profile_save_action">Profil speichern</string>
-    <string name="profile_subtitle">Passe hier deine Körperdaten und Zielwerte an.</string>
-    <string name="profile_summary_empty">Lege deine Größe fest, damit später BMI und Ziele berechnet werden können.</string>
-    <string name="profile_summary_height">Größe: %1$s</string>
-    <string name="profile_summary_target">Ziel: %1$s</string>
+    <string name="profile_save_action">Speichern</string>
+    <string name="profile_saved">Änderungen gespeichert.</string>
+    <string name="profile_height_hint">Für BMI und gesunden Gewichtsbereich.</string>
+    <string name="profile_target_weight_hint">Optional – für die Zielverfolgung in der Übersicht.</string>
     <string name="profile_target_weight_label">Zielgewicht in kg</string>
     <string name="profile_target_weight_placeholder">z.B. 75</string>
     <string name="profile_title">Profil</string>

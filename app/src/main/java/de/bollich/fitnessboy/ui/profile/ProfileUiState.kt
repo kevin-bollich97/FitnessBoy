@@ -8,11 +8,14 @@ data class ProfileFormState(
     @StringRes val heightErrorRes: Int? = null,
     val targetWeightInput: String = "",
     @StringRes val targetWeightErrorRes: Int? = null,
+    /** Shown after a successful save until the user edits the form again. */
+    val isSaved: Boolean = false,
 )
 
 data class ProfileUiState(
     val isLoading: Boolean = true,
     val profile: UserProfile = UserProfile(),
-    val bmi: Double? = null,
     val form: ProfileFormState = ProfileFormState(),
+    /** Whether the inputs differ from the stored profile, i.e. saving would change something. */
+    val hasUnsavedChanges: Boolean = false,
 )
