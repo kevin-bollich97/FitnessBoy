@@ -68,6 +68,34 @@ class WeightViewModelTest {
     }
 
     @Test
+    fun addValidWeight_closesSheet() = runTest {
+        collectUiState()
+        viewModel.onAddWeightSheetVisibilityChange(true)
+        viewModel.onWeightValueChange("80")
+
+        viewModel.onAddWeightClick()
+
+        assertFalse(viewModel.uiState.value.form.isSheetVisible)
+    }
+
+    @Test
+    fun closingSheet_keepsInputButResetsDateAndError() = runTest {
+        collectUiState()
+        viewModel.onAddWeightSheetVisibilityChange(true)
+        viewModel.onWeightValueChange("abc")
+        viewModel.onSelectedDateChange(LocalDate.of(2026, 3, 1))
+        viewModel.onAddWeightClick()
+
+        viewModel.onAddWeightSheetVisibilityChange(false)
+
+        val form = viewModel.uiState.value.form
+        assertFalse(form.isSheetVisible)
+        assertEquals("abc", form.weightInput)
+        assertEquals(LocalDate.now(), form.selectedDate)
+        assertNull(form.errorRes)
+    }
+
+    @Test
     fun addInvalidWeight_showsErrorAndKeepsInput() = runTest {
         collectUiState()
         viewModel.onWeightValueChange("abc")

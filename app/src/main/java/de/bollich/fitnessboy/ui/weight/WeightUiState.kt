@@ -7,6 +7,7 @@ import de.bollich.fitnessboy.model.WeightEntry
 import java.time.LocalDate
 
 data class WeightFormState(
+    val isSheetVisible: Boolean = false,
     val weightInput: String = "",
     val selectedDate: LocalDate = LocalDate.now(),
     @StringRes val errorRes: Int? = null,

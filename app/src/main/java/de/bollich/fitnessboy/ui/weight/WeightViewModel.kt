@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Weight entries, trends and the add-weight form. Shared by the weight and history screens. */
+/** Weight entries, trends and the add-weight sheet. Shared by the weight and history screens. */
 class WeightViewModel(
     private val weightRepository: WeightRepository,
     profileRepository: ProfileRepository,
@@ -50,6 +50,17 @@ class WeightViewModel(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = WeightUiState(),
         )
+
+    fun onAddWeightSheetVisibilityChange(isVisible: Boolean) {
+        form.update {
+            if (isVisible) {
+                it.copy(isSheetVisible = true)
+            } else {
+                // Keep the typed value, but start fresh on date and errors next time.
+                it.copy(isSheetVisible = false, selectedDate = LocalDate.now(), errorRes = null)
+            }
+        }
+    }
 
     fun onWeightValueChange(value: String) {
         form.update { it.copy(weightInput = value, errorRes = null) }

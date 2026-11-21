@@ -19,6 +19,10 @@ data class MainUiState(
     val isLoading: Boolean = true,
     val backStack: List<Destination> = backStackFor(startTab),
 ) {
+    /** The screen currently shown. */
+    val currentDestination: Destination
+        get() = backStack.last()
+
     /** The tab highlighted in the bottom bar: the top-most tab on the back stack. */
     val selectedTab: AppTab
         get() = backStack.filterIsInstance<Destination.Tab>().last().tab

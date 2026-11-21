@@ -1,13 +1,8 @@
 package de.bollich.fitnessboy.ui.measurements
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.ui.components.ScreenContentPadding
 import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.ui.components.HeadlineMetric
@@ -53,7 +49,7 @@ private fun MeasurementsScreen(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(20.dp),
+        contentPadding = ScreenContentPadding,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
@@ -72,15 +68,6 @@ private fun MeasurementsScreen(
             )
         }
 
-        item {
-            OutlinedButton(
-                onClick = { onBodyMeasurementsDialogChange(true) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-            ) {
-                Text(stringResource(R.string.measurements_add_action))
-            }
-        }
     }
 
     if (uiState.form.isDialogVisible) {

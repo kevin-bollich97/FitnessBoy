@@ -26,7 +26,7 @@
     <string name="action_apply">Übernehmen</string>
     <string name="action_back_to_profile">Zurück zum Profil</string>
     <string name="action_cancel">Abbrechen</string>
-    <string name="action_choose">Wählen</string>
+    <string name="action_change_date">Datum ändern</string>
     <string name="action_delete_entry">Eintrag löschen</string>
     <string name="action_save">Speichern</string>
     <string name="date_range">%1$s bis %2$s</string>
@@ -47,13 +47,12 @@
     <string name="chart_single_entry">Bisher nur ein Eintrag vorhanden</string>
     <string name="chart_target_weight">Zielgewicht: %1$s</string>
     <string name="chart_title">Gewichts-Chart</string>
-    <string name="weight_add_action">Eintrag speichern</string>
-    <string name="weight_add_title">Neuen Eintrag erfassen</string>
+    <string name="weight_add_title">Gewicht eintragen</string>
     <string name="weight_history_subtitle">Hier findest du alle gespeicherten Wiegeeinträge und kannst sie bei Bedarf löschen.</string>
     <string name="weight_history_title">Verlauf</string>
     <string name="weight_input_label">Gewicht in kg</string>
     <string name="weight_input_placeholder">z.B. 82.4</string>
-    <string name="weight_selected_date">Ausgewähltes Datum</string>
+    <string name="weight_selected_date">Datum</string>
     <string name="weight_subtitle">Trage neue Werte ein und beobachte deinen Verlauf.</string>
     <string name="weight_title">Gewicht</string>
 
@@ -61,7 +60,7 @@
     <string name="overview_title">Übersicht</string>
     <string name="overview_weight_title">Aktuelles Gewicht</string>
     <string name="overview_weight_measured_on">Gewogen am %1$s</string>
-    <string name="overview_weight_empty">Noch kein Gewicht eingetragen. Sobald du dein erstes Gewicht einträgst, siehst du hier deinen Stand.</string>
+    <string name="overview_weight_empty">Noch kein Gewicht eingetragen. Tippe auf „Gewicht eintragen“, um zu starten.</string>
     <string name="overview_trend_since_date">%1$s seit dem %2$s</string>
     <string name="overview_trend_since_start">%1$s seit Beginn am %2$s</string>
     <string name="overview_goal_title">Ziel: %1$s</string>

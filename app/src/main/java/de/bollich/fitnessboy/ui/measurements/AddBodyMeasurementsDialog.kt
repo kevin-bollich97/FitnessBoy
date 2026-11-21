@@ -95,7 +95,7 @@ fun AddBodyMeasurementsDialog(
                             )
                         }
                         TextButton(onClick = { showDatePicker = true }) {
-                            Text(stringResource(R.string.action_choose))
+                            Text(stringResource(R.string.action_change_date))
                         }
                     }
                 }

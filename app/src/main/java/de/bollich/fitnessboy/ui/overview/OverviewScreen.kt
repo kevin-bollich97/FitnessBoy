@@ -1,7 +1,6 @@
 package de.bollich.fitnessboy.ui.overview
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.bollich.fitnessboy.R
+import de.bollich.fitnessboy.ui.components.ScreenContentPadding
 import de.bollich.fitnessboy.domain.BmiCategory
 import de.bollich.fitnessboy.domain.GoalDirection
 import de.bollich.fitnessboy.domain.GoalProgress
@@ -50,7 +50,7 @@ private fun OverviewScreen(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = ScreenContentPadding,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
