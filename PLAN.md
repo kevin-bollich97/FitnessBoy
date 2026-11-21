@@ -20,7 +20,8 @@ Architektur-Umbau (Phasen 0–4) und Redesign des Aufbaus (Schritte 1–6) sind 
 - [x] Verspielter, aber ruhiger Look: Blau statt Koralle, nur die Gewichtskarte farbig, Nunito, runde Formen (`64bdf80`)
 
 ### 4. Körperfigur bei den Maßen schöner machen
-Ideen: durchgehende weiche Silhouette, Ringe als Maßband (Vorder- und Rückseite), Animation beim Wechsel des Maßes, Ringe antippbar, Gesicht. Umfang noch mit dem Nutzer klären.
+- [x] Schlankes, fröhliches Maskottchen mit Schweißband und Turnschuhen; nur das aktive Maß zeigt ein Maßband, das animiert an seine Stelle springt (`623bf6f`)
+- [ ] Optional später: Maßband antippbar machen, um das Maß im Diagramm auszuwählen
 
 ### 2. Diagramm-Filter als Auswahlfeld statt Chips
 Die Filter-Chips über dem Diagramm brauchen zu viel Platz. Stattdessen ein Auswahlfeld (Material 3 `ExposedDropdownMenuBox`).
@@ -49,6 +50,7 @@ Ist die Liste aufgeklappt, soll „Weniger anzeigen“ auch direkt bei der Über
 
 ## Entscheidungen
 
+- Körperfigur: süß und lustig ja, aber schlank und mit ruhigem Gesicht (geschlossenes Lächeln, Punktaugen); eine pummelige Figur und ein großer offener Mund wurden verworfen. Die Figur ändert sich nie mit den Werten.
 - Design: ein einziger Akzent (Blau); Rot/Koralle und mehrere bunte Kartenfarben wurden ausprobiert und verworfen (zu unruhig bzw. nicht gewünscht). Grün/Amber/Rot nur als Signalfarben beim BMI.
 
 - Nicht gemessene optionale Maße zeigen in „Letzte Messung“ „–“, nicht den letzten bekannten Wert.
