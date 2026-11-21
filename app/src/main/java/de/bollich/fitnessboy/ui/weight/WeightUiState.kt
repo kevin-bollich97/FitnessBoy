@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import de.bollich.fitnessboy.domain.ChartGroup
 import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.model.WeightEntry
+import de.bollich.fitnessboy.ui.components.MonthSection
 import java.time.LocalDate
 
 data class WeightFormState(
@@ -21,8 +22,12 @@ data class WeightListItem(
 
 data class WeightUiState(
     val isLoading: Boolean = true,
-    /** Newest first. */
+    /** Whether there is any weight entry at all, regardless of the period. */
+    val hasEntries: Boolean = false,
+    /** Entries within [chartPeriod], newest first. */
     val items: List<WeightListItem> = emptyList(),
+    /** [items] by month; only the newest few unless [showAllEntries]. */
+    val entrySections: List<MonthSection<WeightListItem>> = emptyList(),
     val targetWeightInKg: Double? = null,
     val chartPeriod: ChartPeriod = ChartPeriod.ALL,
     /** Chart points for [chartPeriod], oldest first. */

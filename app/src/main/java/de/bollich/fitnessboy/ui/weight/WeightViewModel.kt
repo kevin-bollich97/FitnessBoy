@@ -15,6 +15,8 @@ import de.bollich.fitnessboy.domain.summarizeForChart
 import de.bollich.fitnessboy.domain.usecase.AddWeightEntry
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.appContainer
+import de.bollich.fitnessboy.ui.components.COLLAPSED_ENTRY_COUNT
+import de.bollich.fitnessboy.ui.components.sectionsByMonth
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,9 +45,18 @@ class WeightViewModel(
         ) { entries, profile, form, selection ->
             val groups = summarizeForChart(entries.map { DatedValue(it.date, it.weightInKg) }, selection.chartPeriod, today())
             val selectedGroup = groups.firstOrNull { it.start == selection.selectedGroupStart } ?: groups.lastOrNull()
+            val items = entries
+                .filter { selection.chartPeriod.includes(it.date, today()) }
+                .map { WeightListItem(it, calculateBmi(it.weightInKg, profile.heightInCm)) }
             WeightUiState(
                 isLoading = false,
-                items = entries.map { WeightListItem(it, calculateBmi(it.weightInKg, profile.heightInCm)) },
+                hasEntries = entries.isNotEmpty(),
+                items = items,
+                entrySections = sectionsByMonth(
+                    items = items,
+                    dateOf = { it.entry.date },
+                    limit = COLLAPSED_ENTRY_COUNT.takeUnless { selection.showAllEntries },
+                ),
                 targetWeightInKg = profile.targetWeightInKg,
                 chartPeriod = selection.chartPeriod,
                 chartGroups = groups,

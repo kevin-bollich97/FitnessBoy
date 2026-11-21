@@ -4,15 +4,20 @@ import de.bollich.fitnessboy.model.WeightEntry
 import java.math.RoundingMode
 import java.text.NumberFormat
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.absoluteValue
 
 private val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+private val monthFormatter = DateTimeFormatter.ofPattern("LLLL yyyy", Locale.GERMAN)
 
 fun WeightEntry.formattedDate(): String = date.format(dateFormatter)
 
 fun LocalDate.formattedDate(): String = format(dateFormatter)
+
+/** "November 2026" */
+fun YearMonth.formattedMonth(): String = format(monthFormatter)
 
 /** Formats with at most one decimal in the user's locale, e.g. "80,5" (de) or "80.5" (en). */
 fun formatNumber(value: Double, locale: Locale = Locale.getDefault()): String =

@@ -25,7 +25,7 @@
     <string name="delete_entry_title">Eintrag löschen?</string>
     <string name="action_save">Speichern</string>
     <string name="entry_date_label">Datum</string>
-    <string name="list_separator">"\u0020·\u0020"</string>
+    <string name="list_separator">"\u00A0·\u0020"</string>
     <string name="tab_overview">Übersicht</string>
     <string name="tab_measurements">Maße</string>
     <string name="tab_profile">Profil</string>
@@ -51,6 +51,7 @@
         <item quantity="one">%d Eintrag</item>
         <item quantity="other">%d Einträge</item>
     </plurals>
+    <string name="list_month_header">%1$s · %2$s</string>
     <string name="action_show_less">Weniger anzeigen</string>
     <plurals name="action_show_all_entries">
         <item quantity="one">%d Eintrag anzeigen</item>
@@ -62,7 +63,7 @@
     <string name="weight_chart_target_above">Ziel: %1$s – liegt oberhalb des angezeigten Bereichs.</string>
     <string name="weight_chart_description">Gewichtsverlauf von %1$s bis %2$s, zwischen %3$s und %4$s</string>
     <string name="value_with_bmi">%1$s · BMI %2$s</string>
-    <string name="weight_entries_title">Alle Einträge</string>
+    <string name="weight_entries_title">Einträge</string>
     <string name="weight_delete_text">Der Eintrag vom %1$s mit %2$s wird endgültig gelöscht.</string>
     <string name="weight_add_title">Gewicht eintragen</string>
     <string name="weight_input_label">Gewicht in kg</string>
@@ -125,7 +126,7 @@
     <string name="measurements_chart_title">Verlauf</string>
     <string name="measurements_chart_empty">Für %1$s gibt es noch keine Werte.</string>
     <string name="measurements_chart_description">Verlauf %1$s von %2$s bis %3$s, zwischen %4$s und %5$s</string>
-    <string name="measurements_entries_title">Alle Messungen</string>
+    <string name="measurements_entries_title">Messungen</string>
     <string name="measurements_delete_text">Die Messung vom %1$s wird endgültig gelöscht.</string>
     <string name="measurement_value">%1$s: %2$s</string>
 

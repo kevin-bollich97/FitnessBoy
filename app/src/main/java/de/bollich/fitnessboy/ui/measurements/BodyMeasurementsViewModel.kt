@@ -17,6 +17,8 @@ import de.bollich.fitnessboy.domain.usecase.AddBodyMeasurementsEntry
 import de.bollich.fitnessboy.domain.valueOf
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.ui.appContainer
+import de.bollich.fitnessboy.ui.components.COLLAPSED_ENTRY_COUNT
+import de.bollich.fitnessboy.ui.components.sectionsByMonth
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -50,9 +52,18 @@ class BodyMeasurementsViewModel(
             }
             val groups = summarizeForChart(values, selection.chartPeriod, today())
             val selectedGroup = groups.firstOrNull { it.start == selection.selectedGroupStart } ?: groups.lastOrNull()
+            val items = entries
+                .filter { selection.chartPeriod.includes(it.date, today()) }
+                .map { MeasurementListItem(it, calculateBmiOn(it.date, weights, profile.heightInCm)) }
             BodyMeasurementsUiState(
                 isLoading = false,
-                items = entries.map { MeasurementListItem(it, calculateBmiOn(it.date, weights, profile.heightInCm)) },
+                latestEntry = entries.firstOrNull(),
+                items = items,
+                entrySections = sectionsByMonth(
+                    items = items,
+                    dateOf = { it.entry.date },
+                    limit = COLLAPSED_ENTRY_COUNT.takeUnless { selection.showAllEntries },
+                ),
                 chartMeasurement = selection.chartMeasurement,
                 chartMeasurementHasValues = values.isNotEmpty(),
                 chartPeriod = selection.chartPeriod,

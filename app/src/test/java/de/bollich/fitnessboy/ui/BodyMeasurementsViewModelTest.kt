@@ -216,6 +216,20 @@ class BodyMeasurementsViewModelTest {
     }
 
     @Test
+    fun period_filtersListButKeepsOverallLatestEntry() = runTest {
+        collectUiState()
+        addMeasurements(LocalDate.of(2025, 12, 1), waistInCm = 94.0)
+        addMeasurements(LocalDate.of(2026, 1, 15), waistInCm = 92.0)
+
+        viewModel.onChartPeriodChange(ChartPeriod.ONE_MONTH)
+
+        val state = viewModel.uiState.value
+        assertTrue(state.items.isEmpty())
+        assertTrue(state.entrySections.isEmpty())
+        assertEquals(LocalDate.of(2026, 1, 15), state.latestEntry!!.date)
+    }
+
+    @Test
     fun showAllEntries_toggles() = runTest {
         collectUiState()
 

@@ -20,6 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
+import java.time.YearMonth
 
 class WeightViewModelTest {
     @get:Rule
@@ -120,7 +121,40 @@ class WeightViewModelTest {
         val state = viewModel.uiState.value
         assertEquals(listOf(LocalDate.of(2026, 3, 20), LocalDate.of(2026, 3, 30)), state.chartGroups.map { it.start })
         assertEquals(state.chartGroups.last(), state.selectedGroup)
-        assertEquals(3, state.items.size)
+        assertEquals(listOf(80.0, 81.0), state.items.map { it.entry.weightInKg })
+        assertTrue(state.hasEntries)
+    }
+
+    @Test
+    fun emptyPeriod_keepsHasEntries() = runTest {
+        collectUiState()
+        addWeight(LocalDate.of(2025, 12, 1), 85.0)
+
+        viewModel.onChartPeriodChange(ChartPeriod.ONE_MONTH)
+
+        val state = viewModel.uiState.value
+        assertTrue(state.hasEntries)
+        assertTrue(state.items.isEmpty())
+        assertTrue(state.chartGroups.isEmpty())
+    }
+
+    @Test
+    fun entrySections_areGroupedByMonthAndShortenedUntilExpanded() = runTest {
+        collectUiState()
+        addWeight(LocalDate.of(2026, 2, 20), 83.0)
+        addWeight(LocalDate.of(2026, 3, 1), 82.0)
+        addWeight(LocalDate.of(2026, 3, 10), 81.0)
+        addWeight(LocalDate.of(2026, 3, 20), 80.0)
+
+        var sections = viewModel.uiState.value.entrySections
+        assertEquals(listOf(YearMonth.of(2026, 3)), sections.map { it.month })
+        assertEquals(3, sections.single().items.size)
+
+        viewModel.onShowAllEntriesToggle()
+
+        sections = viewModel.uiState.value.entrySections
+        assertEquals(listOf(YearMonth.of(2026, 3), YearMonth.of(2026, 2)), sections.map { it.month })
+        assertEquals(listOf(3, 1), sections.map { it.items.size })
     }
 
     @Test

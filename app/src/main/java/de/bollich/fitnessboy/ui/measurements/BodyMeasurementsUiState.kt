@@ -4,6 +4,7 @@ import de.bollich.fitnessboy.domain.BodyMeasurement
 import de.bollich.fitnessboy.domain.ChartGroup
 import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
+import de.bollich.fitnessboy.ui.components.MonthSection
 import java.time.LocalDate
 
 data class BodyMeasurementsFormState(
@@ -21,8 +22,12 @@ data class MeasurementListItem(
 
 data class BodyMeasurementsUiState(
     val isLoading: Boolean = true,
-    /** Newest first. */
+    /** Newest entry overall, regardless of the period; shown next to the figure. */
+    val latestEntry: BodyMeasurementsEntry? = null,
+    /** Entries within [chartPeriod], newest first. */
     val items: List<MeasurementListItem> = emptyList(),
+    /** [items] by month; only the newest few unless [showAllEntries]. */
+    val entrySections: List<MonthSection<MeasurementListItem>> = emptyList(),
     /** Measurement shown in the chart and highlighted on the figure. */
     val chartMeasurement: BodyMeasurement = BodyMeasurement.WAIST,
     /** Whether [chartMeasurement] was ever measured, regardless of the period. */
@@ -37,7 +42,4 @@ data class BodyMeasurementsUiState(
     val showAllEntries: Boolean = false,
     val entryPendingDeletion: BodyMeasurementsEntry? = null,
     val form: BodyMeasurementsFormState = BodyMeasurementsFormState(),
-) {
-    val latestEntry: BodyMeasurementsEntry?
-        get() = items.firstOrNull()?.entry
-}
+)

@@ -23,9 +23,11 @@ import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.WeightEntry
 import de.bollich.fitnessboy.ui.components.COLLAPSED_ENTRY_COUNT
 import de.bollich.fitnessboy.ui.components.ConfirmDeleteDialog
+import de.bollich.fitnessboy.ui.components.MonthHeader
 import de.bollich.fitnessboy.ui.components.ScreenContentPadding
 import de.bollich.fitnessboy.ui.components.ShowAllButton
 import de.bollich.fitnessboy.ui.components.formatKg
+import de.bollich.fitnessboy.ui.components.sectionsByMonth
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import java.time.LocalDate
 
@@ -66,7 +68,7 @@ private fun WeightScreen(
             )
         }
 
-        if (uiState.items.isEmpty()) {
+        if (!uiState.hasEntries) {
             item {
                 Text(
                     text = stringResource(R.string.weight_empty),
@@ -87,6 +89,7 @@ private fun WeightScreen(
                 onGroupSelected = onGroupSelected,
             )
         }
+        if (uiState.items.isEmpty()) return@LazyColumn
         item {
             Text(
                 text = stringResource(R.string.weight_entries_title),
@@ -94,10 +97,12 @@ private fun WeightScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-        val visibleItems = if (uiState.showAllEntries) uiState.items else uiState.items.take(COLLAPSED_ENTRY_COUNT)
-        items(visibleItems, key = { it.entry.id }) { item ->
-            WeightEntryRow(item = item, onDelete = { onDeleteRequest(item.entry) })
-            HorizontalDivider()
+        uiState.entrySections.forEach { section ->
+            stickyHeader(key = section.month) { MonthHeader(section) }
+            items(section.items, key = { it.entry.id }) { item ->
+                WeightEntryRow(item = item, onDelete = { onDeleteRequest(item.entry) })
+                HorizontalDivider()
+            }
         }
         if (uiState.items.size > COLLAPSED_ENTRY_COUNT) {
             item {
@@ -133,6 +138,8 @@ private fun WeightScreenPreview() {
                 isLoading = false,
                 items = items,
                 targetWeightInKg = 78.0,
+                hasEntries = true,
+                entrySections = sectionsByMonth(items, dateOf = { it.entry.date }),
             ),
             onPeriodChange = {},
             onGroupSelected = {},

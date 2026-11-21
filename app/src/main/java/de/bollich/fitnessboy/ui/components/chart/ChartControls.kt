@@ -17,13 +17,13 @@ import de.bollich.fitnessboy.domain.ChartGroup
 import de.bollich.fitnessboy.domain.ChartGrouping
 import de.bollich.fitnessboy.domain.ChartPeriod
 import de.bollich.fitnessboy.format.formattedDate
+import de.bollich.fitnessboy.format.formattedMonth
 import de.bollich.fitnessboy.ui.components.withBmi
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.IsoFields
-import java.util.Locale
 
 private val dayMonthFormatter = DateTimeFormatter.ofPattern("dd.MM.")
-private val monthFormatter = DateTimeFormatter.ofPattern("LLLL yyyy", Locale.GERMAN)
 
 @get:StringRes
 private val ChartPeriod.labelRes: Int
@@ -73,7 +73,7 @@ private fun periodLabel(group: ChartGroup): String =
             group.start.format(dayMonthFormatter),
             group.end.format(dayMonthFormatter),
         )
-        ChartGrouping.MONTH -> group.start.format(monthFormatter)
+        ChartGrouping.MONTH -> YearMonth.from(group.start).formattedMonth()
     }
 
 /**

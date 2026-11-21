@@ -102,4 +102,13 @@ class ChartSeriesTest {
 
         assertTrue(groups.isEmpty())
     }
+
+    @Test
+    fun periodIncludes_countsBackFromToday() {
+        assertTrue(ChartPeriod.ONE_MONTH.includes(LocalDate.of(2026, 10, 23), today))
+        assertTrue(ChartPeriod.ONE_MONTH.includes(today, today))
+        assertEquals(false, ChartPeriod.ONE_MONTH.includes(LocalDate.of(2026, 10, 22), today))
+        assertEquals(false, ChartPeriod.ONE_MONTH.includes(today.plusDays(1), today))
+        assertTrue(ChartPeriod.ALL.includes(LocalDate.of(2000, 1, 1), today))
+    }
 }

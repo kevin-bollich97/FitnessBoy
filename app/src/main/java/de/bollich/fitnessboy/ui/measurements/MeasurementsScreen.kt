@@ -24,8 +24,10 @@ import de.bollich.fitnessboy.format.formattedDate
 import de.bollich.fitnessboy.model.BodyMeasurementsEntry
 import de.bollich.fitnessboy.ui.components.COLLAPSED_ENTRY_COUNT
 import de.bollich.fitnessboy.ui.components.ConfirmDeleteDialog
+import de.bollich.fitnessboy.ui.components.MonthHeader
 import de.bollich.fitnessboy.ui.components.ScreenContentPadding
 import de.bollich.fitnessboy.ui.components.ShowAllButton
+import de.bollich.fitnessboy.ui.components.sectionsByMonth
 import de.bollich.fitnessboy.ui.theme.FitnessBoyTheme
 import java.time.LocalDate
 
@@ -97,6 +99,7 @@ private fun MeasurementsScreen(
                 onGroupSelected = onGroupSelected,
             )
         }
+        if (uiState.items.isEmpty()) return@LazyColumn
         item {
             Text(
                 text = stringResource(R.string.measurements_entries_title),
@@ -104,10 +107,12 @@ private fun MeasurementsScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-        val visibleItems = if (uiState.showAllEntries) uiState.items else uiState.items.take(COLLAPSED_ENTRY_COUNT)
-        items(visibleItems, key = { it.entry.id }) { item ->
-            MeasurementEntryRow(item = item, onDelete = { onDeleteRequest(item.entry) })
-            HorizontalDivider()
+        uiState.entrySections.forEach { section ->
+            stickyHeader(key = section.month) { MonthHeader(section) }
+            items(section.items, key = { it.entry.id }) { item ->
+                MeasurementEntryRow(item = item, onDelete = { onDeleteRequest(item.entry) })
+                HorizontalDivider()
+            }
         }
         if (uiState.items.size > COLLAPSED_ENTRY_COUNT) {
             item {
@@ -151,7 +156,13 @@ private fun MeasurementsScreenPreview() {
     )
     FitnessBoyTheme {
         MeasurementsScreen(
-            uiState = BodyMeasurementsUiState(isLoading = false, items = items, chartMeasurementHasValues = true),
+            uiState = BodyMeasurementsUiState(
+                isLoading = false,
+                latestEntry = items.first().entry,
+                items = items,
+                entrySections = sectionsByMonth(items, dateOf = { it.entry.date }),
+                chartMeasurementHasValues = true,
+            ),
             onMeasurementChange = {},
             onPeriodChange = {},
             onGroupSelected = {},

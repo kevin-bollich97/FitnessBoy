@@ -16,7 +16,11 @@ enum class ChartPeriod(val days: Long?) {
     ONE_MONTH(30),
     THREE_MONTHS(91),
     ONE_YEAR(365),
-    ALL(null),
+    ALL(null);
+
+    /** Whether [date] lies within this period, i.e. within the last [days] days up to [today]. */
+    fun includes(date: LocalDate, today: LocalDate): Boolean =
+        days == null || (date > today.minusDays(days) && date <= today)
 }
 
 /** How values are combined into one chart point. */
@@ -58,9 +62,7 @@ fun summarizeForChart(
     period: ChartPeriod,
     today: LocalDate,
 ): List<ChartGroup> {
-    val visible = period.days
-        ?.let { days -> values.filter { it.date > today.minusDays(days) && it.date <= today } }
-        ?: values
+    val visible = values.filter { period.includes(it.date, today) }
     if (visible.isEmpty()) return emptyList()
 
     val grouping = groupingFor(spanInDays = ChronoUnit.DAYS.between(visible.minOf { it.date }, visible.maxOf { it.date }))
