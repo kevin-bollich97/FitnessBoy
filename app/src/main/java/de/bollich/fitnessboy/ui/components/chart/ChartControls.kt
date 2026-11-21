@@ -51,9 +51,19 @@ fun ChartPeriodChips(
     }
 }
 
-/** "20.11.2026", "KW 47/2026 · 16.11.–22.11." or "November 2026". */
+/**
+ * "20.11.2026", "KW 47/2026 · 16.11.–22.11." or "November 2026"; a point from a single entry is
+ * labelled with the date of that entry.
+ */
 @Composable
 fun chartGroupLabel(group: ChartGroup): String =
+    when {
+        group.count == 1 -> group.lastDate.formattedDate()
+        else -> periodLabel(group)
+    }
+
+@Composable
+private fun periodLabel(group: ChartGroup): String =
     when (group.grouping) {
         ChartGrouping.DAY -> group.start.formattedDate()
         ChartGrouping.WEEK -> stringResource(

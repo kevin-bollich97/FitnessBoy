@@ -55,6 +55,10 @@ class ChartSeriesTest {
         assertEquals(LocalDate.of(2026, 3, 8), groups[0].end)
         assertEquals(89.0, groups[0].average, 0.0)
         assertEquals(2, groups[0].count)
+        assertEquals(LocalDate.of(2026, 3, 2), groups[0].firstDate)
+        assertEquals(LocalDate.of(2026, 3, 8), groups[0].lastDate)
+        assertEquals(LocalDate.of(2026, 3, 5), groups[0].centerDate)
+        assertEquals(LocalDate.of(2026, 11, 20), groups[2].centerDate)
         assertEquals(LocalDate.of(2026, 3, 9), groups[1].start)
         assertEquals(LocalDate.of(2026, 11, 16), groups[2].start)
     }

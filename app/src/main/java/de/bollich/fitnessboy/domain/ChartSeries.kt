@@ -26,14 +26,23 @@ enum class ChartGrouping {
     MONTH,
 }
 
-/** One chart point: the average of [count] values between [start] and [end] (both inclusive). */
+/**
+ * One chart point: the average of [count] values in the period from [start] to [end] (both
+ * inclusive). [firstDate] and [lastDate] are the dates of the oldest and newest value in it.
+ */
 data class ChartGroup(
     val grouping: ChartGrouping,
     val start: LocalDate,
     val end: LocalDate,
     val average: Double,
     val count: Int,
-)
+    val firstDate: LocalDate,
+    val lastDate: LocalDate,
+) {
+    /** Middle between [firstDate] and [lastDate]; where the point belongs on a time axis. */
+    val centerDate: LocalDate
+        get() = firstDate.plusDays(ChronoUnit.DAYS.between(firstDate, lastDate) / 2)
+}
 
 /** Longest span of visible values (in days) that is still shown per day, respectively per week. */
 private const val DAILY_MAX_SPAN_DAYS = 92L
@@ -64,6 +73,8 @@ fun summarizeForChart(
                 end = grouping.endOf(start),
                 average = group.map(DatedValue::value).average(),
                 count = group.size,
+                firstDate = group.minOf(DatedValue::date),
+                lastDate = group.maxOf(DatedValue::date),
             )
         }
         .sortedBy(ChartGroup::start)

@@ -51,7 +51,7 @@ internal fun WeightChartCard(
                 return@Column
             }
 
-            val points = remember(groups) { groups.map { ChartPoint(it.start, it.average) } }
+            val points = remember(groups) { groups.map { ChartPoint(it.centerDate, it.average) } }
             LineChart(
                 points = points,
                 selectedIndex = groups.indexOf(selectedGroup).takeIf { it >= 0 },
