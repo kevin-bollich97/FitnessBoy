@@ -7,11 +7,11 @@ Jeder Schritt endet lauffähig, getestet (`./gradlew test`, `./gradlew lint`) un
 Architektur-Umbau (Phasen 0–4) und Redesign des Aufbaus (Schritte 1–6) sind abgeschlossen; Details stehen in der Git-History dieser Datei. Die App hat:
 
 - Tabs **Übersicht · Gewicht · Maße · Profil**, Eintragen über FAB + Bottom Sheet
-- Diagramme mit Achsen, Zeitraum-Chips und automatischer Gruppierung (Tag/Woche/Monat, Durchschnitt); Ziellinie nur, wenn sie den Verlauf nicht staucht
+- Diagramme mit Achsen, Auswahlfeldern für Zeitraum und Maß und automatischer Gruppierung (Tag/Woche/Monat, Durchschnitt); Ziellinie nur, wenn sie den Verlauf nicht staucht
 - Listen, die dem Zeitraum folgen, nach Monaten gegliedert sind (mitlaufende Überschriften) und zugeklappt die 3 neuesten Einträge zeigen
 - Optionale Maße Oberarm, Brust, Oberschenkel (DB-Version 3, Migrationstest auf Robolectric)
 
-**Nicht gepusht:** Zuletzt gepusht ist `c1c0661`; alle Commits danach liegen nur lokal auf `main`.
+**Gepusht** bis `ee681cf`.
 
 ## ▶ Nächste Schritte
 
@@ -20,16 +20,16 @@ Der Aufbau steht, jetzt soll sich das Aussehen ändern. Zu Beginn klären: Was g
 
 ### 2. Diagramm-Filter als Auswahlfeld statt Chips
 Die Filter-Chips über dem Diagramm brauchen zu viel Platz. Stattdessen ein Auswahlfeld (Material 3 `ExposedDropdownMenuBox`).
-- [ ] Zeitraum (1 Monat · 3 Monate · 1 Jahr · Alles) als Auswahlfeld – Gewicht und Maße
-- [ ] Klären: Soll auch die Auswahl des Maßes (Bauch, Hüfte, …) im Maße-Diagramm ein Auswahlfeld werden?
-- [ ] Mit großer Schrift prüfen
+- [x] Zeitraum (1 Monat · 3 Monate · 1 Jahr · Alles) als Auswahlfeld – Gewicht und Maße (`aaf8b98`)
+- [x] Auch die Auswahl des Maßes ist ein Auswahlfeld; beide stehen nebeneinander (`aaf8b98`)
+- [x] Mit großer Schrift geprüft: Die Felder rutschen untereinander, bevor ein Text abgeschnitten wird
 
 ### 3. Aufgeklappte Liste auch oben wieder zuklappen
 Ist die Liste aufgeklappt, soll „Weniger anzeigen“ auch direkt bei der Überschrift „Einträge“/„Messungen“ stehen, nicht nur am Ende der Liste.
 - [ ] Gewicht und Maße
 
 ### Außerdem offen
-- [ ] Pushen und den CI-Lauf prüfen (er führt erstmals den Robolectric-Migrationstest aus)
+- [x] Pushen und den CI-Lauf prüfen
 - [ ] GitHub-Issues #1, #3 und #4 schließen (#2 und #6 schließen sich beim Push)
 
 ## GitHub-Issues
