@@ -19,7 +19,7 @@ Package `de.bollich.fitnessboy`:
 - `model/` – reine Datenklassen, keine Android-Abhängigkeiten
 - `domain/` – Berechnungen, Use Cases, Repository-Interfaces. Reines Kotlin, keine Android-Imports.
 - `data/` – Repository-Implementierungen (Room für Einträge, DataStore für Profil/Einstellungen)
-- `ui/` – Compose-Screens, ViewModels, UI-State; ein Unterpaket pro Bereich (`weight/`, `measurements/`, `profile/`); `ui/components/` wiederverwendbare Komponenten
+- `ui/` – Compose-Screens, ViewModels, UI-State; ein Unterpaket pro Bereich (`overview/`, `weight/`, `measurements/`, `profile/`); `ui/components/` wiederverwendbare Komponenten
 - `AppContainer` / `FitnessBoyApplication` – erzeugen Datenbank, DataStores und Repositories genau einmal
 
 Abhängigkeitsrichtung: `ui → domain ← data`. `domain` kennt weder `ui` noch `data`.

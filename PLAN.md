@@ -4,6 +4,8 @@ Ziel: Die App übersichtlicher und verständlicher machen (Dashboard statt verst
 
 Der vorherige Architektur-Umbau (Phasen 0–4) ist abgeschlossen und steht in der Git-History dieser Datei.
 
+**Stand 21.11.2026: Alle fünf Schritte sind erledigt.** Offen sind nur noch das Schließen der Issues #1, #3 und #4 auf GitHub (#2 und #6 schließen sich beim Push) und das zurückgestellte Issue #5.
+
 ## Zielbild
 
 Vier Tabs mit je einer klaren Aufgabe: **Übersicht · Gewicht · Maße · Profil**. Der bisherige BMI-Tab entfällt, seine Inhalte gehen im Dashboard auf.
@@ -49,8 +51,8 @@ Grundregeln für das Design:
 - [x] Domain: BMI zu einem Datum = Gewicht an dem Tag bzw. letzter Eintrag davor + aktuelle Größe (mit Tests) (`0144734`)
 - [x] Liste aller Messungen mit damaligem BMI und Löschen mit Rückfrage; eigene Verlaufsseite und Unterseiten-Navigation entfallen (`0144734`)
 
-### 5. Profil
-- [ ] Profil auf Größe und Zielgewicht reduzieren, doppelte Anzeigen (BMI, Überschrift) entfernen
+### 5. Profil ✅
+- [x] Profil auf Größe und Zielgewicht reduzieren, doppelte Anzeigen (BMI, Überschrift) entfernen; Hinweis pro Feld, Speichern nur bei Änderungen mit Bestätigung (`c94f020`)
 
 ## GitHub-Issues
 

@@ -4,10 +4,11 @@ FitnessBoy ist eine Android-App zum lokalen Tracken von Gewicht, BMI und Körper
 
 ## Funktionen
 
-- **Gewicht:** Einträge mit frei wählbarem Datum, Verlauf als Chart, Trends über 7 Tage, 30 Tage und seit Start, eigene Verlaufsseite mit Löschfunktion
-- **BMI:** BMI mit Einordnung, gesunder Gewichtsbereich und Optimalgewicht auf Basis der Körpergröße, Fortschritt zum Zielgewicht
-- **Körpermaße:** Taille, Hüfte und Schultern mit Datum erfassen, grafische Übersicht, Verlaufsseite mit Löschfunktion
+- **Übersicht:** aktuelles Gewicht mit Veränderung, Fortschritt zum Zielgewicht, BMI mit Einordnung und Erklärung (WHO-Kategorien, gesunder Bereich, Optimalgewicht), letzte Körpermaße
+- **Gewicht:** Einträge mit frei wählbarem Datum, Diagramm mit Achsen und Ziellinie, Liste aller Einträge mit BMI und Löschfunktion
+- **Körpermaße:** Bauch, Hüfte und Schultern sowie optional Oberarm, Brust und Oberschenkel; Figur mit allen Messstellen, Diagramm pro Maß, Liste mit BMI zum Messdatum
 - **Profil:** Körpergröße und Zielgewicht
+- Eintragen über einen Button unten rechts; Layouts funktionieren auch mit großer Schrift
 - Zahlen im Format der Geräte-Sprache
 - Signierte Release-APKs per Git-Tag über GitHub Actions
 
@@ -30,7 +31,7 @@ Package `de.bollich.fitnessboy` unter `app/src/main/java/`:
 | `domain/` | Berechnungen (BMI, Trends, Zielfortschritt), Eingabe-Validierung, Use Cases, Repository-Interfaces – reines Kotlin ohne Android-Abhängigkeiten |
 | `data/` | Repository-Implementierungen: Room-Datenbank (`data/local/`) und DataStore |
 | `format/` | Zahlen- und Einheitenformatierung |
-| `ui/` | Compose-Screens und ViewModels, ein Unterpaket pro Bereich (`weight/`, `bmi/`, `measurements/`, `profile/`), dazu `navigation/`, `components/` und `theme/` |
+| `ui/` | Compose-Screens und ViewModels, ein Unterpaket pro Bereich (`overview/`, `weight/`, `measurements/`, `profile/`), dazu `navigation/`, `components/` (inkl. Diagramm) und `theme/` |
 
 Abhängigkeitsrichtung: `ui → domain ← data`. Die Abhängigkeiten werden manuell über einen `AppContainer` in der `Application`-Klasse erzeugt, ohne DI-Library. Jeder Bereich hat ein ViewModel, das seinen UI-State reaktiv aus den Repository-Flows baut.
 
